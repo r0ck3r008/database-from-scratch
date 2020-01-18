@@ -28,7 +28,7 @@ struct ComparisonOp {
 
 	// these are the operands on the left and on the right
 	struct Operand *left;
-	struct Operand *right;	
+	struct Operand *right;
 };
 
 struct OrList {

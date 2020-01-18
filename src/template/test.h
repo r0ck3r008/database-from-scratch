@@ -18,13 +18,13 @@ class relation {
 private:
 	const char *rname;
 	const char *prefix;
-	char rpath[100]; 
+	char rpath[100];
 	Schema *rschema;
 public:
 	relation (const char *_name, Schema *_schema, const char *_prefix) :
 		rname (_name), rschema (_schema), prefix (_prefix) {
-		sprintf (rpath, "%s%s.bin", prefix, rname);
-	}
+			sprintf (rpath, "%s%s.bin", prefix, rname);
+		}
 	const char* name () { return rname; }
 	const char* path () { return rpath; }
 	Schema* schema () { return rschema;}
@@ -36,7 +36,7 @@ public:
 
 	void get_cnf (CNF &cnf_pred, Record &literal) {
 		cout << " Enter CNF predicate (when done press ctrl-D):\n\t";
-  		if (yyparse() != 0) {
+		if (yyparse() != 0) {
 			std::cout << "Can't parse your CNF.\n";
 			exit (1);
 		}
@@ -44,14 +44,14 @@ public:
 	}
 };
 
-const char *supplier = "supplier"; 
-const char *partsupp = "partsupp"; 
-const char *part = "part"; 
-const char *nation = "nation"; 
-const char *customer = "customer"; 
-const char *orders = "orders"; 
-const char *region = "region"; 
-const char *lineitem = "lineitem"; 
+const char *supplier = "supplier";
+const char *partsupp = "partsupp";
+const char *part = "part";
+const char *nation = "nation";
+const char *customer = "customer";
+const char *orders = "orders";
+const char *region = "region";
+const char *lineitem = "lineitem";
 
 relation *s, *p, *ps, *n, *li, *r, *o, *c;
 

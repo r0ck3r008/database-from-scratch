@@ -39,7 +39,7 @@ Attribute *Schema :: GetAtts () {
 Schema :: Schema (const char *fName, const char *relName) {
 
 	FILE *foo = fopen (fName, "r");
-	
+
 	// this is enough space to hold any tokens
 	char space[200];
 
@@ -50,8 +50,8 @@ Schema :: Schema (const char *fName, const char *relName) {
 	if (strcmp (space, "BEGIN")) {
 		cout << "Unfortunately, this does not seem to be a schema file.\n";
 		exit (1);
-	}	
-		
+	}
+
 	while (1) {
 
 		// check to see if this is the one we want
@@ -74,7 +74,7 @@ Schema :: Schema (const char *fName, const char *relName) {
 				}
 			}
 
-		// otherwise, got the correct file!!
+			// otherwise, got the correct file!!
 		} else {
 			break;
 		}
@@ -90,7 +90,7 @@ Schema :: Schema (const char *fName, const char *relName) {
 	while (1) {
 		fscanf (foo, "%s", space);
 		if (!strcmp (space, "END")) {
-			break;		
+			break;
 		} else {
 			fscanf (foo, "%s", space);
 			numAtts++;
@@ -111,7 +111,7 @@ Schema :: Schema (const char *fName, const char *relName) {
 	for (int i = 0; i < numAtts; i++ ) {
 
 		// read in the attribute name
-		fscanf (foo, "%s", space);	
+		fscanf (foo, "%s", space);
 		myAtts[i].name = strdup (space);
 
 		// read in the attribute type

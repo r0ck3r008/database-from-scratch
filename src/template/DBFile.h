@@ -10,12 +10,12 @@
 
 typedef enum {heap, sorted, tree} fType;
 
-// stub DBFile header..replace it with your own DBFile.h 
+// stub DBFile header..replace it with your own DBFile.h
 
 class DBFile {
 
 public:
-	DBFile (); 
+	DBFile ();
 
 	int Create (const char *fpath, fType file_type, void *startup);
 	int Open (const char *fpath);

@@ -32,7 +32,7 @@ void Comparison :: Print () {
 		cout << "left record ";
 	else if (operand1 == Right)
 		cout << "right record ";
-	else 
+	else
 		cout << "literal record ";
 
 
@@ -52,7 +52,7 @@ void Comparison :: Print () {
 		cout << "right record ";
 	else
 		cout << "literal record ";
- 
+
 
 	if (attType == Int)
 		cout << "(Int)";
@@ -85,21 +85,21 @@ OrderMaker :: OrderMaker(Schema *schema) {
 
 	// now add in the doubles
 	for (int i = 0; i < n; i++) {
-                if (atts[i].myType == Double) {
-                        whichAtts[numAtts] = i;
-                        whichTypes[numAtts] = Double;
-                        numAtts++;
-                }
-        }
+		if (atts[i].myType == Double) {
+			whichAtts[numAtts] = i;
+			whichTypes[numAtts] = Double;
+			numAtts++;
+		}
+	}
 
 	// and finally the strings
-        for (int i = 0; i < n; i++) {
-                if (atts[i].myType == String) {
-                        whichAtts[numAtts] = i;
-                        whichTypes[numAtts] = String;
-                        numAtts++;
-                }
-        }
+	for (int i = 0; i < n; i++) {
+		if (atts[i].myType == String) {
+			whichAtts[numAtts] = i;
+			whichTypes[numAtts] = String;
+			numAtts++;
+		}
+	}
 }
 
 
@@ -128,7 +128,7 @@ int CNF :: GetSortOrders (OrderMaker &left, OrderMaker &right) {
 	// loop through all of the disjunctions in the CNF and find those
 	// that are acceptable for use in a sort ordering
 	for (int i = 0; i < numAnds; i++) {
-		
+
 		// if we don't have a disjunction of length one, then it
 		// can't be acceptable for use with a sort ordering
 		if (orLens[i] != 1) {
@@ -142,8 +142,8 @@ int CNF :: GetSortOrders (OrderMaker &left, OrderMaker &right) {
 
 		// now verify that it operates over atts from both tables
 		if (!((orList[i][0].operand1 == Left && orList[i][0].operand2 == Right) ||
-		      (orList[i][0].operand2 == Left && orList[i][0].operand1 == Right))) {
-			continue;		
+			(orList[i][0].operand2 == Left && orList[i][0].operand1 == Right))) {
+			continue;
 		}
 
 		// since we are here, we have found a join attribute!!!
@@ -151,29 +151,29 @@ int CNF :: GetSortOrders (OrderMaker &left, OrderMaker &right) {
 		// relevant structures
 		if (orList[i][0].operand1 == Left) {
 			left.whichAtts[left.numAtts] = orList[i][0].whichAtt1;
-			left.whichTypes[left.numAtts] = orList[i][0].attType;	
-		}	
+			left.whichTypes[left.numAtts] = orList[i][0].attType;
+		}
 
 		if (orList[i][0].operand1 == Right) {
-                        right.whichAtts[right.numAtts] = orList[i][0].whichAtt1;
-                        right.whichTypes[right.numAtts] = orList[i][0].attType;
-                }
+			right.whichAtts[right.numAtts] = orList[i][0].whichAtt1;
+			right.whichTypes[right.numAtts] = orList[i][0].attType;
+		}
 
 		if (orList[i][0].operand2 == Left) {
-                        left.whichAtts[left.numAtts] = orList[i][0].whichAtt2;
-                        left.whichTypes[left.numAtts] = orList[i][0].attType;
-                }
+			left.whichAtts[left.numAtts] = orList[i][0].whichAtt2;
+			left.whichTypes[left.numAtts] = orList[i][0].attType;
+		}
 
 		if (orList[i][0].operand2 == Right) {
-                        right.whichAtts[right.numAtts] = orList[i][0].whichAtt2;
-                        right.whichTypes[right.numAtts] = orList[i][0].attType;
-                }
+			right.whichAtts[right.numAtts] = orList[i][0].whichAtt2;
+			right.whichTypes[right.numAtts] = orList[i][0].attType;
+		}
 
 		// note that we have found two new attributes
 		left.numAtts++;
 		right.numAtts++;
 	}
-	
+
 	return left.numAtts;
 
 }
@@ -182,7 +182,7 @@ int CNF :: GetSortOrders (OrderMaker &left, OrderMaker &right) {
 void CNF :: Print () {
 
 	for (int i = 0; i < numAnds; i++) {
-		
+
 		cout << "( ";
 		for (int j = 0; j < orLens[i]; j++) {
 			orList[i][j].Print ();
@@ -200,29 +200,29 @@ void CNF :: Print () {
 // this is a helper routine that writes out another field for the literal record and its schema
 void AddLitToFile (int &numFieldsInLiteral, FILE *outRecFile, FILE *outSchemaFile, char *value, Type myType) {
 
-        // first write out the new record field
-        fprintf (outRecFile, "%s|", value);
+	// first write out the new record field
+	fprintf (outRecFile, "%s|", value);
 
-        // now write out the new schema field
-        if (myType == Int) {
-                fprintf (outSchemaFile, "att%d Int\n", numFieldsInLiteral);
-        } else if (myType == Double) {
-                fprintf (outSchemaFile, "att%d Double\n", numFieldsInLiteral);
-        } else if (myType == String) {
-                fprintf (outSchemaFile, "att%d String\n", numFieldsInLiteral);
-        } else {
-                cerr << "I don't know that type!!\n";
-                exit (1);
-        }
+	// now write out the new schema field
+	if (myType == Int) {
+		fprintf (outSchemaFile, "att%d Int\n", numFieldsInLiteral);
+	} else if (myType == Double) {
+		fprintf (outSchemaFile, "att%d Double\n", numFieldsInLiteral);
+	} else if (myType == String) {
+		fprintf (outSchemaFile, "att%d String\n", numFieldsInLiteral);
+	} else {
+		cerr << "I don't know that type!!\n";
+		exit (1);
+	}
 
-        // and note that we have another field
-        numFieldsInLiteral++;
+	// and note that we have another field
+	numFieldsInLiteral++;
 }
 
 
 
-void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *leftSchema, 
-	Schema *rightSchema, Record &literal) {
+void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *leftSchema,
+				Schema *rightSchema, Record &literal) {
 
 	CNF &cnf = *this;
 
@@ -240,12 +240,12 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *leftSchema,
 
 	// now we go through and build the comparison structure
 	for (int whichAnd = 0; 1; whichAnd++, parseTree = parseTree->rightAnd) {
-		
+
 		// see if we have run off of the end of all of the ANDs
 		if (parseTree == NULL) {
 			cnf.numAnds = whichAnd;
 			break;
-		}	
+		}
 
 		// we have not, so copy over all of the ORs hanging off of this AND
 		struct OrList *myOr = parseTree->left;
@@ -258,7 +258,7 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *leftSchema,
 			}
 
 			// we have not run off the list, so add the current OR in!
-			
+
 			// these store the types of the two values that are found
 			Type typeLeft;
 			Type typeRight;
@@ -268,30 +268,30 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *leftSchema,
 			// so we check to see if it is an attribute name, and if so,
 			// we look it up in the schema
 			if (myOr->left->left->code == NAME) {
-				
+
 				// see if we can find this attribute in the left schema
 				if (leftSchema->Find (myOr->left->left->value) != -1) {
 					cnf.orList[whichAnd][whichOr].operand1 = Left;
 					cnf.orList[whichAnd][whichOr].whichAtt1 =
-						leftSchema->Find (myOr->left->left->value);	
+						leftSchema->Find (myOr->left->left->value);
 					typeLeft = leftSchema->FindType (myOr->left->left->value);
 
-				// see if we can find it in the right schema
+					// see if we can find it in the right schema
 				} else if (rightSchema->Find (myOr->left->left->value) != -1) {
-                                        cnf.orList[whichAnd][whichOr].operand1 = Right;
-                                        cnf.orList[whichAnd][whichOr].whichAtt1 =
-                                                rightSchema->Find (myOr->left->left->value);
-                                        typeLeft = rightSchema->FindType (myOr->left->left->value);
+					cnf.orList[whichAnd][whichOr].operand1 = Right;
+					cnf.orList[whichAnd][whichOr].whichAtt1 =
+						rightSchema->Find (myOr->left->left->value);
+					typeLeft = rightSchema->FindType (myOr->left->left->value);
 
-				// it is not there!  So there is an error in the query
-                                } else {
+					// it is not there!  So there is an error in the query
+				} else {
 					cout << "ERROR: Could not find attribute " <<
 						myOr->left->left->value << "\n";
-					exit (1);	
+					exit (1);
 				}
 
-			// the next thing is to see if we have a string; if so, add it to the 
-			// literal record that stores all of the comparison values
+				// the next thing is to see if we have a string; if so, add it to the
+				// literal record that stores all of the comparison values
 			} else if (myOr->left->left->code == STRING) {
 
 				cnf.orList[whichAnd][whichOr].operand1 = Literal;
@@ -299,7 +299,7 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *leftSchema,
 				AddLitToFile (numFieldsInLiteral, outRecFile, outSchemaFile, myOr->left->left->value, String);
 				typeLeft = String;
 
-			// see if it is an integer
+				// see if it is an integer
 			} else if (myOr->left->left->code == INT) {
 
 				cnf.orList[whichAnd][whichOr].operand1 = Literal;
@@ -307,15 +307,15 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *leftSchema,
 				AddLitToFile (numFieldsInLiteral, outRecFile, outSchemaFile, myOr->left->left->value, Int);
 				typeLeft = Int;
 
-			// see if it is a double
+				// see if it is a double
 			} else if (myOr->left->left->code == DOUBLE) {
 
 				cnf.orList[whichAnd][whichOr].operand1 = Literal;
 				cnf.orList[whichAnd][whichOr].whichAtt1 = numFieldsInLiteral;
 				AddLitToFile (numFieldsInLiteral, outRecFile, outSchemaFile, myOr->left->left->value, Double);
 				typeLeft = Double;
-	
-			// catch-all case
+
+				// catch-all case
 			} else {
 				cerr << "You gave me some strange type for an operand that I do not recognize!!\n";
 				exit (1);
@@ -324,29 +324,29 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *leftSchema,
 			// now that we have dealt with the left operand, we need to deal with the
 			// right operand
 			if (myOr->left->right->code == NAME) {
-				
+
 				// see if we can find this attribute in the left schema
 				if (leftSchema->Find (myOr->left->right->value) != -1) {
 					cnf.orList[whichAnd][whichOr].operand2 = Left;
 					cnf.orList[whichAnd][whichOr].whichAtt2 =
-						leftSchema->Find (myOr->left->right->value);	
+						leftSchema->Find (myOr->left->right->value);
 					typeRight = leftSchema->FindType (myOr->left->right->value);
 
-				// see if we can find it in the right schema
+					// see if we can find it in the right schema
 				} else if (rightSchema->Find (myOr->left->right->value) != -1) {
-                                        cnf.orList[whichAnd][whichOr].operand2 = Right;
-                                        cnf.orList[whichAnd][whichOr].whichAtt2 =
-                                                rightSchema->Find (myOr->left->right->value);
+					cnf.orList[whichAnd][whichOr].operand2 = Right;
+					cnf.orList[whichAnd][whichOr].whichAtt2 =
+						rightSchema->Find (myOr->left->right->value);
 					typeRight = rightSchema->FindType (myOr->left->right->value);
 
-				// it is not there!  So there is an error in the query
-                                } else {
+					// it is not there!  So there is an error in the query
+				} else {
 					cout << "ERROR: Could not find attribute " << myOr->left->right->value << "\n";
-					exit (1);	
+					exit (1);
 				}
 
-			// the next thing is to see if we have a string; if so, add it to the 
-			// literal record that stores all of the comparison values
+				// the next thing is to see if we have a string; if so, add it to the
+				// literal record that stores all of the comparison values
 			} else if (myOr->left->right->code == STRING) {
 
 				cnf.orList[whichAnd][whichOr].operand2 = Literal;
@@ -354,7 +354,7 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *leftSchema,
 				AddLitToFile (numFieldsInLiteral, outRecFile, outSchemaFile, myOr->left->right->value, String);
 				typeRight = String;
 
-			// see if it is an integer
+				// see if it is an integer
 			} else if (myOr->left->right->code == INT) {
 
 				cnf.orList[whichAnd][whichOr].operand2 = Literal;
@@ -362,21 +362,21 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *leftSchema,
 				AddLitToFile (numFieldsInLiteral, outRecFile, outSchemaFile, myOr->left->right->value, Int);
 				typeRight = Int;
 
-			// see if it is a double
+				// see if it is a double
 			} else if (myOr->left->right->code == DOUBLE) {
 
 				cnf.orList[whichAnd][whichOr].operand2 = Literal;
 				cnf.orList[whichAnd][whichOr].whichAtt2 = numFieldsInLiteral;
 				AddLitToFile (numFieldsInLiteral, outRecFile, outSchemaFile, myOr->left->right->value, Double);
 				typeRight = Double;
-	
-			// catch-all case
+
+				// catch-all case
 			} else {
 				cerr << "You gave me some strange type for an operand that I do not recognize!!\n";
 				exit (1);
 			}
 
-			
+
 
 			// now we check to make sure that there was not a type mismatch
 			if (typeLeft != typeRight) {
@@ -390,16 +390,16 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *leftSchema,
 
 			// and finally set up the comparison operator for this comparison
 			if (myOr->left->code == LESS_THAN) {
-				cnf.orList[whichAnd][whichOr].op = LessThan;	
+				cnf.orList[whichAnd][whichOr].op = LessThan;
 			} else if (myOr->left->code == GREATER_THAN) {
-				cnf.orList[whichAnd][whichOr].op = GreaterThan;	
+				cnf.orList[whichAnd][whichOr].op = GreaterThan;
 			} else if (myOr->left->code == EQUALS) {
 				cnf.orList[whichAnd][whichOr].op = Equals;
 			} else {
 				cerr << "BAD: found a comparison op I don't recognize.\n";
 				exit (1);
 			}
-		
+
 		}
 	}
 
@@ -427,8 +427,8 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *leftSchema,
 
 
 // this is the version that only deals with unary relational selection predicates
-void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *mySchema, 
-	Record &literal) {
+void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *mySchema,
+				Record &literal) {
 
 	CNF &cnf = *this;
 
@@ -446,12 +446,12 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *mySchema,
 
 	// now we go through and build the comparison structure
 	for (int whichAnd = 0; 1; whichAnd++, parseTree = parseTree->rightAnd) {
-		
+
 		// see if we have run off of the end of all of the ANDs
 		if (parseTree == NULL) {
 			cnf.numAnds = whichAnd;
 			break;
-		}	
+		}
 
 		// we have not, so copy over all of the ORs hanging off of this AND
 		struct OrList *myOr = parseTree->left;
@@ -464,7 +464,7 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *mySchema,
 			}
 
 			// we have not run off the list, so add the current OR in!
-			
+
 			// these store the types of the two values that are found
 			Type typeLeft;
 			Type typeRight;
@@ -473,23 +473,23 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *mySchema,
 			// so we check to see if it is an attribute name, and if so,
 			// we look it up in the schema
 			if (myOr->left->left->code == NAME) {
-				
+
 				// see if we can find this attribute in the schema
 				if (mySchema->Find (myOr->left->left->value) != -1) {
 					cnf.orList[whichAnd][whichOr].operand1 = Left;
 					cnf.orList[whichAnd][whichOr].whichAtt1 =
-						mySchema->Find (myOr->left->left->value);	
+						mySchema->Find (myOr->left->left->value);
 					typeLeft = mySchema->FindType (myOr->left->left->value);
 
-				// it is not there!  So there is an error in the query
-                                } else {
+					// it is not there!  So there is an error in the query
+				} else {
 					cout << "ERROR: Could not find attribute " <<
 						myOr->left->left->value << "\n";
-					exit (1);	
+					exit (1);
 				}
 
-			// the next thing is to see if we have a string; if so, add it to the 
-			// literal record that stores all of the comparison values
+				// the next thing is to see if we have a string; if so, add it to the
+				// literal record that stores all of the comparison values
 			} else if (myOr->left->left->code == STRING) {
 
 				cnf.orList[whichAnd][whichOr].operand1 = Literal;
@@ -497,7 +497,7 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *mySchema,
 				AddLitToFile (numFieldsInLiteral, outRecFile, outSchemaFile, myOr->left->left->value, String);
 				typeLeft = String;
 
-			// see if it is an integer
+				// see if it is an integer
 			} else if (myOr->left->left->code == INT) {
 
 				cnf.orList[whichAnd][whichOr].operand1 = Literal;
@@ -505,15 +505,15 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *mySchema,
 				AddLitToFile (numFieldsInLiteral, outRecFile, outSchemaFile, myOr->left->left->value, Int);
 				typeLeft = Int;
 
-			// see if it is a double
+				// see if it is a double
 			} else if (myOr->left->left->code == DOUBLE) {
 
 				cnf.orList[whichAnd][whichOr].operand1 = Literal;
 				cnf.orList[whichAnd][whichOr].whichAtt1 = numFieldsInLiteral;
 				AddLitToFile (numFieldsInLiteral, outRecFile, outSchemaFile, myOr->left->left->value, Double);
 				typeLeft = Double;
-	
-			// catch-all case
+
+				// catch-all case
 			} else {
 				cerr << "You gave me some strange type for an operand that I do not recognize!!\n";
 				exit (1);
@@ -522,22 +522,22 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *mySchema,
 			// now that we have dealt with the left operand, we need to deal with the
 			// right operand
 			if (myOr->left->right->code == NAME) {
-				
+
 				// see if we can find this attribute in the left schema
 				if (mySchema->Find (myOr->left->right->value) != -1) {
 					cnf.orList[whichAnd][whichOr].operand2 = Left;
 					cnf.orList[whichAnd][whichOr].whichAtt2 =
-						mySchema->Find (myOr->left->right->value);	
+						mySchema->Find (myOr->left->right->value);
 					typeRight = mySchema->FindType (myOr->left->right->value);
 
-				// it is not there!  So there is an error in the query
-                                } else {
+					// it is not there!  So there is an error in the query
+				} else {
 					cout << "ERROR: Could not find attribute " << myOr->left->right->value << "\n";
-					exit (1);	
+					exit (1);
 				}
 
-			// the next thing is to see if we have a string; if so, add it to the 
-			// literal record that stores all of the comparison values
+				// the next thing is to see if we have a string; if so, add it to the
+				// literal record that stores all of the comparison values
 			} else if (myOr->left->right->code == STRING) {
 
 				cnf.orList[whichAnd][whichOr].operand2 = Literal;
@@ -545,7 +545,7 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *mySchema,
 				AddLitToFile (numFieldsInLiteral, outRecFile, outSchemaFile, myOr->left->right->value, String);
 				typeRight = String;
 
-			// see if it is an integer
+				// see if it is an integer
 			} else if (myOr->left->right->code == INT) {
 
 				cnf.orList[whichAnd][whichOr].operand2 = Literal;
@@ -553,20 +553,20 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *mySchema,
 				AddLitToFile (numFieldsInLiteral, outRecFile, outSchemaFile, myOr->left->right->value, Int);
 				typeRight = Int;
 
-			// see if it is a double
+				// see if it is a double
 			} else if (myOr->left->right->code == DOUBLE) {
 
 				cnf.orList[whichAnd][whichOr].operand2 = Literal;
 				cnf.orList[whichAnd][whichOr].whichAtt2 = numFieldsInLiteral;
 				AddLitToFile (numFieldsInLiteral, outRecFile, outSchemaFile, myOr->left->right->value, Double);
 				typeRight = Double;
-	
-			// catch-all case
+
+				// catch-all case
 			} else {
 				cerr << "You gave me some strange type for an operand that I do not recognize!!\n";
 				exit (1);
 			}
-			
+
 
 			// now we check to make sure that there was not a type mismatch
 			if (typeLeft != typeRight) {
@@ -580,16 +580,16 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *mySchema,
 
 			// and finally set up the comparison operator for this comparison
 			if (myOr->left->code == LESS_THAN) {
-				cnf.orList[whichAnd][whichOr].op = LessThan;	
+				cnf.orList[whichAnd][whichOr].op = LessThan;
 			} else if (myOr->left->code == GREATER_THAN) {
-				cnf.orList[whichAnd][whichOr].op = GreaterThan;	
+				cnf.orList[whichAnd][whichOr].op = GreaterThan;
 			} else if (myOr->left->code == EQUALS) {
 				cnf.orList[whichAnd][whichOr].op = Equals;
 			} else {
 				cerr << "BAD: found a comparison op I don't recognize.\n";
 				exit (1);
 			}
-		
+
 		}
 	}
 

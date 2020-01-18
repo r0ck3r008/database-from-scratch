@@ -19,14 +19,14 @@ void test1 () {
 	dbfile.Create (rel->path(), heap, NULL);
 
 	char tbl_path[100]; // construct path of the tpch flat text file
-	sprintf (tbl_path, "%s%s.tbl", tpch_dir, rel->name()); 
+	sprintf (tbl_path, "%s%s.tbl", tpch_dir, rel->name());
 	cout << " tpch file will be loaded from " << tbl_path << endl;
 
 	dbfile.Load (*(rel->schema ()), tbl_path);
 	dbfile.Close ();
 }
 
-// sequential scan of a DBfile 
+// sequential scan of a DBfile
 void test2 () {
 
 	DBFile dbfile;
@@ -52,7 +52,7 @@ void test3 () {
 
 	cout << " Filter with CNF for : " << rel->name() << "\n";
 
-	CNF cnf; 
+	CNF cnf;
 	Record literal;
 	rel->get_cnf (cnf, literal);
 
@@ -80,7 +80,7 @@ int main () {
 
 	void (*test) ();
 	relation *rel_ptr[] = {n, r, c, p, ps, o, li};
-	void (*test_ptr[]) () = {&test1, &test2, &test3};  
+	void (*test_ptr[]) () = {&test1, &test2, &test3};
 
 	int tindx = 0;
 	while (tindx < 1 || tindx > 3) {

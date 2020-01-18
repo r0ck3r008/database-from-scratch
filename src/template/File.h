@@ -14,7 +14,7 @@ using namespace std;
 class Page {
 private:
 	TwoWayList <Record> *myRecs;
-	
+
 	int numRecs;
 	int curSizeInBytes;
 
@@ -49,7 +49,7 @@ class File {
 private:
 
 	int myFilDes;
-	off_t curLength; 
+	off_t curLength;
 
 public:
 

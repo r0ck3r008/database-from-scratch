@@ -19,54 +19,54 @@ int ComparisonEngine :: Compare(Record *left, Record *right, OrderMaker *orderUs
 	for (int i = 0; i < orderUs->numAtts; i++) {
 		val1 = left_bits + ((int *) left_bits)[orderUs->whichAtts[i] + 1];
 		val2 = right_bits + ((int *) right_bits)[orderUs->whichAtts[i] + 1];
-	
+
 		// these are used to store the two operands, depending on their type
 		int val1Int, val2Int;
 		double val1Double, val2Double;
-		
+
 		// now check the type and do the comparison
 		switch (orderUs->whichTypes[i]) {
-	
+
 			// first case: we are dealing with integers
-			case Int:
-	
+		case Int:
+
 			// cast the two bit strings to ints
 			val1Int = *((int *) val1);
 			val2Int = *((int *) val2);
-	
+
 			// and do the comparison
-			if (val1Int < val2Int) 
+			if (val1Int < val2Int)
 				return -1;
 			else if (val1Int > val2Int)
 				return 1;
-	
+
 			break;
-	
-	
+
+
 			// second case: dealing with doubles
-			case Double:
-	
+		case Double:
+
 			// cast the two bit strings to doubles
 			val1Double = *((double *) val1);
 			val2Double = *((double *) val2);
-	
+
 			// and do the comparison
 			if (val1Double < val2Double)
 				return -1;
 			else if (val1Double > val2Double)
 				return 1;
-	
+
 			break;
-	
-	
+
+
 			// last case: dealing with strings
-			default:
+		default:
 			int sc = strcmp (val1, val2);
 			if (sc != 0)
 				return sc;
 
 			break;
-	
+
 		}
 	}
 
@@ -87,54 +87,54 @@ int ComparisonEngine :: Compare (Record *left, OrderMaker *order_left, Record *r
 	for (int i = 0; i < order_left->numAtts; i++) {
 		val1 = left_bits + ((int *) left_bits)[order_left->whichAtts[i] + 1];
 		val2 = right_bits + ((int *) right_bits)[order_right->whichAtts[i] + 1];
-	
+
 		// these are used to store the two operands, depending on their type
 		int val1Int, val2Int;
 		double val1Double, val2Double;
-		
+
 		// now check the type and do the comparison
 		switch (order_left->whichTypes[i]) {
-	
+
 			// first case: we are dealing with integers
-			case Int:
-	
+		case Int:
+
 			// cast the two bit strings to ints
 			val1Int = *((int *) val1);
 			val2Int = *((int *) val2);
-	
+
 			// and do the comparison
-			if (val1Int < val2Int) 
+			if (val1Int < val2Int)
 				return -1;
 			else if (val1Int > val2Int)
 				return 1;
-	
+
 			break;
-	
-	
+
+
 			// second case: dealing with doubles
-			case Double:
-	
+		case Double:
+
 			// cast the two bit strings to doubles
 			val1Double = *((double *) val1);
 			val2Double = *((double *) val2);
-	
+
 			// and do the comparison
 			if (val1Double < val2Double)
 				return -1;
 			else if (val1Double > val2Double)
 				return 1;
-	
+
 			break;
-	
-	
+
+
 			// last case: dealing with strings
-			default:
+		default:
 			int sc = strcmp (val1, val2);
 			if (sc != 0)
 				return sc;
 
 			break;
-	
+
 		}
 	}
 
@@ -152,11 +152,11 @@ int ComparisonEngine :: Compare (Record *left, Record *literal, CNF *myCompariso
 
 			// this returns a 0 if the comparison did not eval to true
 			int result = Run(left, literal, &myComparison->orList[i][j]);
-			
+
 			if (result != 0) {
-				break;	
+				break;
 			}
-			
+
 			// if we made it through all of the comparisons without a hit, return a 0
 			if (j == myComparison->orLens[i] - 1) {
 				return 0;
@@ -169,7 +169,7 @@ int ComparisonEngine :: Compare (Record *left, Record *literal, CNF *myCompariso
 
 	// this ends the for-loop for the AND-list... if we made it this far, then we know that we
 	// have satisfied the overall CNF expression
-	return 1;	
+	return 1;
 }
 
 
@@ -182,9 +182,9 @@ int ComparisonEngine :: Compare (Record *left, Record *right, Record *literal, C
 
 			// this returns a 0 if the comparison did not eval to true
 			int result = Run (left, right, literal, &myComparison->orList[i][j]);
-			
+
 			if (result != 0) {
-				break;	
+				break;
 			}
 
 			// if we made it through all of the comparisons without a hit, return a 0
@@ -199,7 +199,7 @@ int ComparisonEngine :: Compare (Record *left, Record *right, Record *literal, C
 
 	// this ends the for-loop for the AND-list... if we made it this far, then we know that we
 	// have satisfied the overall CNF expression
-	return 1;	
+	return 1;
 }
 
 // This is an internal function used by the comparison engine
@@ -232,69 +232,69 @@ int ComparisonEngine :: Run (Record *left, Record *literal, Comparison *c) {
 	switch (c->attType) {
 
 		// first case: we are dealing with integers
-		case Int:
+	case Int:
 
 		val1Int = *((int *) val1);
 		val2Int = *((int *) val2);
 
 		// and check the operation type in order to actually do the comparison
 		switch (c->op) {
-				
-			case LessThan:
+
+		case LessThan:
 			return (val1Int < val2Int);
 			break;
 
-			case GreaterThan:
+		case GreaterThan:
 			return (val1Int > val2Int);
 			break;
-					
-			default:
+
+		default:
 			return (val1Int == val2Int);
-			break;	
-		}	
+			break;
+		}
 		break;
 
 		// second case: dealing with doubles
-		case Double:
+	case Double:
 		val1Double = *((double *) val1);
 		val2Double = *((double *) val2);
 
 		// and check the operation type in order to actually do the comparison
 		switch (c->op) {
-						
-			case LessThan:
+
+		case LessThan:
 			return (val1Double < val2Double);
 			break;
 
-			case GreaterThan:
+		case GreaterThan:
 			return (val1Double > val2Double);
 			break;
-					
-			default:
+
+		default:
 			return (val1Double == val2Double);
-			break;	
-		}	
+			break;
+		}
 		break;
 
 		// final case: dealing with strings
-		default:
+	default:
 
 		// so check the operation type in order to actually do the comparison
 		tempResult = strcmp (val1, val2);
 		switch (c->op) {
-						
-			case LessThan:
+
+		case LessThan:
 			return tempResult < 0;
 			break;
 
-			case GreaterThan:
+		case GreaterThan:
 			return tempResult > 0;
 			break;
-					
-			default:
+
+		default:
 			return tempResult == 0;
-			break;	
-		}	
+			break;
+		}
 		break;
 	}
 
@@ -312,36 +312,36 @@ int ComparisonEngine :: Run (Record *left, Record *right, Record *literal, Compa
 	// first get a pointer to the first value to compare
 	switch (c->operand1) {
 
-		case Left:
+	case Left:
 		val1 = left_bits + ((int *) left_bits)[c->whichAtt1 + 1];
 		break;
-	
-		case Right:
+
+	case Right:
 		val1 = right_bits + ((int *) right_bits)[c->whichAtt1 + 1];
 		break;
 
-		default:
+	default:
 		val1 = lit_bits + ((int *) lit_bits)[c->whichAtt1 + 1];
-		break;	
+		break;
 	}
 
 	// next get a pointer to the second value to compare
 	switch (c->operand2) {
 
-		case Left:
+	case Left:
 		val2 = left_bits + ((int *) left_bits)[c->whichAtt2 + 1];
 		break;
 
-		case Right:
+	case Right:
 		val2 = right_bits + ((int *) right_bits)[c->whichAtt2 + 1];
 		break;
 
-		default:
+	default:
 		val2 = lit_bits + ((int *) lit_bits)[c->whichAtt2 + 1];
-		break;	
+		break;
 
 	}
-			
+
 	int val1Int, val2Int, tempResult;
 	double val1Double, val2Double;
 
@@ -349,69 +349,69 @@ int ComparisonEngine :: Run (Record *left, Record *right, Record *literal, Compa
 	switch (c->attType) {
 
 		// first case: we are dealing with integers
-		case Int:
+	case Int:
 
 		val1Int = *((int *) val1);
 		val2Int = *((int *) val2);
 
 		// and check the operation type in order to actually do the comparison
 		switch (c->op) {
-				
-			case LessThan:
+
+		case LessThan:
 			return (val1Int < val2Int);
 			break;
 
-			case GreaterThan:
+		case GreaterThan:
 			return (val1Int > val2Int);
 			break;
-					
-			default:
+
+		default:
 			return (val1Int == val2Int);
-			break;	
-		}	
+			break;
+		}
 		break;
 
 		// second case: dealing with doubles
-		case Double:
+	case Double:
 		val1Double = *((double *) val1);
 		val2Double = *((double *) val2);
 
 		// and check the operation type in order to actually do the comparison
 		switch (c->op) {
-						
-			case LessThan:
+
+		case LessThan:
 			return (val1Double < val2Double);
 			break;
 
-			case GreaterThan:
+		case GreaterThan:
 			return (val1Double > val2Double);
 			break;
-					
-			default:
+
+		default:
 			return (val1Double == val2Double);
-			break;	
-		}	
+			break;
+		}
 		break;
 
 		// final case: dealing with strings
-		default:
+	default:
 
 		// so check the operation type in order to actually do the comparison
 		tempResult = strcmp (val1, val2);
 		switch (c->op) {
-						
-			case LessThan:
+
+		case LessThan:
 			return tempResult < 0;
 			break;
 
-			case GreaterThan:
+		case GreaterThan:
 			return tempResult > 0;
 			break;
-					
-			default:
+
+		default:
 			return tempResult == 0;
-			break;	
-		}	
+			break;
+		}
 		break;
 	}
 
