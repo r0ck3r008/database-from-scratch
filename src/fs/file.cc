@@ -1,6 +1,3 @@
-#include "File.h"
-#include "TwoWayList.cc"
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -9,7 +6,7 @@
 #include <iostream>
 #include <stdlib.h>
 
-
+#include "file.h"
 
 Page :: Page () {
 	curSizeInBytes = sizeof (int);

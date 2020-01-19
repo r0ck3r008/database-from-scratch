@@ -1,11 +1,11 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include "TwoWayList.h"
-#include "Record.h"
-#include "Schema.h"
-#include "Comparison.h"
-#include "ComparisonEngine.h"
+#include "mem/two_way_list.h"
+#include "record.h"
+#include "db/schema.h"
+#include "lex/comparison.h"
+#include "lex/comparison_engine.h"
 
 class Record;
 

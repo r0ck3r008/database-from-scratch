@@ -1,13 +1,9 @@
-#ifndef _TWO_WAY_LIST_C
-#define _TWO_WAY_LIST_C
-
-#include "TwoWayList.h"
-
 #include <iostream>
 #include <stdlib.h>
 
-using namespace std;
+#include "two_way_list.h"
 
+using namespace std;
 
 // create an alias of the given TwoWayList
 template <class Type>
@@ -273,6 +269,3 @@ TwoWayList <Type> :: Remove (Type *Item)
 
 	(list->rightSize)--;
 }
-
-#endif
-

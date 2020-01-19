@@ -1,11 +1,5 @@
-#include "TwoWayList.h"
-#include "Record.h"
-#include "Schema.h"
-#include "File.h"
-#include "Comparison.h"
-#include "ComparisonEngine.h"
-#include "DBFile.h"
-#include "Defs.h"
+#include "dbfile.h"
+#include "glbl/defs.h"
 
 // stub file .. replace it with your own DBFile.cc
 

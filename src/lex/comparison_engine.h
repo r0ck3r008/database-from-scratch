@@ -1,12 +1,10 @@
-#ifndef _ENGINE
-#define _ENGINE
+#ifndef COMPARISON_ENGINE
+#define COMPARISON_ENGINE
 
-
-#include "Record.h"
-#include "Schema.h"
-#include "File.h"
-#include "Comparison.h"
-#include "ComparisonEngine.h"
+#include "fs/record.h"
+#include "db/schema.h"
+#include "fs/file.h"
+#include "comparison.h"
 
 class Record;
 class Comparison;

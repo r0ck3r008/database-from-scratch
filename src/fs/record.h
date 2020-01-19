@@ -6,13 +6,12 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include "Defs.h"
-#include "ParseTree.h"
-#include "Record.h"
-#include "Schema.h"
-#include "File.h"
-#include "Comparison.h"
-#include "ComparisonEngine.h"
+#include "glbl/defs.h"
+#include "db/schema.h"
+#include "file.h"
+#include "lex/parse_tree.h"
+#include "lex/comparison.h"
+#include "lex/comparison_engine.h"
 
 
 

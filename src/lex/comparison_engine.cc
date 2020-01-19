@@ -1,15 +1,12 @@
-
-#include "ComparisonEngine.h"
-#include "Comparison.h"
-
 #include <string.h>
 #include <stdlib.h>
 #include <iostream>
 
+#include "comparison_engine.h"
 
 // returns a -1, 0, or 1 depending upon whether left is less then, equal to, or greater
 // than right, depending upon the OrderMaker
-int ComparisonEngine :: Compare(Record *left, Record *right, OrderMaker *orderUs) {
+int ComparisonEngine :: Compare(Record *left, Record *right, OrderMaker *orderUs){
 
 	char *val1, *val2;
 

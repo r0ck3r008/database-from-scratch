@@ -1,8 +1,8 @@
-#include "Schema.h"
 #include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+
+#include "schema.h"
 
 int Schema :: Find (const char *attName) {
 

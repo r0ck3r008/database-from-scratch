@@ -1,12 +1,12 @@
 #ifndef DBFILE_H
 #define DBFILE_H
 
-#include "TwoWayList.h"
-#include "Record.h"
-#include "Schema.h"
-#include "File.h"
-#include "Comparison.h"
-#include "ComparisonEngine.h"
+#include "mem/two_way_list.h"
+#include "db/schema.h"
+#include "file.h"
+#include "record.h"
+#include "lex/comparison.h"
+#include "lex/comparison_engine.h"
 
 typedef enum {heap, sorted, tree} fType;
 

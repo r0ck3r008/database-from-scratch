@@ -1,5 +1,5 @@
-#ifndef _TWO_WAY_LIST_H
-#define _TWO_WAY_LIST_H
+#ifndef TWO_WAY_LIST_H
+#define TWO_WAY_LIST_H
 
 template <class Type>
 class TwoWayList {

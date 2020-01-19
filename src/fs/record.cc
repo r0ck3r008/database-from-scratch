@@ -1,10 +1,8 @@
-#include "Record.h"
-
 #include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
 
+#include "record.h"
 
 Record :: Record () {
 	bits = NULL;

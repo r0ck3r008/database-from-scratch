@@ -1,11 +1,10 @@
 #ifndef COMPARISON_H
 #define COMPARISON_H
 
-#include "Record.h"
-#include "Schema.h"
-#include "File.h"
-#include "Comparison.h"
-#include "ComparisonEngine.h"
+#include "fs/record.h"
+#include "db/schema.h"
+#include "fs/file.h"
+#include "comparison_engine.h"
 
 
 // This stores an individual comparison that is part of a CNF

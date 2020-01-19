@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Comparison.h"
+#include "comparison.h"
 
 
 Comparison::Comparison()

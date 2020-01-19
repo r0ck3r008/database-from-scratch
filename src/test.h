@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include "DBFile.h"
-#include "Record.h"
+#include "fs/dbfile.h"
+#include "fs/record.h"
 using namespace std;
 
 extern "C" {
