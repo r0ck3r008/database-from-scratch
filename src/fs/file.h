@@ -1,7 +1,7 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include "mem/two_way_list.h"
+#include "mem/two_way_list.cc"
 #include "record.h"
 #include "db/schema.h"
 #include "lex/comparison.h"
