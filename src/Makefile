@@ -1,53 +1,39 @@
-CC = g++ -O2 -Wno-deprecated
+COMPILER = g++
+COMPILER_FLAGS := -O2 -g -c
+LINKER_FLAGS := -lfl -o
+ALL_OBJS := db/schema.o fs/file.o fs/record.o mem/two_way_list.o lex/comparison.o lex/comparison_engine.o lex/lex.yy.o lex/y.tab.o
 
-tag = -i
+test: test.o fs/dbfile.o ${DIR_TARGETS}
+	$(COMPILER) ${LINKER_FLAGS} test.o fs/dbfile.o ${ALL_OBJS} test.bin
 
-ifdef linux
-tag = -n
-endif
+test.o: test.cc test.h
+	${COMPILER} ${COMPILER_FLAGS} test.cc
 
-test.out: Record.o Comparison.o ComparisonEngine.o Schema.o File.o DBFile.o y.tab.o lex.yy.o test.o
-	$(CC) -o test.out Record.o Comparison.o ComparisonEngine.o Schema.o File.o DBFile.o y.tab.o lex.yy.o test.o -lfl
-
-main: Record.o Comparison.o ComparisonEngine.o Schema.o File.o y.tab.o lex.yy.o main.o
-	$(CC) -o main Record.o Comparison.o ComparisonEngine.o Schema.o File.o y.tab.o lex.yy.o main.o -lfl
-
-test.o: test.cc
-	$(CC) -g -c test.cc
+main: main.o db_objs fs_objs mem_objs lex_objs tpch-dbgen
+	${COMPILER} main.o ${ALL_OBJS} ${LINKER_FLAGS} main.bin
 
 main.o: main.cc
-	$(CC) -g -c main.cc
+	${COMPILER} ${COMPILER_FLAGS} main.cc
 
-Comparison.o: Comparison.cc
-	$(CC) -g -c Comparison.cc
+db_objs:
+	make -C db
 
-ComparisonEngine.o: ComparisonEngine.cc
-	$(CC) -g -c ComparisonEngine.cc
+fs_objs:
+	make -C fs
 
-DBFile.o: DBFile.cc
-	$(CC) -g -c DBFile.cc
+mem_objs:
+	make -C mem
 
-File.o: File.cc
-	$(CC) -g -c File.cc
+lex_objs:
+	make -C lex
 
-Record.o: Record.cc
-	$(CC) -g -c Record.cc
-
-Schema.o: Schema.cc
-	$(CC) -g -c Schema.cc
-
-y.tab.o: Parser.y
-	yacc -d Parser.y
-	sed $(tag) y.tab.c -e "s/  __attribute__ ((__unused__))$$/# ifndef __cplusplus\n  __attribute__ ((__unused__));\n# endif/"
-	g++ -c y.tab.c
-
-lex.yy.o: Lexer.l
-	lex  Lexer.l
-	gcc  -c lex.yy.c
+dbgen_bin:
+	make -C tpch-dbgen
 
 clean:
-	rm -f *.o
-	rm -f *.out
-	rm -f y.tab.c
-	rm -f lex.yy.c
-	rm -f y.tab.h
+	make -C db clean
+	make -C fs clean
+	make -C mem clean
+	make -C lex clean
+	make -C tpch-dbgen clean
+	rm ./*.o
