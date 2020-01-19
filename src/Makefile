@@ -3,13 +3,13 @@ COMPILER_FLAGS := -O2 -g -c
 LINKER_FLAGS := -lfl -o
 ALL_OBJS := db/schema.o fs/file.o fs/record.o mem/two_way_list.o lex/comparison.o lex/comparison_engine.o lex/lex.yy.o lex/y.tab.o
 
-test: test.o fs/dbfile.o ${DIR_TARGETS}
-	$(COMPILER) ${LINKER_FLAGS} test.o fs/dbfile.o ${ALL_OBJS} test.bin
+test: test.o fs/dbfile.o db_objs fs_objs mem_objs lex_objs dbgen_bin
+	$(COMPILER) test.o fs/dbfile.o ${ALL_OBJS} ${LINKER_FLAGS} test.bin
 
 test.o: test.cc test.h
 	${COMPILER} ${COMPILER_FLAGS} test.cc
 
-main: main.o db_objs fs_objs mem_objs lex_objs tpch-dbgen
+main: main.o db_objs fs_objs mem_objs lex_objs dbgen_bin
 	${COMPILER} main.o ${ALL_OBJS} ${LINKER_FLAGS} main.bin
 
 main.o: main.cc
