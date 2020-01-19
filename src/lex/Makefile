@@ -21,7 +21,7 @@ y.tab.o: parser.y
 
 lex.yy.o: lexer.l
 	lex lexer.l
-	${COMPILER} ${COMPILER_FLAGS} lex.yy.c
+	gcc ${COMPILER_FLAGS} lex.yy.c
 
 clean:
 	rm ./*.o
