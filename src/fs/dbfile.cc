@@ -9,7 +9,7 @@ DBFile::~DBFile()
 {
 }
 
-int DBFile::Create(char *fname, fType file_type, void *startup)
+int DBFile::Create(const char *fname, fType file_type, void *startup)
 {
 	if(this->file==NULL){
 		file=new File;
@@ -22,7 +22,7 @@ int DBFile::Create(char *fname, fType file_type, void *startup)
 	return 1;
 }
 
-int DBFile::Open(char *fname)
+int DBFile::Open(const char *fname)
 {
 	this->file->Open(1, fname);
 	return 0;

@@ -17,8 +17,8 @@ class DBFile
 public:
 	DBFile();
 	~DBFile();
-	int Create(char *, fType, void *);
-	int Open(char *);
+	int Create(const char *, fType, void *);
+	int Open(const char *);
 	int Close();
 };
 
