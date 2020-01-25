@@ -3,22 +3,27 @@
 
 #include"mem/two_way_list.cc"
 #include"file.h"
+#include"db/schema.h"
 
-enum fType
+typedef enum
 {
-	heap, sorted, tree;
-};
+	heap, sorted, tree
+} fType;
 
 class DBFile
 {
-	Record *pointer;
-	TwoWAyList <Page> pgs;
+	Record *head;
+	Record *start;
 	File *file;
+	Page *pg;
+	off_t page_num;
 public:
 	DBFile();
 	~DBFile();
 	int Create(const char *, fType, void *);
 	int Open(const char *);
+	void MoveFirst();
+	void Load(Schema *, char *);
 	int Close();
 };
 
