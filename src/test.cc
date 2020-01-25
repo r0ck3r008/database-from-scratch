@@ -5,7 +5,7 @@
 // make sure that the file path/dir information below is correct
 const char *dbfile_dir = "out/"; // dir where binary heap files should be stored
 const char *tpch_dir ="tpch-dbgen/"; // dir where dbgen tpch files (extension *.tbl) can be found
-const char *catalog_path = "db/"; // full path of the catalog file
+const char *catalog_path = "db/catalog"; // full path of the catalog file
 
 using namespace std;
 
@@ -22,10 +22,12 @@ void test1 () {
 	sprintf (tbl_path, "%s%s.tbl", tpch_dir, rel->name());
 	cout << " tpch file will be loaded from " << tbl_path << endl;
 
-	dbfile.Load (*(rel->schema ()), tbl_path);
+	dbfile.Load (rel->schema (), tbl_path);
 	dbfile.Close ();
 }
-
+void test2(){}
+void test3(){}
+/*
 // sequential scan of a DBfile
 void test2 () {
 
@@ -73,7 +75,7 @@ void test3 () {
 	cout << " selected " << counter << " recs \n";
 	dbfile.Close ();
 }
-
+*/
 int main () {
 
 	setup (catalog_path, dbfile_dir, tpch_dir);
