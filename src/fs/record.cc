@@ -16,6 +16,10 @@ Record :: ~Record () {
 
 }
 
+int Record :: get_size()
+{
+	return ((int *)this->bits)[0];
+}
 
 int Record :: SuckNextRecord (Schema *mySchema, FILE *textFile) {
 
