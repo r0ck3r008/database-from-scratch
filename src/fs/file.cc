@@ -224,7 +224,7 @@ void File :: AddPage (Page *addMe, off_t whichPage) {
 #endif
 }
 
-
+//fname is const char * to stay compatible with calls from DBFile Create and Open
 void File :: Open (int fileLen, const char *fName) {
 
 	// figure out the flags for the system open call
