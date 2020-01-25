@@ -60,6 +60,10 @@ int Page :: GetFirst (Record *firstOne) {
 	return 1;
 }
 
+int Page :: get_curr_size()
+{
+	return this->curSizeInBytes;
+}
 
 int Page :: Append (Record *addMe) {
 	char *b = addMe->GetBits();
