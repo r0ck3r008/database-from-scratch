@@ -1,1 +1,4 @@
 src/try/*
+!src/try/.gitkeep
+src/out/*
+!src/out/.gitkeep
