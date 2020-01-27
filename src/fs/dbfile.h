@@ -23,6 +23,8 @@ public:
 	int Create(const char *, fType, void *);
 	int Open(const char *);
 	void MoveFirst();
+	void Add(Record *);
+	int GetNext(Record *);
 	void Load(Schema *, char *);
 	int Close();
 };
