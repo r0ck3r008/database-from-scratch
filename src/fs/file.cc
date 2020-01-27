@@ -60,6 +60,12 @@ int Page :: GetFirst (Record *firstOne) {
 	return 1;
 }
 
+Record *Page :: get_next()
+{
+	this->myRecs->Advance();
+	return this->myRecs->Current(0);
+}
+
 int Page :: get_curr_size()
 {
 	return this->curSizeInBytes;

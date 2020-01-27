@@ -34,6 +34,8 @@ public:
 	// a zero if there were no records on the page
 	int GetFirst (Record *firstOne);
 
+	Record *get_next();
+
 	int get_curr_size();
 
 	// this appends the record to the end of a page.  The return value
