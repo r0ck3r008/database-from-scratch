@@ -43,31 +43,54 @@ void DBFile :: MoveFirst()
 	head=start;
 }
 
+//TODO
+//check if the new page pointer used to add current page to the file is now reset
+void DBFile :: Add(Record *new_rec)
+{
+	this->head=new_rec;
+	if(this->pg->get_curr_size() + new_rec->get_size() >= PAGE_SIZE)
+		this->file->AddPage(this->pg, this->page_num);
+
+	//try to append now
+	if(!this->pg->Append(new_rec)) {
+		//Error
+		std :: cerr << "Error in adding the new record!"
+			<< std ::endl;
+		_exit(-1);
+	}
+	//housekeeping
+	this->head=new_rec;
+	this->page_num++;
+}
+
+int DBFile :: GetNext(Record *placeholder)
+{
+	placeholder=head;
+	head=this->pg->get_next();
+	return 1;
+}
+
 void DBFile :: Load(Schema *schma, char *fname)
 {
 	FILE *f=NULL;
 	if((f=fopen(fname, "r"))==NULL){
-		std :: cerr << "Error in opening the file " << fname << std :: endl;
+		std :: cerr << "Error in opening the file " << fname
+			<< std :: endl;
 		_exit(-1);
 	}
 
 	int stat=1;
 	Record *tmp=NULL;
-	for(int i=0; ; i++){
+	for(int i=0; !feof(f); i++){
 		tmp=new Record;
-		if(!tmp->SuckNextRecord(schma, f) && feof(f))
-			//Error
+		if(!tmp->SuckNextRecord(schma, f) && !feof(f)) {
+			std :: cerr << "Error in reading from " << fname
+				<< std :: endl;
 			break;
+		}
 		if(!i)
 			this->start=tmp;
-		this->head=tmp;
-
-		if(this->pg->get_curr_size() + tmp->get_size() < PAGE_SIZE)
-			if(!this->pg->Append(tmp))
-				//Error
-				break;
-		else
-			this->file->AddPage(this->pg, this->page_num);
+		this->Add(tmp);
 	}
 
 	fclose(f);
