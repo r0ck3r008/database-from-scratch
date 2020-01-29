@@ -60,12 +60,6 @@ int Page :: GetFirst (Record *firstOne) {
 	return 1;
 }
 
-Record *Page :: get_next()
-{
-	this->myRecs->Advance();
-	return this->myRecs->Current(0);
-}
-
 int Page :: get_curr_size()
 {
 	return this->curSizeInBytes;
@@ -205,6 +199,7 @@ void File :: AddPage (Page *addMe, off_t whichPage) {
 	// if we are trying to add past the end of the file, then
 	// zero all of the pages out
 	if (whichPage >= curLength) {
+		std :: cout << "zeroing page " << whichPage << "!\n";
 
 		// do the zeroing
 		for (off_t i = curLength; i < whichPage; i++) {
