@@ -44,4 +44,5 @@ clean_objs:
 clean:
 	make -C tpch-dbgen clean
 	rm ./*.bin
+	rm tpch-dbgen/*.tbl
 	rm out/*.bin
