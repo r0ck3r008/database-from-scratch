@@ -4,6 +4,7 @@
 #include"mem/two_way_list.cc"
 #include"file.h"
 #include"db/schema.h"
+#include"lex/comparison.h"
 
 typedef enum
 {
@@ -12,19 +13,22 @@ typedef enum
 
 class DBFile
 {
-	Record *head;
-	Record *start;
+	//vars
 	File *file;
 	Page *pg;
-	off_t page_num;
+	off_t curr_pg;
+	Record *head;
+private:
+	//functions
+	void writeback();
+	void fetch(off_t);
 public:
 	DBFile();
 	~DBFile();
 	int Create(const char *, fType, void *);
-	int Open(const char *);
+	int Open(char *);
 	void MoveFirst();
 	void Add(Record *);
-	int GetNext(Record *);
 	void Load(Schema *, char *);
 	int Close();
 };
