@@ -7,7 +7,7 @@ all: test_bin clean_objs
 
 main_all: main_bin clean_objs
 
-test_bin: test.o fs/dbfile.o db_objs fs_objs mem_objs lex_objs dbgen_bin
+test_bin: test.o db_objs fs_objs mem_objs lex_objs dbgen_bin
 	$(COMPILER) test.o fs/dbfile.o ${ALL_OBJS} ${LINKER_FLAGS} test.bin
 
 test.o: test.cc test.h
