@@ -66,13 +66,13 @@ void DBFile :: Add(Record *new_rec)
 	}
 }
 
-int DBFile :: GetNext(Record *placeholder)
+int DBFile :: GetNext(Record **placeholder)
 {
 	if(!this->pg->myRecs->RightLength())
-		this->fetch(this->curr_pg++, 1);
+		this->fetch(++this->curr_pg, 1);
 
 	this->head=this->pg->myRecs->Current(0);
-	placeholder=this->head;
+	*placeholder=this->head;;
 	this->pg->myRecs->Advance();
 	return 1;
 }

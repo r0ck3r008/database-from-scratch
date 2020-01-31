@@ -37,7 +37,7 @@ void test2 () {
 	Record *temp;
 
 	int counter = 0;
-	while (dbfile.GetNext (temp) == 1) {
+	while (dbfile.GetNext (&temp) == 1) {
 		counter += 1;
 		temp->Print (rel->schema());
 		if (counter % 10000 == 0) {
