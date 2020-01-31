@@ -20,13 +20,14 @@ DBFile :: ~DBFile()
 
 void DBFile :: writeback()
 {
-	this->file->AddPage(pg, curr_pg++);
+	this->file->AddPage(this->pg, curr_pg++);
 	this->pg->EmptyItOut();
 }
 
-void DBFile :: fetch(off_t pg_num)
+void DBFile :: fetch(off_t pg_num, int wrtbk)
 {
-	this->writeback();
+	if(wrtbk)
+		this->writeback();
 	this->file->GetPage(this->pg, pg_num);
 	this->curr_pg=pg_num;
 }
@@ -37,18 +38,20 @@ int DBFile :: Create(const char *fname, fType type, void *startup)
 	return 1;
 }
 
-int DBFile :: Open(char *fname)
+int DBFile :: Open(const char *fname)
 {
 	this->file->Open(1, fname);
+	this->fetch(0, 0);
 	return 1;
 }
 
 void DBFile :: MoveFirst()
 {
-	if(!this->curr_pg)
-		this->fetch(0);
+	if(this->curr_pg)
+		this->fetch(0, 1);
 
-	//make DBFile and Page friends
+	this->pg->myRecs->MoveToStart();
+	this->head=this->pg->myRecs->Current(0);
 }
 
 void DBFile :: Add(Record *new_rec)
@@ -61,6 +64,17 @@ void DBFile :: Add(Record *new_rec)
 		std :: cerr << "Error in adding new rec!" << std :: endl;
 		_exit(-1);
 	}
+}
+
+int DBFile :: GetNext(Record *placeholder)
+{
+	if(!this->pg->myRecs->RightLength())
+		this->fetch(this->curr_pg++, 1);
+
+	this->head=this->pg->myRecs->Current(0);
+	placeholder=this->head;
+	this->pg->myRecs->Advance();
+	return 1;
 }
 
 void DBFile :: Load(Schema *sch, char *fname)
