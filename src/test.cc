@@ -25,9 +25,8 @@ void test1 () {
 	dbfile.Load (rel->schema (), tbl_path);
 	dbfile.Close ();
 }
-void test2(){}
 void test3(){}
-/*
+
 // sequential scan of a DBfile
 void test2 () {
 
@@ -35,12 +34,12 @@ void test2 () {
 	dbfile.Open (rel->path());
 	dbfile.MoveFirst ();
 
-	Record temp;
+	Record *temp;
 
 	int counter = 0;
 	while (dbfile.GetNext (temp) == 1) {
 		counter += 1;
-		temp.Print (rel->schema());
+		temp->Print (rel->schema());
 		if (counter % 10000 == 0) {
 			cout << counter << "\n";
 		}
@@ -49,6 +48,7 @@ void test2 () {
 	dbfile.Close ();
 }
 
+/*
 // scan of a DBfile and apply a filter predicate
 void test3 () {
 
