@@ -41,8 +41,10 @@ clean_objs:
 	make -C lex clean
 	rm ./*.o
 
+distclean: clean
+	rm tpch-dbgen/*.tbl
+	rm out/*.bin
+
 clean:
 	make -C tpch-dbgen clean
 	rm ./*.bin
-	rm tpch-dbgen/*.tbl
-	rm out/*.bin
