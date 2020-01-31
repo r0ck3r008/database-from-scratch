@@ -1,5 +1,5 @@
 COMPILER := g++
-COMPILER_FLAGS := -O2 -g -c
+COMPILER_FLAGS := -g -c
 
 all: file.o record.o dbfile.o
 
