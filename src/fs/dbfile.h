@@ -17,10 +17,14 @@ class DBFile
 	Page *pg;
 	off_t curr_pg;
 	Record *head;
+	int dirty;
 private:
 	//functions
 	void writeback();
-	void fetch(off_t, int);
+	void fetch(off_t);
+	void set_dirty();
+	void unset_dirty();
+	int chk_dirty();
 public:
 	DBFile();
 	~DBFile();
