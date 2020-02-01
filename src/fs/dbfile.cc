@@ -38,6 +38,8 @@ void DBFile :: writeback()
 {
 	this->file->AddPage(this->pg, curr_pg++);
 	this->pg->EmptyItOut();
+	delete this->pg;
+	this->pg=new Page;
 	this->unset_dirty();
 }
 
