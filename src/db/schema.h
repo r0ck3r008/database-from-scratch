@@ -36,17 +36,17 @@ public:
 
 	// this finds the position of the specified attribute in the schema
 	// returns a -1 if the attribute is not present in the schema
-	int Find (const char *attName);
+	int Find (const char *);
 
 	// this finds the type of the given attribute
-	Type FindType (const char *attName);
+	Type FindType (const char *);
 
 	// this reads the specification for the schema in from a file
-	Schema (const char *fName, const char *relName);
+	Schema (const char *, const char *);
 
 	// this constructs a sort order structure that can be used to
 	// place a lexicographic ordering on the records using this type of schema
-	int GetSortOrder (OrderMaker &order);
+	int GetSortOrder (OrderMaker);
 
 	~Schema ();
 
