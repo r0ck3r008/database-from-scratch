@@ -16,7 +16,6 @@ DBFile :: DBFile()
 
 DBFile :: ~DBFile()
 {
-	delete this->head;
 	delete this->pg;
 	delete this->file;
 }
