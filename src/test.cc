@@ -9,20 +9,20 @@ const char *catalog_path = "db/catalog"; // full path of the catalog file
 
 using namespace std;
 
-relation *rel;
+relation *rela;
 
 // load from a tpch file
 void test1 () {
 
 	DBFile dbfile;
-	cout << " DBFile will be created at " << rel->path () << endl;
-	dbfile.Create (rel->path(), heap, NULL);
+	cout << " DBFile will be created at " << rela->path () << endl;
+	dbfile.Create (rela->path(), heap, NULL);
 
 	char tbl_path[100]; // construct path of the tpch flat text file
-	sprintf (tbl_path, "%s%s.tbl", tpch_dir, rel->name());
+	sprintf (tbl_path, "%s%s.tbl", tpch_dir, rela->name());
 	cout << " tpch file will be loaded from " << tbl_path << endl;
 
-	dbfile.Load (rel->schema (), tbl_path);
+	dbfile.Load (rela->schema (), tbl_path);
 	dbfile.Close ();
 }
 
@@ -30,7 +30,7 @@ void test1 () {
 void test2 () {
 
 	DBFile dbfile;
-	dbfile.Open (rel->path());
+	dbfile.Open (rela->path());
 	dbfile.MoveFirst ();
 
 	Record *temp=new Record;
@@ -38,7 +38,7 @@ void test2 () {
 	int counter = 0;
 	while (dbfile.GetNext (temp) == 1) {
 		counter += 1;
-		temp->Print (rel->schema());
+		temp->Print (rela->schema());
 		if (counter % 10000 == 0) {
 			cout << counter << "\n";
 		}
@@ -53,14 +53,14 @@ void test2 () {
 // scan of a DBfile and apply a filter predicate
 void test3 () {
 
-	cout << " Filter with CNF for : " << rel->name() << "\n";
+	cout << " Filter with CNF for : " << rela->name() << "\n";
 
 	CNF cnf;
 	Record literal;
-	rel->get_cnf (cnf, literal);
+	rela->get_cnf (cnf, literal);
 
 	DBFile dbfile;
-	dbfile.Open (rel->path());
+	dbfile.Open (rela->path());
 	dbfile.MoveFirst ();
 
 	Record *temp=new Record;
@@ -68,7 +68,7 @@ void test3 () {
 	int counter = 0;
 	while (dbfile.GetNext (temp, &cnf, &literal) == 1) {
 		counter += 1;
-		temp->Print (rel->schema());
+		temp->Print (rela->schema());
 		if (counter % 10000 == 0) {
 			cout << counter << "\n";
 		}
@@ -85,7 +85,6 @@ int main () {
 	setup (catalog_path, dbfile_dir, tpch_dir);
 
 	void (*test) ();
-	relation *rel_ptr[] = {n, r, c, p, ps, o, li};
 	void (*test_ptr[]) () = {&test1, &test2, &test3};
 
 	int tindx = 0;
@@ -98,19 +97,20 @@ int main () {
 	}
 
 	int findx = 0;
-	while (findx < 1 || findx > 7) {
+	while (findx < 1 || findx > 8) {
 		cout << "\n select table: \n";
-		cout << "\t 1. nation \n";
-		cout << "\t 2. region \n";
-		cout << "\t 3. customer \n";
-		cout << "\t 4. part \n";
-		cout << "\t 5. partsupp \n";
-		cout << "\t 6. orders \n";
-		cout << "\t 7. lineitem \n \t ";
+		cout << "\t 1. supplier \n";
+		cout << "\t 2. partsupp \n";
+		cout << "\t 3. part \n";
+		cout << "\t 4. nation \n";
+		cout << "\t 5. lineitem \n";
+		cout << "\t 6. region \n";
+		cout << "\t 7. orders \n";
+		cout << "\t 8. customer \n \t ";
 		cin >> findx;
 	}
 
-	rel = rel_ptr [findx - 1];
+	rela = rel[findx-1];
 	test = test_ptr [tindx - 1];
 
 	test ();
