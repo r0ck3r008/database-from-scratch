@@ -3,11 +3,12 @@
 #include<string.h>
 
 #include "dbfile.h"
+#include "glbl/defs.h"
 
 DBFile :: DBFile()
 {
 	this->file=new File;
-	this->head=NULL;
+	this->head=new Record;
 	this->dirty=0;
 	this->curr_pg=0;
 	this->pg=new Page;
@@ -15,6 +16,7 @@ DBFile :: DBFile()
 
 DBFile :: ~DBFile()
 {
+	delete this->head;
 	delete this->pg;
 	delete this->file;
 }
@@ -46,6 +48,8 @@ void DBFile :: fetch(off_t pg_num)
 {
 	if(this->chk_dirty())
 		this->writeback();
+	else
+		this->curr_pg=pg_num;
 
 	this->file->GetPage(this->pg, pg_num);
 }
@@ -69,11 +73,31 @@ int DBFile :: Open(const char *fname)
 
 void DBFile :: MoveFirst()
 {
-
+	if(this->curr_pg)
+		this->fetch(0);
+	else if(this->chk_dirty())
+		this->writeback();
 }
 
 int DBFile :: GetNext(Record **placeholder)
 {
+	//GetNext doesnt need to care about which page is currently loaded or if
+	//the dirty bit is set, since that is taken care of in MoveToFirst
+
+	while(1) {
+		int stat=this->pg->GetFirst(this->head);
+		if(!stat) {
+			if(this->curr_pg!=this->file->GetLength()-2)
+				this->fetch((this->curr_pg+1));
+			else
+				return 0;
+		} else {
+			break;
+		}
+	}
+
+	*placeholder=this->head;
+
 	return 1;
 }
 
@@ -88,7 +112,7 @@ void DBFile :: Add(Record *placeholder)
 			PAGE_SIZE)
 			this->writeback();
 	} else {
-		//fetch latest page for reading... this is a read write
+		//fetch latest page for writing... this is a read write
 		//alternating situation
 		this->fetch(curr_len-1);
 	}
@@ -124,10 +148,11 @@ void DBFile :: Load(Schema *sch, const char *fname)
 
 		this->head=tmp;
 		this->Add(tmp);
-
+		delete tmp;
 		tmp=new Record;
 	}
 
+	delete tmp;
 	fclose(f);
 }
 
