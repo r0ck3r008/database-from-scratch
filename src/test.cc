@@ -33,16 +33,19 @@ void test2 () {
 	dbfile.Open (rel->path());
 	dbfile.MoveFirst ();
 
-	Record *temp;
+	Record *temp=new Record;
 
 	int counter = 0;
-	while (dbfile.GetNext (&temp) == 1) {
+	while (dbfile.GetNext (temp) == 1) {
 		counter += 1;
 		temp->Print (rel->schema());
 		if (counter % 10000 == 0) {
 			cout << counter << "\n";
 		}
+		delete temp;
+		temp=new Record;
 	}
+	delete temp;
 	cout << " scanned " << counter << " recs \n";
 	dbfile.Close ();
 }
@@ -60,16 +63,19 @@ void test3 () {
 	dbfile.Open (rel->path());
 	dbfile.MoveFirst ();
 
-	Record *temp;
+	Record *temp=new Record;
 
 	int counter = 0;
-	while (dbfile.GetNext (&temp, &cnf, &literal) == 1) {
+	while (dbfile.GetNext (temp, &cnf, &literal) == 1) {
 		counter += 1;
 		temp->Print (rel->schema());
 		if (counter % 10000 == 0) {
 			cout << counter << "\n";
 		}
+		delete temp;
+		temp=new Record;
 	}
+	delete temp;
 	cout << " selected " << counter << " recs \n";
 	dbfile.Close ();
 }
