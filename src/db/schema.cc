@@ -132,6 +132,9 @@ Schema :: Schema (const char *fName, const char *relName) {
 }
 
 Schema :: ~Schema () {
+	for(int i=0; i<numAtts; i++)
+		free(myAtts[i].name);
+	free(fileName);
 	delete [] myAtts;
 	myAtts = 0;
 }
