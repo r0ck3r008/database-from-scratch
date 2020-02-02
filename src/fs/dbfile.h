@@ -33,8 +33,8 @@ public:
 	int Open(const char *);
 	void MoveFirst();
 	void Add(Record *);
-	int GetNext(Record **);
-	int GetNext(Record **, CNF *, Record *);
+	int GetNext(Record *);
+	int GetNext(Record *, CNF *, Record *);
 	void Load(Schema *, const char *);
 	int Close();
 };
