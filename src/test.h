@@ -54,6 +54,7 @@ const char *region = "region";
 const char *lineitem = "lineitem";
 
 relation *s, *p, *ps, *n, *li, *r, *o, *c;
+Schema *S_s, *S_ps, *S_p, *S_n, *S_li, *S_r, *S_o, *S_c;
 
 void setup (const char *catalog_path, const char *dbfile_dir, const char *tpch_dir) {
 	cout << " \n** IMPORTANT: MAKE SURE THE INFORMATION BELOW IS CORRECT **\n";
@@ -62,18 +63,30 @@ void setup (const char *catalog_path, const char *dbfile_dir, const char *tpch_d
 	cout << " heap files dir: \t" << dbfile_dir << endl;
 	cout << " \n\n";
 
-	s = new relation (supplier, new Schema (catalog_path, supplier), dbfile_dir);
-	ps = new relation (partsupp, new Schema (catalog_path, partsupp), dbfile_dir);
-	p = new relation (part, new Schema (catalog_path, part), dbfile_dir);
-	n = new relation (nation, new Schema (catalog_path, nation), dbfile_dir);
-	li = new relation (lineitem, new Schema (catalog_path, lineitem), dbfile_dir);
-	r = new relation (region, new Schema (catalog_path, region), dbfile_dir);
-	o = new relation (orders, new Schema (catalog_path, orders), dbfile_dir);
-	c = new relation (customer, new Schema (catalog_path, customer), dbfile_dir);
+	//curbing memory leaks
+	S_s=new Schema(catalog_path, supplier);
+	S_ps=new Schema(catalog_path, partsupp);
+	S_p=new Schema(catalog_path, part);
+	S_n=new Schema(catalog_path, nation);
+	S_li=new Schema(catalog_path, lineitem);
+	S_r=new Schema(catalog_path, region);
+	S_o=new Schema(catalog_path, orders);
+	S_c=new Schema(catalog_path, customer);
+
+	s = new relation (supplier, S_s, dbfile_dir);
+	ps = new relation (partsupp, S_ps, dbfile_dir);
+	p = new relation (part, S_p, dbfile_dir);
+	n = new relation (nation, S_n, dbfile_dir);
+	li = new relation (lineitem, S_li, dbfile_dir);
+	r = new relation (region, S_r, dbfile_dir);
+	o = new relation (orders, S_o, dbfile_dir);
+	c = new relation (customer, S_c, dbfile_dir);
 }
 
 void cleanup () {
+	std :: cout << "Calling cleanup!" << std :: endl;
 	delete s, p, ps, n, li, r, o, c;
+	delete S_s, S_ps, S_p, S_n, S_li, S_r, S_o, S_c;
 }
 
 #endif
