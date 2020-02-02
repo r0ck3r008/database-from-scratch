@@ -12,10 +12,12 @@ DBFile :: DBFile()
 	this->dirty=0;
 	this->curr_pg=0;
 	this->pg=new Page;
+	this->cmp=new ComparisonEngine;
 }
 
 DBFile :: ~DBFile()
 {
+	delete this->cmp;
 	delete this->pg;
 	delete this->file;
 }
@@ -97,6 +99,20 @@ int DBFile :: GetNext(Record **placeholder)
 
 	*placeholder=this->head;
 
+	return 1;
+}
+
+int DBFile :: GetNext(Record **placeholder, CNF *cnf, Record *literal)
+{
+	while(1) {
+		int stat=this->GetNext(placeholder);
+		if(!stat)
+			return 0;
+
+		stat=cmp->Compare(*placeholder, literal, cnf);
+		if(stat)
+			break;
+	}
 	return 1;
 }
 
