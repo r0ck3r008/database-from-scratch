@@ -21,7 +21,7 @@ class Schema {
 	Attribute *myAtts;
 
 	// gives the physical location of the binary file storing the relation
-	const char *fileName;
+	char *fileName;
 
 	friend class Record;
 
