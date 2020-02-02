@@ -12,7 +12,6 @@ class Record;
 using namespace std;
 
 class Page {
-	friend class DBFile;
 private:
 	TwoWayList <Record> *myRecs;
 	int numRecs;
