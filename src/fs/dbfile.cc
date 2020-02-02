@@ -8,7 +8,7 @@
 DBFile :: DBFile()
 {
 	this->file=new File;
-	this->head=new Record;
+	this->head=NULL;
 	this->dirty=0;
 	this->curr_pg=0;
 	this->pg=new Page;
@@ -80,13 +80,13 @@ void DBFile :: MoveFirst()
 		this->writeback();
 }
 
-int DBFile :: GetNext(Record **placeholder)
+int DBFile :: GetNext(Record *placeholder)
 {
 	//GetNext doesnt need to care about which page is currently loaded or if
 	//the dirty bit is set, since that is taken care of in MoveToFirst
 
 	while(1) {
-		int stat=this->pg->GetFirst(this->head);
+		int stat=this->pg->GetFirst(placeholder);
 		if(!stat) {
 			if(this->curr_pg!=this->file->GetLength()-2)
 				this->fetch((this->curr_pg+1));
@@ -97,19 +97,19 @@ int DBFile :: GetNext(Record **placeholder)
 		}
 	}
 
-	*placeholder=this->head;
+	this->head=placeholder;
 
 	return 1;
 }
 
-int DBFile :: GetNext(Record **placeholder, CNF *cnf, Record *literal)
+int DBFile :: GetNext(Record *placeholder, CNF *cnf, Record *literal)
 {
 	while(1) {
 		int stat=this->GetNext(placeholder);
 		if(!stat)
 			return 0;
 
-		stat=cmp->Compare(*placeholder, literal, cnf);
+		stat=cmp->Compare(placeholder, literal, cnf);
 		if(stat)
 			break;
 	}
