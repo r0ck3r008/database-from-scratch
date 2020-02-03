@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include"glbl/timer.h"
 #include "test.h"
 
 // make sure that the file path/dir information below is correct
@@ -58,6 +59,7 @@ void test3 () {
 	CNF cnf;
 	Record literal;
 	rela->get_cnf (cnf, literal);
+	timer t;
 
 	DBFile dbfile;
 	dbfile.Open (rela->path());
@@ -65,6 +67,7 @@ void test3 () {
 
 	Record *temp=new Record;
 
+	t.start_timer();
 	int counter = 0;
 	while (dbfile.GetNext (temp, &cnf, &literal) == 1) {
 		counter += 1;
@@ -75,8 +78,11 @@ void test3 () {
 		delete temp;
 		temp=new Record;
 	}
+	t.stop_timer();
+	struct timeval diff=t.get_tt();
 	delete temp;
 	cout << " selected " << counter << " recs \n";
+	cout << "Time taken: " << diff.tv_usec/1000 << " milliseconds!\n";
 	dbfile.Close ();
 }
 
