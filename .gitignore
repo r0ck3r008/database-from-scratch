@@ -1,4 +1,5 @@
 src/try/*
 !src/try/.gitkeep
 src/out/*
+src/.vscode
 !src/out/.gitkeep
