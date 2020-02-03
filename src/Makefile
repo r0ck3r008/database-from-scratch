@@ -1,11 +1,13 @@
 COMPILER = g++
 COMPILER_FLAGS :=-g -c
-LINKER_FLAGS := -lfl -o
+LINKER_FLAGS := -lfl -lgtest -o
 ALL_OBJS := db/schema.o fs/file.o fs/record.o mem/two_way_list.o lex/comparison.o lex/comparison_engine.o lex/lex.yy.o lex/y.tab.o glbl/timer.o
 
 all: test_bin clean_objs
 
 main_all: main_bin clean_objs
+
+gtest_all: gtest_bin clean_objs
 
 test_bin: test.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs
 	$(COMPILER) test.o fs/dbfile.o ${ALL_OBJS} ${LINKER_FLAGS} test.bin
@@ -18,6 +20,12 @@ main_bin: main.o db_objs fs_objs mem_objs lex_objs dbgen_bin
 
 main.o: main.cc
 	${COMPILER} ${COMPILER_FLAGS} main.cc
+
+gtest_bin: gtest.o test.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs
+	$(COMPILER) gtest.o test.o fs/dbfile.o ${ALL_OBJS} ${LINKER_FLAGS} gtest.bin
+
+gtest.o: gtest.cc
+	${COMPILER} ${COMPILER_FLAGS} gtest.cc
 
 db_objs:
 	make -C db
