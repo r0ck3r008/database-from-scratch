@@ -82,7 +82,7 @@ void test3 () {
 	struct timeval diff=t.get_tt();
 	delete temp;
 	cout << " selected " << counter << " recs \n";
-	cout << "Time taken: " << diff.tv_usec/1000 << " milliseconds!\n";
+	cout << "Time taken: " << diff.tv_usec/1000.00 << " milliseconds!\n";
 	dbfile.Close ();
 }
 
