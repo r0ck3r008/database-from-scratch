@@ -1,13 +1,13 @@
 COMPILER = g++
 COMPILER_FLAGS :=-g -c
 LINKER_FLAGS := -lfl -o
-ALL_OBJS := db/schema.o fs/file.o fs/record.o mem/two_way_list.o lex/comparison.o lex/comparison_engine.o lex/lex.yy.o lex/y.tab.o
+ALL_OBJS := db/schema.o fs/file.o fs/record.o mem/two_way_list.o lex/comparison.o lex/comparison_engine.o lex/lex.yy.o lex/y.tab.o glbl/timer.o
 
 all: test_bin clean_objs
 
 main_all: main_bin clean_objs
 
-test_bin: test.o db_objs fs_objs mem_objs lex_objs dbgen_bin
+test_bin: test.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs
 	$(COMPILER) test.o fs/dbfile.o ${ALL_OBJS} ${LINKER_FLAGS} test.bin
 
 test.o: test.cc test.h
@@ -34,11 +34,15 @@ lex_objs:
 dbgen_bin:
 	make -C tpch-dbgen
 
+glbl_objs:
+	make -C glbl
+
 clean_objs:
 	make -C db clean
 	make -C fs clean
 	make -C mem clean
 	make -C lex clean
+	make -C glbl clean
 	rm ./*.o
 
 distclean: clean
