@@ -17,37 +17,19 @@ const char *catalog_path = "db/catalog"; // full path of the catalog file
 
 TEST (DBFILETEST, DBCreate) {
 
-    struct stat *buff;
-    cout << " DBFile will be created at " << rela->path () << endl;
-	dbfile.Create (rela->path(), heap, NULL);
-
-	char tbl_path[100]; // construct path of the tpch flat text file
+	EXPECT_EQ(dbfile.Create (rela->path(), heap, NULL), 1);
+    char tbl_path[100]; // construct path of the tpch flat text file
 	sprintf (tbl_path, "%s%s.tbl", tpch_dir, rela->name());
 	cout << " tpch file will be loaded from " << tbl_path << endl;
 
 	dbfile.Load ((rela->schema ()), tbl_path);
-    dbfile.Close ();
-    cout<<rela->path()<<endl;
-    if (stat(rela->path(), buff) == -1) {
-        cout<< strerror(errno)<<endl;
-    }
-    EXPECT_EQ(stat(rela->path(), buff), 0);
+    dbfile.Close();
 }
 
 TEST (DBFILETEST, DBOpen) {
 
-    dbfile.Open(rela->path());
-    dbfile.MoveFirst ();
-
-	Record *temp = new Record();
-
-	int counter = 0;
-	while (dbfile.GetNext (temp) == 1) {
-		counter += 1;
-        break;
-    }
-    dbfile.Close();
-    EXPECT_EQ(counter, 1);
+    EXPECT_EQ(dbfile.Open(rela->path()), 1);
+    // dbfile.Close();
 }
 
 TEST (DBFILETEST, DBClose) {
