@@ -41,20 +41,29 @@ int main (int argc, char **argv) {
 	testing::InitGoogleTest(&argc, argv);
 
 	setup(catalog_path, dbfile_dir, tpch_dir);
-
+	/*
 	int findx = 0;
-	while (findx < 1 || findx > 7) {
+	while (findx < 1 || findx > 8) {
 		cout << "\n select table: \n";
-		cout << "\t 1. nation \n";
-		cout << "\t 2. region \n";
-		cout << "\t 3. customer \n";
-		cout << "\t 4. part \n";
-		cout << "\t 5. partsupp \n";
-		cout << "\t 6. orders \n";
-		cout << "\t 7. lineitem \n \t ";
+		cout << "\t 1. supplier \n";
+		cout << "\t 2. partsupp \n";
+		cout << "\t 3. part \n";
+		cout << "\t 4. nation \n";
+		cout << "\t 5. lineitem \n";
+		cout << "\t 6. region \n";
+		cout << "\t 7. orders \n";
+		cout << "\t 8. customer \n \t ";
 		cin >> findx;
-	}
-	rela = rel [findx - 1];
+	}*/
 
-	return RUN_ALL_TESTS();
+	int stat;
+	for(int i=0; i<8; i++) {
+	rela = rel [i];
+	stat=RUN_ALL_TESTS();
+	if(stat)
+		break;
+	}
+
+	cleanup();
+	return stat;
 }
