@@ -229,7 +229,7 @@ void File :: AddPage (Page *addMe, off_t whichPage) {
 }
 
 //fname is const char * to stay compatible with calls from DBFile Create and Open
-void File :: Open (int fileLen, const char *fName) {
+int File :: Open (int fileLen, const char *fName) {
 
 	// figure out the flags for the system open call
 	int mode;
@@ -248,7 +248,7 @@ void File :: Open (int fileLen, const char *fName) {
 	// see if there was an error
 	if (myFilDes < 0) {
 		cerr << "BAD!  Open did not work for " << fName << "\n";
-		exit (1);
+		return 0;
 	}
 
 	// read in the buffer if needed
@@ -262,6 +262,8 @@ void File :: Open (int fileLen, const char *fName) {
 		curLength = 0;
 	}
 
+	return 1;
+
 }
 
 
@@ -274,13 +276,16 @@ int File :: Close () {
 
 	// write out the current length in pages
 	lseek (myFilDes, 0, SEEK_SET);
-	write (myFilDes, &curLength, sizeof (off_t));
+	int stat=write (myFilDes, &curLength, sizeof (off_t));
+	if(stat==-1)
+		return 0;
 
 	// close the file
-	close (myFilDes);
+	stat=close (myFilDes);
+	if(stat==-1)
+		return 0;
 
-	// and return the size
-	return curLength;
+	return 1;
 
 }
 

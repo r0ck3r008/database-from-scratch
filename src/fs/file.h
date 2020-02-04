@@ -65,7 +65,8 @@ public:
 	// the file; if notNew is zero, then the file is created and any other
 	// file located at that location is erased.  Otherwise, the file is
 	// simply opened
-	void Open (int length, const char *fName);
+	// return 0 on faliure and 1 on success
+	int Open (int length, const char *fName);
 
 	// allows someone to explicitly get a specified page from the file
 	void GetPage (Page *putItHere, off_t whichPage);
@@ -75,7 +76,7 @@ public:
 	// are before the page to be written are zeroed out
 	void AddPage (Page *addMe, off_t whichPage);
 
-	// closes the file and returns the file length (in number of pages)
+	// closes the file and returns 0 on error and 1 on success
 	int Close ();
 
 };
