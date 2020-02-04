@@ -59,7 +59,8 @@ void DBFile :: fetch(off_t pg_num)
 //public functions
 int DBFile :: Create(const char *fname, fType type, void *startup)
 {
-	this->file->Open(0, fname);
+	if(!this->file->Open(0, fname))
+		return 0;
 	return 1;
 }
 
@@ -67,7 +68,8 @@ int DBFile :: Open(const char *fname)
 {
 	//TODO
 	//dummy proofing, use stat to acertain that the file exists
-	this->file->Open(1, fname);
+	if(!this->file->Open(1, fname))
+		return 0;
 	this->fetch(0);
 	return 1;
 }
@@ -176,6 +178,7 @@ int DBFile :: Close()
 	if(this->chk_dirty())
 		this->writeback();
 
-	this->file->Close();
+	if(!this->file->Close())
+		return 0;
 	return 1;
 }
