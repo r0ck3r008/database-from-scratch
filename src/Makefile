@@ -9,19 +9,19 @@ main_all: main_bin clean_objs
 
 gtest_all: gtest_bin clean_objs
 
-test_bin: test.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs
+test_bin: test.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_bin
 	$(COMPILER) test.o fs/dbfile.o ${ALL_OBJS} ${LINKER_FLAGS} test.bin
 
 test.o: test.cc test.h
 	${COMPILER} ${COMPILER_FLAGS} test.cc
 
-main_bin: main.o db_objs fs_objs mem_objs lex_objs dbgen_bin
+main_bin: main.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_bin
 	${COMPILER} main.o ${ALL_OBJS} ${LINKER_FLAGS} main.bin
 
 main.o: main.cc
 	${COMPILER} ${COMPILER_FLAGS} main.cc
 
-gtest_bin: gtest.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs
+gtest_bin: gtest.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_bin
 	$(COMPILER) gtest.o fs/dbfile.o ${ALL_OBJS} ${LINKER_FLAGS} gtest.bin
 
 gtest.o: gtest.cc
@@ -42,7 +42,7 @@ lex_objs:
 dbgen_bin:
 	make -C tpch-dbgen
 
-glbl_objs:
+glbl_bin:
 	make -C glbl
 
 clean_objs:
