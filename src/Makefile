@@ -1,7 +1,7 @@
 COMPILER = g++
 COMPILER_FLAGS :=-g -c
 LINKER_FLAGS := -lfl -lgtest -lpthread -o
-ALL_OBJS := db/schema.o fs/file.o fs/record.o mem/two_way_list.o lex/comparison.o lex/comparison_engine.o lex/lex.yy.o lex/y.tab.o glbl/timer.o
+ALL_OBJS := db/schema.o fs/file.o fs/record.o mem/two_way_list.o mem/pipe.o mem/tournament.o lex/comparison.o lex/comparison_engine.o lex/lex.yy.o lex/y.tab.o glbl/timer.o
 
 all: test_bin clean_objs
 
