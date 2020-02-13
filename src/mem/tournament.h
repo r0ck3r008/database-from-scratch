@@ -15,7 +15,6 @@ private:
 	};
 	int size;
 	struct node **tree;
-	std :: queue <T *> win_queue;
 	std :: queue <int> e_queue;
 
 private:
@@ -25,10 +24,11 @@ private:
 	int play_matches(int);
 
 public:
+	std :: queue <T *> win_queue;
 	Tournament(int);
 	~Tournament();
-	T *get_winner();
 	int feed(T *);
+	std :: queue <T *> flush();
 };
 
 #endif

@@ -56,7 +56,11 @@ int Tournament <T> :: promote(struct node *winner, int pos)
 	int parent_pos=(pos%2==0) ? ((pos/2)-1) : (((pos+1)/2)-1);
 	this->tree[parent_pos]=winner;
 	if(parent_pos==0) {
-		this->push_winner(winner);
+		if(winner->data!=NULL)
+			this->push_winner(winner);
+		else
+			//this is end of flush
+			return 0;
 	} else {
 		if(!this->play_matches(parent_pos))
 			return 0;
@@ -76,29 +80,25 @@ int Tournament <T> :: play_matches(int pos)
 		//cant move further as no player to play with
 		return 1;
 
-	if(*(player_1->data)<=*(player_2->data)) {
-		//player 1 wins and gets promoted
-		if(!this->promote(player_1, pos))
-			return 0;
+	struct node *winner;
+	int winner_pos;
+	if(player_1->data==NULL) {
+		winner=player_2;
+		winner_pos=match_pos;
+	} else if(player_2->data==NULL) {
+		winner=player_1;
+		winner_pos=pos;
+	} else if(*(player_1->data)<=*(player_2->data)) {
+		winner=player_1;
+		winner_pos=pos;
 	} else {
-		//player 2 wins and gets promoted
-		if(!this->promote(player_2, match_pos))
-			return 0;
+		winner=player_2;
+		winner_pos=match_pos;
 	}
 
+	if(!this->promote(winner, winner_pos))
+		return 0;
 	return 1;
-}
-
-template <class T>
-T *Tournament <T> :: get_winner()
-{
-	T *ret=NULL;
-	if(this->win_queue.size()!=0) {
-		ret=this->win_queue.front();
-		this->win_queue.pop();
-	}
-
-	return ret;
 }
 
 template <class T>
@@ -120,6 +120,17 @@ int Tournament <T> :: feed(T *in)
 		return 0;
 
 	return 1;
+}
+
+template <class T>
+std :: queue <T *> Tournament <T> :: flush()
+{
+	while(1) {
+		if(!this->feed(NULL)) {
+			break;
+		}
+	}
+	return this->win_queue;
 }
 
 #endif
