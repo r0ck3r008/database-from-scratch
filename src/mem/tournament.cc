@@ -5,19 +5,26 @@
 #include<unistd.h>
 #include"tournament.h"
 
+template <class T>
+Tournament <T> :: node :: node(T *in, int init_pos)
+{
+	this->data=in;
+	this->init_pos=init_pos;
+}
 
 template <class T>
 Tournament <T> :: Tournament(int n_ext)
 {
-	tree=new T *[2*n_ext-1];
+	tree=new struct node *[2*n_ext-1];
 
-	for(int i=n_ext-1; i<(2*n_ext)-1; i++)
-		this->e_queue.push(i);
 	for(int i=0; i<2*n_ext-1; i++)
 		this->tree[i]=NULL;
 
+	for(int i=(n_ext-1); i<(2*n_ext)-1; i++)
+		this->e_queue.push(i);
+
 	if(n_ext%2!=0) {
-		std :: cerr << "Tournament tree require even number of players!"
+		std :: cerr << "Tournament tree requires even number of players!"
 			<< std :: endl;
 		//TODO
 		//change to a graceful exit
@@ -33,70 +40,51 @@ Tournament <T> :: ~Tournament()
 }
 
 template <class T>
-void Tournament <T> :: print_tree()
+void Tournament <T> :: push_winner(struct node *winner)
 {
-	for(int i=0; i<this->size; i++) {
-		std :: cout << i << " ";
-		if(this->tree[i]!=NULL)
-			std :: cout << *(this->tree[i]) << "\n";
-		else
-			std :: cout << "NULL\n";
-	}
+	//free up initial position
+	this->e_queue.push(winner->init_pos);
+	//buffer the winner
+	this->win_queue.push(winner->data);
+	//delete node
+	delete winner;
 }
 
 template <class T>
-int Tournament <T> :: promote(T *winner, int pos)
+int Tournament <T> :: promote(struct node *winner, int pos)
 {
-	int parent_pos=(pos%2)==0 ? (pos/2) : ((pos-1)/2);
-	if(this->tree[parent_pos]==NULL)
-		this->tree[parent_pos]=winner;
-	else {
-		if(!parent_pos) {
-			//return error as clearly this is a
-			//non empty root and needs a get_winner
-			//first
+	int parent_pos=(pos%2==0) ? ((pos/2)-1) : (((pos+1)/2)-1);
+	this->tree[parent_pos]=winner;
+	if(parent_pos==0) {
+		this->push_winner(winner);
+	} else {
+		if(!this->play_matches(parent_pos))
 			return 0;
-		} else {
-			//just put it here and play match
-			//with the overflow
-			T *overflow=this->tree[parent_pos];
-			this->tree[parent_pos]=winner;
-			if(!this->play_matches(overflow, parent_pos))
-				return 0;
-
-		}
 	}
 
 	return 1;
 }
 
 template <class T>
-int Tournament <T> :: play_matches(T *overflow, int pos)
+int Tournament <T> :: play_matches(int pos)
 {
 	int match_pos=(pos%2==0) ? (pos-1) : (pos+1);
-	T *player_1=(overflow!=NULL) ? (overflow) : this->tree[pos];
+	struct node *player_1=this->tree[pos];
+	struct node *player_2=this->tree[match_pos];
 
-	//return if match position is empty
-	if(this->tree[match_pos]==NULL)
+	if(player_2==NULL)
+		//cant move further as no player to play with
 		return 1;
 
-	T *winner=NULL;
-	int winner_pos;
-	if(*(player_1)<=*(this->tree[match_pos])) {
-		winner=player_1;
-		winner_pos=pos;
-		this->tree[pos]=NULL;
+	if(*(player_1->data)<=*(player_2->data)) {
+		//player 1 wins and gets promoted
+		if(!this->promote(player_1, pos))
+			return 0;
 	} else {
-		winner=this->tree[match_pos];
-		winner_pos=match_pos;
+		//player 2 wins and gets promoted
+		if(!this->promote(player_2, match_pos))
+			return 0;
 	}
-
-	if(!this->promote(winner, winner_pos))
-		return 0;
-
-	//update empty queue if an empty position is released
-	if(winner_pos>=(this->size+1)/2-1)
-		this->e_queue.push(winner_pos);
 
 	return 1;
 }
@@ -104,26 +92,33 @@ int Tournament <T> :: play_matches(T *overflow, int pos)
 template <class T>
 T *Tournament <T> :: get_winner()
 {
-	T *ret=this->tree[0];
-	if(ret==NULL) {
-		std :: cerr << "Too soon!\n";
-		_exit(-1);
+	T *ret=NULL;
+	if(this->win_queue.size()!=0) {
+		ret=this->win_queue.front();
+		this->win_queue.pop();
 	}
-	this->tree[0]=NULL;
+
 	return ret;
 }
 
 template <class T>
 int Tournament <T> :: feed(T *in)
 {
-	//continue popping till you have an empty position
-	//get an empty position
-	int e_pos=this->e_queue.front();
-	this->e_queue.pop();
-
-	this->tree[e_pos]=in;
-	if(!this->play_matches(NULL, e_pos))
+	int e_pos;
+	if(this->e_queue.size()!=0) {
+		e_pos=this->e_queue.front();
+		this->e_queue.pop();
+	} else {
+		std :: cerr << "Cant feed more!\n";
 		return 0;
+	}
+
+	struct node *new_node=new struct node(in, e_pos);
+	this->tree[e_pos]=new_node;
+
+	if(!this->play_matches(e_pos))
+		return 0;
+
 	return 1;
 }
 
