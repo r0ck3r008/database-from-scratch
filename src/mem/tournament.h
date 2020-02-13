@@ -16,13 +16,14 @@ private:
 private:
 	//functions
 	int play_matches(T *, int);
-	int promote(int);
+	int promote(T *, int);
 
 public:
 	Tournament(int);
 	~Tournament();
 	T *get_winner();
 	int feed(T *);
+	void print_tree();
 };
 
 #endif
