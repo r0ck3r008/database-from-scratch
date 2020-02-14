@@ -7,7 +7,6 @@
 #include"lex/comparison.h"
 #include"fs/record.h"
 #include"pipe.h"
-#include"tournament.h"
 
 struct thread_arg
 {
@@ -17,13 +16,11 @@ struct thread_arg
 	OrderMaker *order;
 	File *f;
 	Page *pg;
-	Tournament <Record> *tour;
 
 public:
 	thread_arg(Pipe *, Pipe *,
 			int, OrderMaker *,
-			File *, Page *,
-			Tournament <Record> *);
+			File *, Page *);
 	~thread_arg();
 };
 
