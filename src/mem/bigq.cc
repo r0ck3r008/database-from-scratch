@@ -19,11 +19,11 @@ thread_arg :: thread_arg(Pipe *in_pipe, Pipe *out_pipe,
 
 thread_arg :: ~thread_arg()
 {
-	if(pg!=NULL)
-		delete pg;
-	if(f!=NULL)
-		delete f;
-	if(tour!=NULL)
+	if(this->pg!=NULL)
+		delete this->pg;
+	if(this->f!=NULL)
+		delete this->f;
+	if(this->tour!=NULL)
 		delete this->tour;
 }
 
