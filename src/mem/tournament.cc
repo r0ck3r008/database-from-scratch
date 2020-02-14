@@ -4,6 +4,7 @@
 #include<iostream>
 #include<unistd.h>
 #include"tournament.h"
+#include"lex/comparison_engine.h"
 
 template <class T>
 Tournament <T> :: node :: node(T *in, int init_pos)
@@ -13,7 +14,19 @@ Tournament <T> :: node :: node(T *in, int init_pos)
 }
 
 template <class T>
-Tournament <T> :: Tournament(int n_ext)
+bool Tournament <T> :: node :: operator<=(struct node *in)
+{
+	if(this->comp==NULL) {
+		return (this->data<=in->data);
+	} else {
+		comp->rec1=&(this->data);
+		comp->rec2=&(in->data);
+		return (Compare(comp)==1) ? false : true;
+	}
+}
+
+template <class T>
+Tournament <T> :: Tournament(int n_ext, struct comparator *comp)
 {
 	tree=new struct node *[2*n_ext-1];
 
@@ -31,6 +44,7 @@ Tournament <T> :: Tournament(int n_ext)
 		_exit(-1);
 	}
 	this->size=2*n_ext-1;
+	this->comp=comp;
 }
 
 template <class T>

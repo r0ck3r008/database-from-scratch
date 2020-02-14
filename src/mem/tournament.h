@@ -3,19 +3,24 @@
 
 #include<queue>
 
+#include"lex/comparison_engine.h"
+
 template <class T>
 class Tournament
 {
 private:
 	struct node
 	{
-		node(T *, int);
 		T *data;
 		int init_pos;
+	public:
+		bool operator<=(struct node *);
+		node(T *, int);
 	};
 	int size;
 	struct node **tree;
 	std :: queue <int> e_queue;
+	struct comparator *comp;
 
 private:
 	//functions
@@ -25,7 +30,7 @@ private:
 
 public:
 	std :: queue <T *> win_queue;
-	Tournament(int);
+	Tournament(int, struct comparator *);
 	~Tournament();
 	int feed(T *);
 	std :: queue <T *> flush();
