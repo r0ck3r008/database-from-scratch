@@ -49,4 +49,20 @@ public:
 
 };
 
+struct comparator
+{
+	ComparisonEngine *ceng;
+	Record **rec1;
+	Record **rec2;
+	void *comp1;
+	void *comp2;
+	int flag;
+public:
+	comparator(Record **, Record **, void *,
+			void *, int);
+	~comparator();
+};
+
+int Compare(struct comparator *);
+
 #endif

@@ -414,4 +414,46 @@ int ComparisonEngine :: Run (Record *left, Record *right, Record *literal, Compa
 
 }
 
+comparator :: comparator(Record **rec1, Record **rec2, void *comp1, void *comp2,
+				int flag)
+{
+	this->ceng=new ComparisonEngine;
+	this->rec1=rec1;
+	this->rec2=rec2;
+	this->comp1=comp1;
+	this->comp2=comp2;
+	this->flag=flag;
+}
+
+comparator :: ~comparator()
+{
+	delete this->ceng;
+}
+
+int Compare(struct comparator *comp)
+{
+	int ret;
+	switch(comp->flag) {
+	case 0:
+		ret=comp->ceng->Compare(*(comp->rec1), *(comp->rec2),
+					(OrderMaker *)comp->comp1);
+		break;
+	case 1:
+		ret=comp->ceng->Compare(*(comp->rec1),
+					(OrderMaker *)comp->comp1,
+					*(comp->rec2),
+					(OrderMaker *)comp->comp2);
+		break;
+	case 2:
+		ret=comp->ceng->Compare(*(comp->rec1),
+					*(comp->rec2), (Record *)comp->comp1,
+					(CNF *)comp->comp2);
+		break;
+	case 3:
+		ret=comp->ceng->Compare(*(comp->rec1), (Record *)comp->comp1,
+					(CNF *)comp->comp2);
+	}
+
+	return ret;
+}
 
