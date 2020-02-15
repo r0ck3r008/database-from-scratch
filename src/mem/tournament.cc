@@ -28,13 +28,6 @@ Tournament :: Tournament(int n_ext, struct comparator *comp)
 	for(int i=(n_ext-1); i<(2*n_ext)-1; i++)
 		this->e_queue.push(i);
 
-	if(n_ext%2!=0) {
-		std :: cerr << "Tournament tree requires even number of players!"
-			<< std :: endl;
-		//TODO
-		//change to a graceful exit
-		_exit(-1);
-	}
 	this->size=2*n_ext-1;
 	this->comp=comp;
 }
