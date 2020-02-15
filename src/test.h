@@ -73,10 +73,6 @@ public:
 	}
 };
 
-
-relation *rel;
-
-
 char *supplier = "supplier";
 char *partsupp = "partsupp";
 char *part = "part";
@@ -86,7 +82,8 @@ char *orders = "orders";
 char *region = "region";
 char *lineitem = "lineitem";
 
-relation *s, *p, *ps, *n, *li, *r, *o, *c;
+relation **rel;
+Schema **sch;
 
 void setup () {
 	cout << " \n** IMPORTANT: MAKE SURE THE INFORMATION BELOW IS CORRECT **\n";
@@ -95,18 +92,42 @@ void setup () {
 	cout << " heap files dir: \t" << dbfile_dir << endl;
 	cout << " \n\n";
 
-	s = new relation (supplier, new Schema (catalog_path, supplier), dbfile_dir);
-	ps = new relation (partsupp, new Schema (catalog_path, partsupp), dbfile_dir);
-	p = new relation (part, new Schema (catalog_path, part), dbfile_dir);
-	n = new relation (nation, new Schema (catalog_path, nation), dbfile_dir);
-	li = new relation (lineitem, new Schema (catalog_path, lineitem), dbfile_dir);
-	r = new relation (region, new Schema (catalog_path, region), dbfile_dir);
-	o = new relation (orders, new Schema (catalog_path, orders), dbfile_dir);
-	c = new relation (customer, new Schema (catalog_path, customer), dbfile_dir);
+	sch=new Schema *[8];
+	rel=new relation *[8];
+
+	//curbing memory leaks
+	sch[0]=new Schema(catalog_path, supplier);
+	sch[1]=new Schema(catalog_path, partsupp);
+	sch[2]=new Schema(catalog_path, part);
+	sch[3]=new Schema(catalog_path, nation);
+	sch[4]=new Schema(catalog_path, lineitem);
+	sch[5]=new Schema(catalog_path, region);
+	sch[6]=new Schema(catalog_path, orders);
+	sch[7]=new Schema(catalog_path, customer);
+
+	rel[0]= new relation (supplier, sch[0], dbfile_dir);
+	rel[1]= new relation (partsupp, sch[1], dbfile_dir);
+	rel[2]= new relation (part, sch[2], dbfile_dir);
+	rel[3]= new relation (nation, sch[3], dbfile_dir);
+	rel[4]= new relation (lineitem, sch[4], dbfile_dir);
+	rel[5]= new relation (region, sch[5], dbfile_dir);
+	rel[6]= new relation (orders, sch[6], dbfile_dir);
+	rel[7]= new relation (customer, sch[7], dbfile_dir);
 }
 
 void cleanup () {
-	delete s, p, ps, n, li, r, o, c;
+	//NOTE
+	//changed to the array layout for both memory and relation as delete
+	//cannot be called with multiple arguments like
+	//delete a, b, c;
+	//this left a lot of memory leaks, fixed test.cc as well.
+	std :: cout << "Calling cleanup!" << std :: endl;
+	for(int i=0; i<8; i++) {
+		delete rel[i];
+		delete sch[i];
+	}
+	delete[] rel;
+	delete[] sch;
 }
 
 #endif
