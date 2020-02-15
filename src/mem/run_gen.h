@@ -2,7 +2,7 @@
 #define RUN_GEN_H
 
 #include"lex/comparison_engine.h"
-#include"tournament.cc"
+#include"tournament.h"
 #include"fs/record.h"
 #include"fs/dbfile.h"
 #include"pipe.h"
