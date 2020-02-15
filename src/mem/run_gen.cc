@@ -30,10 +30,6 @@ int RunGen :: setup_dbf()
 		std :: cerr << "Error in creating run dbfile!\n";
 		return 0;
 	}
-	if(!this->dbf->Open("runs.bin")) {
-		std :: cerr << "Error in opening run dbfile!\n";
-		return 0;
-	}
 
 	return 1;
 }
@@ -63,12 +59,11 @@ int RunGen :: fetch_rec(Record **rec)
 		goto exit;
 	} else {
 		*rec=new Record;
+		if(!this->in_pipe->Remove(*rec))
+			return -1;
+		this->size_curr_run+=(*rec)->get_size();
 	}
 
-	if(!this->in_pipe->Remove(*rec))
-		return -1;
-
-	this->size_curr_run+=(*rec)->get_size();
 	if(this->size_curr_run>=(PAGE_SIZE*this->run_len)) {
 		//reset run
 		this->buf=rec;
@@ -87,11 +82,13 @@ void RunGen :: generator()
 	while(1) {
 		std :: vector <Record *> rec_vec;
 		while(1) {
+			rec=new Record *;
 			stat=this->fetch_rec(rec);
 			if(stat)
 				break;
 
 			rec_vec.push_back(*rec);
+			delete rec;
 		}
 		if(stat==-1) {
 			std :: cerr << "End of records!\n";
