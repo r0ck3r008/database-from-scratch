@@ -24,7 +24,6 @@ class BigQ
 {
 public:
 	BigQ(Pipe *, Pipe *, OrderMaker *, int);
-	~BigQ();
 };
 
 void *wrkr_run(void *);
