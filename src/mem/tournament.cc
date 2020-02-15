@@ -1,6 +1,3 @@
-#ifndef TOURNAMENT_CC
-#define TOURNAMENT_CC
-
 #include<iostream>
 #include<unistd.h>
 #include"tournament.h"
@@ -135,5 +132,3 @@ std :: queue <Record *> Tournament :: flush()
 	}
 	return this->win_queue;
 }
-
-#endif
