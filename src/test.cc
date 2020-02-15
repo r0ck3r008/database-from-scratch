@@ -8,7 +8,7 @@ void *producer (void *arg) {
 
 	Pipe *myPipe = (Pipe *) arg;
 
-	Record *temp=new Record;;
+	Record *temp=new Record;
 	int counter = 0;
 
 	DBFile dbfile;
@@ -23,7 +23,10 @@ void *producer (void *arg) {
 		}
 		myPipe->Insert (temp);
 		delete temp;
+		temp=new Record;
 	}
+
+	delete temp;
 
 	dbfile.Close ();
 	myPipe->ShutDown ();
