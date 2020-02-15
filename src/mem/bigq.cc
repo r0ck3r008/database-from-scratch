@@ -3,6 +3,7 @@
 #include<unistd.h>
 
 #include"bigq.h"
+#include"run_gen.h"
 
 thread_arg :: thread_arg(Pipe *in_pipe, Pipe *out_pipe,
 				int run_len, OrderMaker *order,
@@ -12,16 +13,6 @@ thread_arg :: thread_arg(Pipe *in_pipe, Pipe *out_pipe,
 	this->out_pipe=out_pipe;
 	this->order=order;
 	this->run_len=run_len;
-	this->f=f;
-	this->pg=pg;
-}
-
-thread_arg :: ~thread_arg()
-{
-	if(this->pg!=NULL)
-		delete this->pg;
-	if(this->f!=NULL)
-		delete this->f;
 }
 
 BigQ :: BigQ(Pipe *in_pipe, Pipe *out_pipe,
@@ -52,7 +43,11 @@ void *wrkr_run(void *a)
 {
 	//instantiate
 	struct thread_arg *arg=wrkr_init((struct thread_arg *)a);
+
+	RunGen *run_gen=new RunGen(arg->in_pipe, arg->run_len, arg->order);
+	run_gen->generator();
 exit:
 	delete arg;
+	delete run_gen;
 	return NULL;
 }

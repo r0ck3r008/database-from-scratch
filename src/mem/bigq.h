@@ -14,14 +14,10 @@ struct thread_arg
 	Pipe *out_pipe;
 	int run_len;
 	OrderMaker *order;
-	File *f;
-	Page *pg;
-
 public:
 	thread_arg(Pipe *, Pipe *,
 			int, OrderMaker *,
 			File *, Page *);
-	~thread_arg();
 };
 
 class BigQ
