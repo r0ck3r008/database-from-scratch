@@ -6,27 +6,22 @@
 #include"tournament.h"
 #include"lex/comparison_engine.h"
 
-template <class T>
-Tournament <T> :: node :: node(T *in, int init_pos)
+Tournament :: node :: node(Record *in, int init_pos, const Tournament *ref)
 {
 	this->data=in;
 	this->init_pos=init_pos;
+	this->ref=ref;
 }
 
-template <class T>
-bool Tournament <T> :: node :: operator<=(struct node *in)
+
+bool Tournament :: node :: operator<=(struct node in)
 {
-	if(this->comp==NULL) {
-		return (this->data<=in->data);
-	} else {
-		comp->rec1=&(this->data);
-		comp->rec2=&(in->data);
-		return (Compare(comp)==1) ? false : true;
-	}
+	this->ref->comp->rec1=&(this->data);
+	this->ref->comp->rec2=&(in.data);
+	return (Compare(this->ref->comp)==1) ? false : true;
 }
 
-template <class T>
-Tournament <T> :: Tournament(int n_ext, struct comparator *comp)
+Tournament :: Tournament(int n_ext, struct comparator *comp)
 {
 	tree=new struct node *[2*n_ext-1];
 
@@ -47,14 +42,12 @@ Tournament <T> :: Tournament(int n_ext, struct comparator *comp)
 	this->comp=comp;
 }
 
-template <class T>
-Tournament <T> :: ~Tournament()
+Tournament :: ~Tournament()
 {
 	delete[] tree;
 }
 
-template <class T>
-void Tournament <T> :: push_winner(struct node *winner)
+void Tournament :: push_winner(struct node *winner)
 {
 	//free up initial position
 	this->e_queue.push(winner->init_pos);
@@ -64,8 +57,7 @@ void Tournament <T> :: push_winner(struct node *winner)
 	delete winner;
 }
 
-template <class T>
-int Tournament <T> :: promote(struct node *winner, int pos)
+int Tournament :: promote(struct node *winner, int pos)
 {
 	int parent_pos=(pos%2==0) ? ((pos/2)-1) : (((pos+1)/2)-1);
 	this->tree[parent_pos]=winner;
@@ -83,8 +75,7 @@ int Tournament <T> :: promote(struct node *winner, int pos)
 	return 1;
 }
 
-template <class T>
-int Tournament <T> :: play_matches(int pos)
+int Tournament :: play_matches(int pos)
 {
 	int match_pos=(pos%2==0) ? (pos-1) : (pos+1);
 	struct node *player_1=this->tree[pos];
@@ -102,7 +93,7 @@ int Tournament <T> :: play_matches(int pos)
 	} else if(player_2->data==NULL) {
 		winner=player_1;
 		winner_pos=pos;
-	} else if(*(player_1->data)<=*(player_2->data)) {
+	} else if(*player_1<=*player_2) {
 		winner=player_1;
 		winner_pos=pos;
 	} else {
@@ -115,8 +106,7 @@ int Tournament <T> :: play_matches(int pos)
 	return 1;
 }
 
-template <class T>
-int Tournament <T> :: feed(T *in)
+int Tournament :: feed(Record *in)
 {
 	int e_pos;
 	if(this->e_queue.size()!=0) {
@@ -127,7 +117,7 @@ int Tournament <T> :: feed(T *in)
 		return 0;
 	}
 
-	struct node *new_node=new struct node(in, e_pos);
+	struct node *new_node=new struct node(in, e_pos, this);
 	this->tree[e_pos]=new_node;
 
 	if(!this->play_matches(e_pos))
@@ -136,8 +126,7 @@ int Tournament <T> :: feed(T *in)
 	return 1;
 }
 
-template <class T>
-std :: queue <T *> Tournament <T> :: flush()
+std :: queue <Record *> Tournament :: flush()
 {
 	while(1) {
 		if(!this->feed(NULL)) {

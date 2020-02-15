@@ -3,19 +3,20 @@
 
 #include<queue>
 
+#include"fs/record.h"
 #include"lex/comparison_engine.h"
 
-template <class T>
 class Tournament
 {
 private:
 	struct node
 	{
-		T *data;
+		Record *data;
 		int init_pos;
+		const Tournament *ref;
 	public:
-		bool operator<=(struct node *);
-		node(T *, int);
+		bool operator<=(struct node);
+		node(Record *, int, const Tournament *);
 	};
 	int size;
 	struct node **tree;
@@ -29,11 +30,11 @@ private:
 	int play_matches(int);
 
 public:
-	std :: queue <T *> win_queue;
+	std :: queue <Record *> win_queue;
 	Tournament(int, struct comparator *);
 	~Tournament();
-	int feed(T *);
-	std :: queue <T *> flush();
+	int feed(Record *);
+	std :: queue <Record *> flush();
 };
 
 #endif
