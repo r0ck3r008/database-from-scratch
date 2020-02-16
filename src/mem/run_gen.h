@@ -13,9 +13,9 @@ class RunGen
 {
 private:
 	Pipe *in_pipe;
-	struct comparator *comp;
-	Record **buf;
+	Record *buf;
 	DBFile *dbf;
+	struct OrderMaker *order;
 	int run_len;
 	int size_curr_run;
 
@@ -23,7 +23,7 @@ private:
 	//functions
 	int setup_dbf();
 	void write_dummy();
-	void write(std :: queue <Record *>);
+	void write(std :: queue <Record *> *);
 	int fetch_rec(Record **);
 
 public:
