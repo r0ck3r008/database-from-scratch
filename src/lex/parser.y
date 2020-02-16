@@ -2,17 +2,17 @@
 %{
 
 #include "parse_tree.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <iostream>
+	#include <stdio.h>
+	#include <string.h>
+	#include <stdlib.h>
+	#include <iostream>
 
 extern "C" int yylex();
-extern "C" int yyparse();
-extern "C" void yyerror(char *s);
+	extern "C" int yyparse();
+	extern "C" void yyerror(char *s);
 
 // this is the final parse tree that is returned
-struct AndList *final;
+	struct AndList *final;
 
 %}
 
@@ -95,7 +95,7 @@ OrList: Condition OR OrList
 ;
 
 Condition: Literal Op Literal
-	 {
+	{
 	// in this case we have a simple literal/variable comparison
 	$$ = $2;
 	$$->left = $1;

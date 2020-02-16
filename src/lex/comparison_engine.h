@@ -1,10 +1,11 @@
-#ifndef COMPARISON_ENGINE
-#define COMPARISON_ENGINE
+#ifndef _ENGINE
+#define _ENGINE
 
 #include "fs/record.h"
 #include "db/schema.h"
 #include "fs/file.h"
 #include "comparison.h"
+#include "comparison_engine.h"
 
 class Record;
 class Comparison;
@@ -33,15 +34,13 @@ public:
 	// similar to the last function, except that this one works in the
 	// case where the two records come from different input relations
 	// it is used to do sorts for a sort-merge join
-	int Compare(Record *left, OrderMaker *order_left, Record *right,
-			OrderMaker *order_right);
+	int Compare(Record *left, OrderMaker *order_left, Record *right, OrderMaker *order_right);
 
 	// this applies the given CNF to the three records and either
 	// accepts the records or rejects them.
 	// It is is for binary operations such as join.  Returns
 	// a 0 if the given CNF evaluates to false over the record pair
-	int Compare(Record *left, Record *right, Record *literal,
-			CNF *myComparison);
+	int Compare(Record *left, Record *right, Record *literal, CNF *myComparison);
 
 	// like the last one, but for unary operations
 	int Compare(Record *left, Record *literal, CNF *myComparison);

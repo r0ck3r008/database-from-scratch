@@ -4,6 +4,7 @@
 #include "fs/record.h"
 #include "db/schema.h"
 #include "fs/file.h"
+#include "comparison.h"
 #include "comparison_engine.h"
 
 

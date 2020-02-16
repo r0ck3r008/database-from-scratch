@@ -1,12 +1,15 @@
+
+#include "comparison_engine.h"
+#include "comparison.h"
+
 #include <string.h>
 #include <stdlib.h>
 #include <iostream>
 
-#include "comparison_engine.h"
 
 // returns a -1, 0, or 1 depending upon whether left is less then, equal to, or greater
 // than right, depending upon the OrderMaker
-int ComparisonEngine :: Compare(Record *left, Record *right, OrderMaker *orderUs){
+int ComparisonEngine :: Compare(Record *left, Record *right, OrderMaker *orderUs) {
 
 	char *val1, *val2;
 
@@ -25,7 +28,7 @@ int ComparisonEngine :: Compare(Record *left, Record *right, OrderMaker *orderUs
 		switch (orderUs->whichTypes[i]) {
 
 			// first case: we are dealing with integers
-		case Int:
+			case Int:
 
 			// cast the two bit strings to ints
 			val1Int = *((int *) val1);
@@ -41,7 +44,7 @@ int ComparisonEngine :: Compare(Record *left, Record *right, OrderMaker *orderUs
 
 
 			// second case: dealing with doubles
-		case Double:
+			case Double:
 
 			// cast the two bit strings to doubles
 			val1Double = *((double *) val1);
@@ -57,7 +60,7 @@ int ComparisonEngine :: Compare(Record *left, Record *right, OrderMaker *orderUs
 
 
 			// last case: dealing with strings
-		default:
+			default:
 			int sc = strcmp (val1, val2);
 			if (sc != 0)
 				return sc;
@@ -93,7 +96,7 @@ int ComparisonEngine :: Compare (Record *left, OrderMaker *order_left, Record *r
 		switch (order_left->whichTypes[i]) {
 
 			// first case: we are dealing with integers
-		case Int:
+			case Int:
 
 			// cast the two bit strings to ints
 			val1Int = *((int *) val1);
@@ -109,7 +112,7 @@ int ComparisonEngine :: Compare (Record *left, OrderMaker *order_left, Record *r
 
 
 			// second case: dealing with doubles
-		case Double:
+			case Double:
 
 			// cast the two bit strings to doubles
 			val1Double = *((double *) val1);
@@ -125,7 +128,7 @@ int ComparisonEngine :: Compare (Record *left, OrderMaker *order_left, Record *r
 
 
 			// last case: dealing with strings
-		default:
+			default:
 			int sc = strcmp (val1, val2);
 			if (sc != 0)
 				return sc;
@@ -229,7 +232,7 @@ int ComparisonEngine :: Run (Record *left, Record *literal, Comparison *c) {
 	switch (c->attType) {
 
 		// first case: we are dealing with integers
-	case Int:
+		case Int:
 
 		val1Int = *((int *) val1);
 		val2Int = *((int *) val2);
@@ -237,58 +240,58 @@ int ComparisonEngine :: Run (Record *left, Record *literal, Comparison *c) {
 		// and check the operation type in order to actually do the comparison
 		switch (c->op) {
 
-		case LessThan:
+			case LessThan:
 			return (val1Int < val2Int);
 			break;
 
-		case GreaterThan:
+			case GreaterThan:
 			return (val1Int > val2Int);
 			break;
 
-		default:
+			default:
 			return (val1Int == val2Int);
 			break;
 		}
 		break;
 
 		// second case: dealing with doubles
-	case Double:
+		case Double:
 		val1Double = *((double *) val1);
 		val2Double = *((double *) val2);
 
 		// and check the operation type in order to actually do the comparison
 		switch (c->op) {
 
-		case LessThan:
+			case LessThan:
 			return (val1Double < val2Double);
 			break;
 
-		case GreaterThan:
+			case GreaterThan:
 			return (val1Double > val2Double);
 			break;
 
-		default:
+			default:
 			return (val1Double == val2Double);
 			break;
 		}
 		break;
 
 		// final case: dealing with strings
-	default:
+		default:
 
 		// so check the operation type in order to actually do the comparison
 		tempResult = strcmp (val1, val2);
 		switch (c->op) {
 
-		case LessThan:
+			case LessThan:
 			return tempResult < 0;
 			break;
 
-		case GreaterThan:
+			case GreaterThan:
 			return tempResult > 0;
 			break;
 
-		default:
+			default:
 			return tempResult == 0;
 			break;
 		}
@@ -309,15 +312,15 @@ int ComparisonEngine :: Run (Record *left, Record *right, Record *literal, Compa
 	// first get a pointer to the first value to compare
 	switch (c->operand1) {
 
-	case Left:
+		case Left:
 		val1 = left_bits + ((int *) left_bits)[c->whichAtt1 + 1];
 		break;
 
-	case Right:
+		case Right:
 		val1 = right_bits + ((int *) right_bits)[c->whichAtt1 + 1];
 		break;
 
-	default:
+		default:
 		val1 = lit_bits + ((int *) lit_bits)[c->whichAtt1 + 1];
 		break;
 	}
@@ -325,15 +328,15 @@ int ComparisonEngine :: Run (Record *left, Record *right, Record *literal, Compa
 	// next get a pointer to the second value to compare
 	switch (c->operand2) {
 
-	case Left:
+		case Left:
 		val2 = left_bits + ((int *) left_bits)[c->whichAtt2 + 1];
 		break;
 
-	case Right:
+		case Right:
 		val2 = right_bits + ((int *) right_bits)[c->whichAtt2 + 1];
 		break;
 
-	default:
+		default:
 		val2 = lit_bits + ((int *) lit_bits)[c->whichAtt2 + 1];
 		break;
 
@@ -346,7 +349,7 @@ int ComparisonEngine :: Run (Record *left, Record *right, Record *literal, Compa
 	switch (c->attType) {
 
 		// first case: we are dealing with integers
-	case Int:
+		case Int:
 
 		val1Int = *((int *) val1);
 		val2Int = *((int *) val2);
@@ -354,58 +357,58 @@ int ComparisonEngine :: Run (Record *left, Record *right, Record *literal, Compa
 		// and check the operation type in order to actually do the comparison
 		switch (c->op) {
 
-		case LessThan:
+			case LessThan:
 			return (val1Int < val2Int);
 			break;
 
-		case GreaterThan:
+			case GreaterThan:
 			return (val1Int > val2Int);
 			break;
 
-		default:
+			default:
 			return (val1Int == val2Int);
 			break;
 		}
 		break;
 
 		// second case: dealing with doubles
-	case Double:
+		case Double:
 		val1Double = *((double *) val1);
 		val2Double = *((double *) val2);
 
 		// and check the operation type in order to actually do the comparison
 		switch (c->op) {
 
-		case LessThan:
+			case LessThan:
 			return (val1Double < val2Double);
 			break;
 
-		case GreaterThan:
+			case GreaterThan:
 			return (val1Double > val2Double);
 			break;
 
-		default:
+			default:
 			return (val1Double == val2Double);
 			break;
 		}
 		break;
 
 		// final case: dealing with strings
-	default:
+		default:
 
 		// so check the operation type in order to actually do the comparison
 		tempResult = strcmp (val1, val2);
 		switch (c->op) {
 
-		case LessThan:
+			case LessThan:
 			return tempResult < 0;
 			break;
 
-		case GreaterThan:
+			case GreaterThan:
 			return tempResult > 0;
 			break;
 
-		default:
+			default:
 			return tempResult == 0;
 			break;
 		}
