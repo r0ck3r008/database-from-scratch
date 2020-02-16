@@ -30,7 +30,7 @@ int RunGen :: setup_dbf()
 {
 	//first instance
 	dbf=new DBFile;
-	if(!this->dbf->Create("runs.bin", heap, NULL)) {
+	if(!this->dbf->Create("out/runs.bin", heap, NULL)) {
 		std :: cerr << "Error in creating run dbfile!\n";
 		return 0;
 	}
@@ -41,12 +41,16 @@ int RunGen :: setup_dbf()
 void RunGen :: write(std :: queue <Record *> *que)
 {
 	Record *rec;
+	int count=0;
 	while(que->size()!=0) {
 		rec=que->front();
 		que->pop();
 
 		this->dbf->Add(rec);
+		count++;
 	}
+
+	this->rec_sizes.push_back(count);
 }
 
 int RunGen :: fetch_rec(Record **rec)
@@ -74,7 +78,7 @@ exit:
 	return 0;
 }
 
-void RunGen :: generator()
+std :: vector <int> *RunGen :: generator()
 {
 	int flag=1;
 	while(flag) {
@@ -110,6 +114,8 @@ void RunGen :: generator()
 		this->write(rec_queue);
 		delete tour;
 	}
+
+	return &(this->rec_sizes);
 }
 
 // Note:

@@ -27,9 +27,10 @@ private:
 	int fetch_rec(Record **);
 
 public:
+	std :: vector <int> rec_sizes;
 	RunGen(Pipe *, int, OrderMaker *);
 	~RunGen();
-	void generator();
+	std :: vector <int> *generator();
 };
 
 #endif
