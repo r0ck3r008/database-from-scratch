@@ -3,22 +3,13 @@
 #include"tournament.h"
 #include"lex/comparison_engine.h"
 
-Tournament :: node :: node(Record *in, int init_pos, const Tournament *ref)
+Tournament :: node :: node(Record *in, int init_pos)
 {
 	this->data=in;
 	this->init_pos=init_pos;
-	this->ref=ref;
 }
 
-
-bool Tournament :: node :: operator<=(struct node in)
-{
-	this->ref->comp->rec1=&(this->data);
-	this->ref->comp->rec2=&(in.data);
-	return (Compare(this->ref->comp)==1) ? false : true;
-}
-
-Tournament :: Tournament(int n_ext, struct comparator *comp)
+Tournament :: Tournament(int n_ext, struct OrderMaker *order)
 {
 	tree=new struct node *[2*n_ext-1];
 
@@ -29,12 +20,14 @@ Tournament :: Tournament(int n_ext, struct comparator *comp)
 		this->e_queue.push(i);
 
 	this->size=2*n_ext-1;
-	this->comp=comp;
+	this->ceng=new ComparisonEngine;
+	this->order=order;
 }
 
 Tournament :: ~Tournament()
 {
-	delete[] tree;
+	delete this->ceng;
+	delete[] this->tree;
 }
 
 void Tournament :: push_winner(struct node *winner)
@@ -42,6 +35,8 @@ void Tournament :: push_winner(struct node *winner)
 	//free up initial position
 	this->e_queue.push(winner->init_pos);
 	//buffer the winner
+	if((winner->data->check_null()))
+		std :: cerr << "Received NULL!\n";
 	this->win_queue.push(winner->data);
 	//delete node
 	delete winner;
@@ -83,7 +78,8 @@ int Tournament :: play_matches(int pos)
 	} else if(player_2->data==NULL) {
 		winner=player_1;
 		winner_pos=pos;
-	} else if(*player_1<=*player_2) {
+	} else if(ceng->Compare(player_1->data, player_2->data,
+				this->order)<=0) {
 		winner=player_1;
 		winner_pos=pos;
 	} else {
@@ -107,7 +103,7 @@ int Tournament :: feed(Record *in)
 		return 0;
 	}
 
-	struct node *new_node=new struct node(in, e_pos, this);
+	struct node *new_node=new struct node(in, e_pos);
 	this->tree[e_pos]=new_node;
 
 	if(!this->play_matches(e_pos))
@@ -116,12 +112,12 @@ int Tournament :: feed(Record *in)
 	return 1;
 }
 
-std :: queue <Record *> Tournament :: flush()
+std :: queue <Record *> *Tournament :: flush()
 {
 	while(1) {
 		if(!this->feed(NULL)) {
 			break;
 		}
 	}
-	return this->win_queue;
+	return &(this->win_queue);
 }
