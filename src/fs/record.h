@@ -40,6 +40,8 @@ public:
 	// this call, fromMe will no longer have anything inside of it
 	void Consume (Record *fromMe);
 
+	int check_null();
+
 	// make a copy of the record fromMe; note that this is far more
 	// expensive (requiring a bit-by-bit copy) than Consume, which is
 	// only a pointer operation

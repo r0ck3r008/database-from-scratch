@@ -367,4 +367,9 @@ void Record :: Print (Schema *mySchema) {
 }
 
 
-
+int Record :: check_null()
+{
+	if(this->bits==NULL)
+		return 1;
+	return 0;
+}
