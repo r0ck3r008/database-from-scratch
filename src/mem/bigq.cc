@@ -1,6 +1,7 @@
 #include<string.h>
 #include<errno.h>
 #include<unistd.h>
+#include<vector>
 
 #include"bigq.h"
 #include"run_gen.h"
@@ -45,7 +46,11 @@ void *wrkr_run(void *a)
 	struct thread_arg *arg=wrkr_init((struct thread_arg *)a);
 
 	RunGen *run_gen=new RunGen(arg->in_pipe, arg->run_len, arg->order);
-	run_gen->generator();
+	std :: vector <int> *rec_sizes=run_gen->generator();
+
+	std :: cout << "sizes!\n";
+	for(int i=0; i<rec_sizes->size(); i++)
+		std :: cerr << (*rec_sizes)[i] << " ";
 exit:
 	delete arg;
 	delete run_gen;
