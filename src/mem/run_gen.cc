@@ -8,18 +8,22 @@ RunGen :: RunGen(Pipe *in_pipe, int run_len, OrderMaker *order)
 {
 	this->in_pipe=in_pipe;
 	this->run_len=run_len;
-	this->comp=new struct comparator(NULL, NULL, (void *)order, NULL, 0);
-	this->dbf=NULL;
 	this->size_curr_run=0;
 	this->buf=NULL;
+	this->order=order;
+	if(!this->setup_dbf()) {
+		std :: cerr << "Error in setting up DBFile!\n";
+		_exit(-1);
+	}
 }
 
 RunGen :: ~RunGen()
 {
-	if(!this->dbf->Close())
+	if(!this->dbf->Close()) {
+		std :: cerr << "Error in closing dbf!\n";
 		_exit(-1);
+	}
 	delete this->dbf;
-	delete this->comp;
 }
 
 int RunGen :: setup_dbf()
@@ -34,31 +38,26 @@ int RunGen :: setup_dbf()
 	return 1;
 }
 
-void RunGen :: write(std :: queue <Record *> que)
+void RunGen :: write(std :: queue <Record *> *que)
 {
-	if(this->dbf==NULL)
-		if(!this->setup_dbf())
-			return;
-
 	Record *rec;
-	while(que.size()!=0) {
-		rec=que.front();
-		que.pop();
+	while(que->size()!=0) {
+		rec=que->front();
+		que->pop();
 
 		this->dbf->Add(rec);
-		delete rec;
 	}
 }
 
 int RunGen :: fetch_rec(Record **rec)
 {
+	*rec=new Record;
 	if(this->buf!=NULL) {
-		rec=this->buf;
+		*rec=this->buf;
 		this->buf=NULL;
 		this->size_curr_run+=(*rec)->get_size();
 		goto exit;
 	} else {
-		*rec=new Record;
 		if(!this->in_pipe->Remove(*rec))
 			return -1;
 		this->size_curr_run+=(*rec)->get_size();
@@ -66,7 +65,7 @@ int RunGen :: fetch_rec(Record **rec)
 
 	if(this->size_curr_run>=(PAGE_SIZE*this->run_len)) {
 		//reset run
-		this->buf=rec;
+		this->buf=*rec;
 		this->size_curr_run=0;
 		return 1;
 	}
@@ -77,10 +76,12 @@ exit:
 
 void RunGen :: generator()
 {
-	Record **rec;
-	int stat;
-	while(1) {
+	int flag=1;
+	while(flag) {
+		Record **rec;
 		std :: vector <Record *> rec_vec;
+		int rec_count=0;
+		int stat;
 		while(1) {
 			rec=new Record *;
 			stat=this->fetch_rec(rec);
@@ -88,15 +89,16 @@ void RunGen :: generator()
 				break;
 
 			rec_vec.push_back(*rec);
-			delete rec;
+			rec_count++;
+//			delete rec;
 		}
 		if(stat==-1) {
 			std :: cerr << "End of records!\n";
-			break;
+			flag=0;
 		}
 		//sort
-		Tournament *tour=new Tournament(rec_vec.size(), this->comp);
-		for(int i=0; i<(rec_vec.size()); i++) {
+		Tournament *tour=new Tournament(rec_count, this->order);
+		for(int i=0; i<rec_count; i++) {
 			Record *rec_feed=rec_vec[i];
 			if(!(tour->feed(rec_feed))) {
 				std :: cerr << "Error feeding record #"
@@ -104,7 +106,7 @@ void RunGen :: generator()
 				break;
 			}
 		}
-		std :: queue <Record *> rec_queue=tour->flush();
+		std :: queue <Record *> *rec_queue=tour->flush();
 		this->write(rec_queue);
 		delete tour;
 	}
