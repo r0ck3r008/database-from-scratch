@@ -106,6 +106,8 @@ int RunMerge :: get_winner(Record **rec)
 	}
 	if(this->n_runs<=1) {
 		*rec=tmp;
+		if(tmp==NULL)
+			return 0;
 		return 1;
 	}
 	//feed it
