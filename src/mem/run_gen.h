@@ -21,12 +21,12 @@ private:
 
 private:
 	//functions
-	int setup_dbf();
 	void write_dummy();
 	void write(std :: queue <Record *> *);
 	int fetch_rec(Record **);
 
 public:
+	int setup_dbf();
 	std :: vector <int> rec_sizes;
 	RunGen(Pipe *, int, OrderMaker *);
 	~RunGen();

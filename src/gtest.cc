@@ -8,12 +8,19 @@
 #include "unistd.h"
 #include "string.h"
 #include "errno.h"
+#include "mem/run_gen.h"
+#include "mem/tournament.h"
 
 relation *rela;
 DBFile dbfile;
-const char *dbfile_dir = "out/"; // dir where binary heap files should be stored
-const char *tpch_dir ="tpch-dbgen/"; // dir where dbgen tpch files (extension *.tbl) can be found
-const char *catalog_path = "db/catalog"; // full path of the catalog file
+Pipe *inpipe, *outpipe;
+OrderMaker *order;
+int runLength = 4;
+RunGen rgen(inpipe, runLength, order);
+Tournament tour(runLength, order);
+// const char *dbfile_dir = "out/"; // dir where binary heap files should be stored
+// const char *tpch_dir ="tpch-dbgen/"; // dir where dbgen tpch files (extension *.tbl) can be found
+// const char *catalog_path = "db/catalog"; // full path of the catalog file
 
 TEST (DBFILETEST, DBCreate) {
 
@@ -36,11 +43,20 @@ TEST (DBFILETEST, DBClose) {
 	EXPECT_EQ(dbfile.Close(), 1);
 }
 
+TEST (RUNGEN_DBSETUPTEST, DBSetup) {
+	EXPECT_EQ(rgen.setup_dbf(), 1);
+}
+
+TEST (TOURNAMENTPLAYERNUMTEST, Playnum)
+{
+	EXPECT_EQ(tour.get_player_num(), 4);
+}
+
 int main (int argc, char **argv) {
 
 	testing::InitGoogleTest(&argc, argv);
 
-	setup(catalog_path, dbfile_dir, tpch_dir);
+	setup();
 	/*
 	int findx = 0;
 	while (findx < 1 || findx > 8) {
