@@ -12,18 +12,6 @@
 class RunMerge
 {
 private:
-	struct thread
-	{
-		pthread_t *tid;
-		Pipe *pipe;
-		const RunMerge *ref;
-		int r_start;
-		int r_size;
-	public:
-		thread(pthread_t *, Pipe *, const RunMerge *,
-			int, int);
-		~thread();
-	};
 	Tournament *tour;
 	OrderMaker *order;
 	Pipe *out_pipe;
@@ -33,13 +21,27 @@ private:
 
 private:
 	struct thread *init_thread(pthread_t *, int, int);
-
+	void join_wait();
+	void push_winners();
+	void new_feed();
 public:
 	RunMerge(Pipe *, std :: vector <int> *, OrderMaker *);
 	~RunMerge();
 	void merge_init();
 };
 
+struct thread
+{
+	pthread_t *tid;
+	Pipe *pipe;
+	const RunMerge *ref;
+	int r_start;
+	int r_size;
+public:
+	thread(pthread_t *, Pipe *, const RunMerge *,
+		int, int);
+	~thread();
+};
 void *thread_handler(void *);
 
 #endif
