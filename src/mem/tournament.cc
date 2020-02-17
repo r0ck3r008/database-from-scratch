@@ -12,7 +12,7 @@ Tournament :: node :: node(Record *in, int init_pos)
 Tournament :: Tournament(int n_ext, struct OrderMaker *order)
 {
 	if(!n_ext) {
-		std :: cerr << "Invalid number of players!";
+		std :: cerr << "Invalid number of players!\n";
 		_exit(-1);
 	}
 	tree=new struct node *[2*n_ext-1];
