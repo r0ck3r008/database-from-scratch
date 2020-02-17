@@ -15,9 +15,9 @@ private:
 	Tournament *tour;
 	OrderMaker *order;
 	Pipe *out_pipe;
+	struct thread **threads;
 	int n_runs;
 	std :: vector <int> *run_sizes;
-	struct thread **threads;
 
 private:
 	struct thread *init_thread(pthread_t *, int, int);
@@ -34,12 +34,10 @@ struct thread
 {
 	pthread_t *tid;
 	Pipe *pipe;
-	const RunMerge *ref;
 	int r_start;
 	int r_size;
 public:
-	thread(pthread_t *, Pipe *, const RunMerge *,
-		int, int);
+	thread(pthread_t *, Pipe *, int, int);
 };
 void *thread_handler(void *);
 

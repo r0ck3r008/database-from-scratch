@@ -5,13 +5,10 @@
 #include"tournament.h"
 #include"run_merge.h"
 
-thread :: thread(pthread_t *tid, Pipe *pipe,
-				const RunMerge *ref, int r_start,
-				int r_size)
+thread :: thread(pthread_t *tid, Pipe *pipe, int r_start, int r_size)
 {
 	this->pipe=pipe;
 	this->tid=tid;
-	this->ref=ref;
 	this->r_start=r_start;
 	this->r_size=r_size;
 }
@@ -43,8 +40,7 @@ thread *RunMerge :: init_thread(pthread_t *tid, int r_start,
 						int r_size)
 {
 	Pipe *pipe=new Pipe(100);
-	struct thread *arg=new struct thread(tid, pipe, this, r_start,
-						r_size);
+	struct thread *arg=new struct thread(tid, pipe, r_start, r_size);
 
 	return arg;
 }
@@ -91,7 +87,7 @@ void RunMerge :: merge_init()
 int RunMerge :: get_winner(Record **rec)
 {
 	int pos;
-	if((pos=tour->get_nxt_spot(0))<0)
+	if((pos=this->tour->get_nxt_spot(0))<0)
 		//wait till one is free
 		return 1;
 	//map to thread indeces
@@ -99,9 +95,12 @@ int RunMerge :: get_winner(Record **rec)
 	Record *tmp;
 	if(this->threads[pos]->r_size!=0) {
 		tmp=new Record;
-		if(!this->threads[pos]->pipe->Remove(tmp))
+		if(!this->threads[pos]->pipe->Remove(tmp)) {
 			//end of input from first thread
 			this->threads[pos]->r_size=0;
+			delete tmp;
+			tmp=NULL;
+		}
 	} else {
 		tmp=NULL;
 	}
@@ -115,10 +114,9 @@ int RunMerge :: get_winner(Record **rec)
 			<< pos << std :: endl;
 		return 0;
 	}
-	tmp=NULL;
-	if((tmp=this->tour->get_nxt_winner())==NULL)
+	*rec=NULL;
+	if((*rec=this->tour->get_nxt_winner())==NULL)
 		return 1;
-	*rec=tmp;
 
 	return 1;
 }
@@ -128,12 +126,13 @@ void RunMerge :: new_feed()
 	Record **tmp;
 	while(1) {
 		tmp=new Record *;
-		if(!this->get_winner(tmp) || *tmp==NULL)
+		if(!this->get_winner(tmp))
 			break;
-		this->out_pipe->Insert(*tmp);
+		if(*tmp!=NULL)
+			this->out_pipe->Insert(*tmp);
 		delete tmp;
 	}
-
+	this->out_pipe->ShutDown();
 }
 
 void *thread_handler(void *a)
@@ -148,8 +147,9 @@ void *thread_handler(void *a)
 	dbf->MoveFirst();
 
 	//reach required record
+	int start=arg->r_start, size=arg->r_size;
 	Record *tmp=new Record;
-	for(int i=0; i<((arg->r_start)+(arg->r_size)-1); i++) {
+	for(int i=0; i<(start+size-1); i++) {
 		if(!dbf->GetNext(tmp)) {
 			std :: cerr << "Error in getting record!\n";
 			break;
