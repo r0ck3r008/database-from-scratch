@@ -13,11 +13,9 @@
 
 relation *rela;
 DBFile dbfile;
-Pipe *inpipe, *outpipe;
-OrderMaker *order;
 int runLength = 4;
-RunGen rgen(inpipe, runLength, order);
-Tournament tour(runLength, order);
+RunGen rgen(NULL, runLength, NULL);
+Tournament tour(4, NULL);
 // const char *dbfile_dir = "out/"; // dir where binary heap files should be stored
 // const char *tpch_dir ="tpch-dbgen/"; // dir where dbgen tpch files (extension *.tbl) can be found
 // const char *catalog_path = "db/catalog"; // full path of the catalog file
@@ -47,30 +45,25 @@ TEST (RUNGEN_DBSETUPTEST, DBSetup) {
 	EXPECT_EQ(rgen.setup_dbf(), 1);
 }
 
-TEST (TOURNAMENTPLAYERNUMTEST, Playnum)
+TEST (TOURNAMENTTEST, Playnum)
 {
 	EXPECT_EQ(tour.get_player_num(), 4);
 }
 
+TEST (TOURNAMENTTEST, Promote)
+{
+	EXPECT_EQ(tour.get_nxt_spot(0), 3);
+}
+
+TEST(TOURNAMENTTEST, InvalidNumberOfPlayer)
+{
+	ASSERT_DEATH(Tournament tou(0, NULL), "Invalid number of players!");
+}
 int main (int argc, char **argv) {
 
 	testing::InitGoogleTest(&argc, argv);
 
 	setup();
-	/*
-	int findx = 0;
-	while (findx < 1 || findx > 8) {
-		cout << "\n select table: \n";
-		cout << "\t 1. supplier \n";
-		cout << "\t 2. partsupp \n";
-		cout << "\t 3. part \n";
-		cout << "\t 4. nation \n";
-		cout << "\t 5. lineitem \n";
-		cout << "\t 6. region \n";
-		cout << "\t 7. orders \n";
-		cout << "\t 8. customer \n \t ";
-		cin >> findx;
-	}*/
 
 	int stat;
 	for(int i=0; i<8; i++) {
