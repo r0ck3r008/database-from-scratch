@@ -1,7 +1,7 @@
 COMPILER := g++
 COMPILER_FLAGS :=-g -c
 
-all: two_way_list.o pipe.o tournament.o bigq.o run_gen.o
+all: two_way_list.o pipe.o tournament.o bigq.o run_gen.o run_merge.o
 
 two_way_list.o: two_way_list.cc two_way_list.h
 	${COMPILER} ${COMPILER_FLAGS} two_way_list.cc
@@ -14,6 +14,9 @@ tournament.o: tournament.cc tournament.h
 
 bigq.o: bigq.cc bigq.h
 	${COMPILER} ${COMPILER_FLAGS} bigq.cc
+
+run_merge.o: run_merge.cc run_merge.h
+	${COMPILER} ${COMPILER_FLAGS} run_merge.cc
 
 run_gen.o: run_gen.cc run_gen.h
 	${COMPILER} ${COMPILER_FLAGS} run_gen.cc
