@@ -95,14 +95,10 @@ int Tournament :: play_matches(int pos)
 int Tournament :: feed(Record *in)
 {
 	int e_pos;
-	if(this->e_queue.size()!=0) {
-		e_pos=this->e_queue.front();
-		this->e_queue.pop();
-	} else {
+	if((e_pos=this->get_nxt_spot(1))<0) {
 		std :: cerr << "Cant feed more!\n";
 		return 0;
 	}
-
 	struct node *new_node=new struct node(in, e_pos);
 	this->tree[e_pos]=new_node;
 
@@ -120,4 +116,33 @@ std :: queue <Record *> *Tournament :: flush()
 		}
 	}
 	return &(this->win_queue);
+}
+
+int Tournament :: get_nxt_spot(int pop)
+{
+	int e_pos;
+	if(this->e_queue.size()!=0) {
+		e_pos=this->e_queue.front();
+		if(pop)
+			this->e_queue.pop();
+	} else {
+		return -1;
+	}
+
+	return e_pos;
+}
+
+int Tournament :: get_player_num()
+{
+	return (((this->size)+1)/2);
+}
+
+Record *Tournament :: get_nxt_winner()
+{
+	if(!this->win_queue.size())
+		return NULL;
+
+	Record *rec=this->win_queue.front();
+	this->win_queue.pop();
+	return rec;
 }

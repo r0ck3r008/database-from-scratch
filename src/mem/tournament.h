@@ -34,6 +34,9 @@ public:
 	~Tournament();
 	int feed(Record *);
 	std :: queue <Record *> *flush();
+	int get_nxt_spot(int);
+	int get_player_num();
+	Record *get_nxt_winner();
 };
 
 #endif
