@@ -79,7 +79,7 @@ int Tournament :: play_matches(int pos)
 		winner=player_1;
 		winner_pos=pos;
 	} else if(ceng->Compare(player_1->data, player_2->data,
-				this->order)<=0) {
+				this->order)<0) {
 		winner=player_1;
 		winner_pos=pos;
 	} else {
