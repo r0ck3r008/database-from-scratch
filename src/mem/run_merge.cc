@@ -50,11 +50,11 @@ void RunMerge :: join_wait()
 	for(int i=0; i<this->n_runs; i++) {
 		struct thread *arg=this->threads[i];
 		int stat=pthread_join(*(arg->tid), NULL);
-		if(stat) {
-			std :: cerr << "Error in joining thread: "
-				<< i << " " << strerror(stat)
+/*		if(stat) {
+			std :: cerr << "Error in joining thread "
+				<< i << ": " << strerror(stat)
 				<< std :: endl;
-		}
+		}*/
 	}
 }
 
@@ -112,8 +112,11 @@ int RunMerge :: get_winner(Record **rec)
 	}
 	//feed it
 	if(!this->tour->feed(tmp)) {
-		std :: cerr << "Error in feeding "
-			<< pos << std :: endl;
+		if(this->threads[pos]->r_size)
+			std :: cerr << "Error in feeding "
+				<< pos << std :: endl;
+		else
+			std :: cerr << "Merging Done!\n";
 		return 0;
 	}
 	*rec=NULL;
@@ -170,5 +173,5 @@ void *thread_handler(void *a)
 		_exit(-1);
 	}
 	delete dbf;
-	return NULL;
+	pthread_exit(NULL);
 }
