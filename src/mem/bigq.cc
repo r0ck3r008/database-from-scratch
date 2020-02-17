@@ -57,7 +57,7 @@ void *wrkr_run(void *a)
 	run_merge->merge_init();
 exit:
 	delete arg;
-	delete run_gen;
 	delete run_merge;
+	delete run_gen;
 	return NULL;
 }
