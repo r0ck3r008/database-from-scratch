@@ -40,7 +40,6 @@ struct thread
 public:
 	thread(pthread_t *, Pipe *, const RunMerge *,
 		int, int);
-	~thread();
 };
 void *thread_handler(void *);
 
