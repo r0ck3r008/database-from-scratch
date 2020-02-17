@@ -69,7 +69,7 @@ void RunMerge :: merge_init()
 	int cum_size=0;
 	for(int i=0; i<this->n_runs; i++) {
 		pthread_t tid;
-		int curr_size=(*(this->run_sizes))[i]+1;
+		int curr_size=(*(this->run_sizes))[i];
 		struct thread *arg=this->init_thread(&tid, cum_size,
 							curr_size);
 		cum_size+=curr_size;
