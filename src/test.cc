@@ -83,7 +83,7 @@ void *consumer (void *arg) {
 		cerr << " consumer: recs removed written out as heap DBFile at " << outfile << endl;
 		dbfile.Close ();
 	}
-	cerr << " consumer: " << (i - err) << " recs out of " << i << " recs in sorted order \n";
+	cout << " consumer: " << (i - err) << " recs out of " << i << " recs in sorted order \n";
 	if (err) {
 		cerr << " consumer: " <<  err << " recs failed sorted order test \n" << endl;
 	}
@@ -142,15 +142,6 @@ void test_dbfile () {
 int main (int argc, char *argv[]) {
 
 	setup ();
-	int tindx = 0;
-	while (tindx < 1 || tindx > 3) {
-		cout << " select test: \n";
-		cout << " \t 1. load file \n";
-		cout << " \t 2. scan \n";
-		cout << " \t 3. scan & filter \n \t ";
-		cin >> tindx;
-	}
-
 	int findx = 0;
 	while (findx < 1 || findx > 8) {
 		cout << "\n select table: \n";
@@ -168,7 +159,7 @@ int main (int argc, char *argv[]) {
 	rela = rel[findx-1];
 	test_dbfile();
 
-	tindx = 0;
+	int tindx = 0;
 	while (tindx < 1 || tindx > 3) {
 		cout << " select test option: \n";
 		cout << " \t 1. sort \n";

@@ -10,7 +10,7 @@ main_all: main_bin clean_objs
 gtest_all: gtest_bin clean_objs
 
 test_bin: test.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_bin
-	$(COMPILER) test.o fs/dbfile.o ${ALL_OBJS} ${LINKER_FLAGS} test.bin
+	$(COMPILER) test.o fs/dbfile.o ${ALL_OBJS} ${LINKER_FLAGS} test.out
 
 test.o: test.cc test.h
 	${COMPILER} ${COMPILER_FLAGS} test.cc
