@@ -35,8 +35,8 @@ RunMerge :: ~RunMerge()
 		delete arg->pipe;
 		delete arg;
 	}
-	delete tour;
 	delete[] this->threads;
+	delete tour;
 }
 
 thread *RunMerge :: init_thread(pthread_t *tid, int r_start,
@@ -88,37 +88,50 @@ void RunMerge :: merge_init()
 	this->join_wait();
 }
 
+int RunMerge :: get_winner(Record **rec)
+{
+	int pos;
+	if((pos=tour->get_nxt_spot(0))<0)
+		//wait till one is free
+		return 1;
+	//map to thread indeces
+	pos=pos-(this->n_runs-1);
+	Record *tmp;
+	if(this->threads[pos]->r_size!=0) {
+		tmp=new Record;
+		if(!this->threads[pos]->pipe->Remove(tmp))
+			//end of input from first thread
+			this->threads[pos]->r_size=0;
+	} else {
+		tmp=NULL;
+	}
+	if(this->n_runs<=1) {
+		*rec=tmp;
+		return 1;
+	}
+	//feed it
+	if(!this->tour->feed(tmp)) {
+		std :: cerr << "Error in feeding "
+			<< pos << std :: endl;
+		return 0;
+	}
+	tmp=NULL;
+	if((tmp=this->tour->get_nxt_winner())==NULL)
+		return 1;
+	*rec=tmp;
+
+	return 1;
+}
+
 void RunMerge :: new_feed()
 {
-	int size=this->tour->get_player_num();
-	int n_players=(size%2==0) ? (size/2) : ((size+1)/2);
-	int flag=0;
-	while(!flag) {
-		int pos;
-		if((pos=tour->get_nxt_spot(0))<0)
-			//wait till one is free
-			continue;
-		//map to thread indeces
-		pos=pos-(n_players-1);
-		Record *tmp;
-		if(this->threads[pos]->r_size!=0) {
-			tmp=new Record;
-			if(!this->threads[pos]->pipe->Remove(tmp))
-				//end of input from first thread
-				this->threads[pos]->r_size=0;
-		} else {
-			tmp=NULL;
-		}
-		//feed it
-		if(!this->tour->feed(tmp)) {
-			std :: cerr << "Error in feeding "
-				<< pos << std :: endl;
-			flag=-1;
-		}
-		tmp=NULL;
-		if((tmp=this->tour->get_nxt_winner())==NULL)
-			continue;
-		this->out_pipe->Insert(tmp);
+	Record **tmp;
+	while(1) {
+		tmp=new Record *;
+		if(!this->get_winner(tmp) || *tmp==NULL)
+			break;
+		this->out_pipe->Insert(*tmp);
+		delete tmp;
 	}
 
 }

@@ -22,7 +22,7 @@ private:
 private:
 	struct thread *init_thread(pthread_t *, int, int);
 	void join_wait();
-	void push_winners();
+	int get_winner(Record **);
 	void new_feed();
 public:
 	RunMerge(Pipe *, std :: vector <int> *, OrderMaker *);
