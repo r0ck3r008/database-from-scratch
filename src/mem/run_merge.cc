@@ -6,13 +6,13 @@
 #include"run_merge.h"
 
 thread :: thread(pthread_t *tid, Pipe *pipe,
-				const RunMerge *ref, int r_no,
+				const RunMerge *ref, int r_start,
 				int r_size)
 {
 	this->pipe=pipe;
 	this->tid=tid;
 	this->ref=ref;
-	this->r_start=r_no;
+	this->r_start=r_start;
 	this->r_size=r_size;
 }
 
@@ -22,10 +22,10 @@ RunMerge :: RunMerge(Pipe *out_pipe,
 {
 	this->run_sizes=run_sizes;
 	this->out_pipe=out_pipe;
+	this->n_runs=this->run_sizes->size();
 	this->tour=new Tournament(this->n_runs, order);
 	this->order=order;
 	this->threads=NULL;
-	this->n_runs=this->run_sizes->size();
 }
 
 RunMerge :: ~RunMerge()
@@ -39,11 +39,11 @@ RunMerge :: ~RunMerge()
 	delete[] this->threads;
 }
 
-thread *RunMerge :: init_thread(pthread_t *tid, int r_no,
+thread *RunMerge :: init_thread(pthread_t *tid, int r_start,
 						int r_size)
 {
 	Pipe *pipe=new Pipe(100);
-	struct thread *arg=new struct thread(tid, pipe, this, r_no,
+	struct thread *arg=new struct thread(tid, pipe, this, r_start,
 						r_size);
 
 	return arg;
