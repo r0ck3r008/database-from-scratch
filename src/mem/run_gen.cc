@@ -19,10 +19,6 @@ RunGen :: RunGen(Pipe *in_pipe, int run_len, OrderMaker *order)
 
 RunGen :: ~RunGen()
 {
-	if(!this->dbf->Close()) {
-		std :: cerr << "Error in closing dbf!\n";
-		_exit(-1);
-	}
 	delete this->dbf;
 }
 
@@ -113,6 +109,10 @@ std :: vector <int> *RunGen :: generator()
 		std :: queue <Record *> *rec_queue=tour->flush();
 		this->write(rec_queue);
 		delete tour;
+	}
+	if(!this->dbf->Close()) {
+		std :: cerr << "Error in closing dbf!\n";
+		_exit(-1);
 	}
 
 	return &(this->rec_sizes);
