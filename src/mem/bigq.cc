@@ -5,6 +5,7 @@
 
 #include"bigq.h"
 #include"run_gen.h"
+#include"run_merge.h"
 
 thread_arg :: thread_arg(Pipe *in_pipe, Pipe *out_pipe,
 				int run_len, OrderMaker *order,
@@ -51,8 +52,12 @@ void *wrkr_run(void *a)
 	std :: cout << "sizes!\n";
 	for(int i=0; i<rec_sizes->size(); i++)
 		std :: cerr << (*rec_sizes)[i] << " ";
+
+	RunMerge *run_merge=new RunMerge(arg->out_pipe, rec_sizes, arg->order);
+	run_merge->merge_init();
 exit:
 	delete arg;
 	delete run_gen;
+	delete run_merge;
 	return NULL;
 }
