@@ -54,8 +54,8 @@ void *wrkr_run(void *a)
 	std :: vector <int> *rec_sizes=run_gen->generator();
 	t1->stop_timer();
 	struct timeval diff=t1->get_tt();
-	std :: cout << "[BigQ Worker] Time taken for Run Generation: "
-		<< diff.tv_usec/1000.00 << " milliseconds!\n";
+//	std :: cerr << "[BigQ Worker] Time taken for Run Generation: "
+//		<< diff.tv_usec/1000.00 << " milliseconds!\n";
 
 
 	t2->start_timer();
@@ -63,8 +63,8 @@ void *wrkr_run(void *a)
 	run_merge->merge_init();
 	t2->stop_timer();
 	diff=t2->get_tt();
-	std :: cout << "[BigQ Worker] Time taken for Merging Runs: "
-		<< diff.tv_usec/1000.00 << " milliseconds!\n";
+//	std :: cerr << "[BigQ Worker] Time taken for Merging Runs: "
+//		<< diff.tv_usec/1000.00 << " milliseconds!\n";
 exit:
 	delete arg;
 	delete run_merge;

@@ -115,8 +115,6 @@ int RunMerge :: get_winner(Record **rec)
 		if(this->threads[pos]->r_size)
 			std :: cerr << "Error in feeding "
 				<< pos << std :: endl;
-		else
-			std :: cerr << "Merging Done!\n";
 		return 0;
 	}
 	*rec=NULL;
@@ -154,7 +152,7 @@ void *thread_handler(void *a)
 	//reach required record
 	int start=arg->r_start, size=arg->r_size;
 	Record *tmp=new Record;
-	for(int i=0; i<(start+size-1); i++) {
+	for(int i=0; i<(start+size); i++) {
 		if(!dbf->GetNext(tmp)) {
 			std :: cerr << "Error in getting record!\n";
 			break;
