@@ -49,10 +49,6 @@ void *wrkr_run(void *a)
 	RunGen *run_gen=new RunGen(arg->in_pipe, arg->run_len, arg->order);
 	std :: vector <int> *rec_sizes=run_gen->generator();
 
-	std :: cout << "sizes!\n";
-	for(int i=0; i<rec_sizes->size(); i++)
-		std :: cerr << (*rec_sizes)[i] << " ";
-
 	RunMerge *run_merge=new RunMerge(arg->out_pipe, rec_sizes, arg->order);
 	run_merge->merge_init();
 exit:
