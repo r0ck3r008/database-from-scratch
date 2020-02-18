@@ -3,3 +3,4 @@ src/tmp/*
 src/bin/*
 src/.vscode
 !src/bin/.gitkeep
+src/*.out
