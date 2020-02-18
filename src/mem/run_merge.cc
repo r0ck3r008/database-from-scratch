@@ -142,7 +142,7 @@ void *thread_handler(void *a)
 {
 	struct thread *arg=(struct thread *)a;
 	struct DBFile *dbf=new DBFile;
-	if(!dbf->Open("out/runs.bin")) {
+	if(!dbf->Open("bin/runs.bin")) {
 		std :: cerr << "Error in opening DBFile: "
 			<< arg->r_start;
 		_exit(-1);
