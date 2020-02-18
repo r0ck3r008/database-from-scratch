@@ -10,7 +10,8 @@ RunGen :: RunGen(Pipe *in_pipe, int run_len, OrderMaker *order)
 	this->run_len=run_len;
 	this->size_curr_run=0;
 	this->buf=NULL;
-	this->order=order;
+	this->comp=new struct comparator(NULL, NULL, (void *)order,
+						NULL, 0);
 	if(!this->setup_dbf()) {
 		std :: cerr << "Error in setting up DBFile!\n";
 		_exit(-1);
@@ -19,6 +20,7 @@ RunGen :: RunGen(Pipe *in_pipe, int run_len, OrderMaker *order)
 
 RunGen :: ~RunGen()
 {
+	delete this->comp;
 	delete this->dbf;
 }
 
@@ -97,7 +99,7 @@ std :: vector <int> *RunGen :: generator()
 			flag=0;
 		}
 		//sort
-		Tournament *tour=new Tournament(rec_count, this->order);
+		Tournament *tour=new Tournament(rec_count, this->comp);
 		for(int i=0; i<rec_count; i++) {
 			Record *rec_feed=rec_vec[i];
 			if(!(tour->feed(rec_feed))) {

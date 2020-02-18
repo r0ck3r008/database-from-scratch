@@ -13,14 +13,15 @@ private:
 	{
 		Record *data;
 		int init_pos;
+		const Tournament *ref;
 	public:
-		node(Record *, int);
+		bool operator<=(struct node);
+		node(Record *, int, const Tournament *);
 	};
 	int size;
 	struct node **tree;
 	std :: queue <int> e_queue;
-	struct ComparisonEngine *ceng;
-	struct OrderMaker *order;
+	struct comparator *comp;
 
 private:
 	//functions
@@ -30,7 +31,7 @@ private:
 
 public:
 	std :: queue <Record *> win_queue;
-	Tournament(int, struct OrderMaker *);
+	Tournament(int, struct comparator *);
 	~Tournament();
 	int feed(Record *);
 	std :: queue <Record *> *flush();

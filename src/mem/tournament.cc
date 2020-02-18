@@ -1,15 +1,23 @@
 #include<iostream>
 #include<unistd.h>
 #include"tournament.h"
-#include"lex/comparison_engine.h"
 
-Tournament :: node :: node(Record *in, int init_pos)
+Tournament :: node :: node(Record *in, int init_pos, const Tournament *ref)
 {
 	this->data=in;
 	this->init_pos=init_pos;
+	this->ref=ref;
 }
 
-Tournament :: Tournament(int n_ext, struct OrderMaker *order)
+bool Tournament :: node :: operator<=(struct node in)
+{
+	this->ref->comp->rec1=&(this->data);
+	this->ref->comp->rec2=&(in.data);
+
+	return ((Compare(this->ref->comp)<=0) ? true : false);
+}
+
+Tournament :: Tournament(int n_ext, struct comparator *comp)
 {
 	if(!n_ext) {
 		std :: cerr << "Invalid number of players!\n";
@@ -24,13 +32,11 @@ Tournament :: Tournament(int n_ext, struct OrderMaker *order)
 		this->e_queue.push(i);
 
 	this->size=2*n_ext-1;
-	this->ceng=new ComparisonEngine;
-	this->order=order;
+	this->comp=comp;
 }
 
 Tournament :: ~Tournament()
 {
-	delete this->ceng;
 	delete[] this->tree;
 }
 
@@ -82,8 +88,7 @@ int Tournament :: play_matches(int pos)
 	} else if(player_2->data==NULL) {
 		winner=player_1;
 		winner_pos=pos;
-	} else if(ceng->Compare(player_1->data, player_2->data,
-				this->order)<0) {
+	} else if(*player_1<=*player_2) {
 		winner=player_1;
 		winner_pos=pos;
 	} else {
@@ -103,7 +108,7 @@ int Tournament :: feed(Record *in)
 		std :: cerr << "Cant feed more!\n";
 		return 0;
 	}
-	struct node *new_node=new struct node(in, e_pos);
+	struct node *new_node=new struct node(in, e_pos, this);
 	this->tree[e_pos]=new_node;
 
 	if(!this->play_matches(e_pos))

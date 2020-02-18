@@ -13,7 +13,7 @@ class RunMerge
 {
 private:
 	Tournament *tour;
-	OrderMaker *order;
+	struct comparator *comp;
 	Pipe *out_pipe;
 	struct thread **threads;
 	int n_runs;

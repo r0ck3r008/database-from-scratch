@@ -15,7 +15,7 @@ private:
 	Pipe *in_pipe;
 	Record *buf;
 	DBFile *dbf;
-	struct OrderMaker *order;
+	struct comparator *comp;
 	int run_len;
 	int size_curr_run;
 
