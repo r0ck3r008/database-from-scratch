@@ -1,5 +1,5 @@
 src/tmp/*
 !src/tmp/.gitkeep
-src/out/*
+src/bin/*
 src/.vscode
-!src/out/.gitkeep
+!src/bin/.gitkeep
