@@ -76,6 +76,9 @@ exit:
 	return 0;
 }
 
+//TODO
+//Make the generator return a const reference, &, so that the vector is not re
+//allocated in the memoty and acquires space all over again!
 std :: vector <int> *RunGen :: generator()
 {
 	int flag=1;
@@ -119,11 +122,3 @@ std :: vector <int> *RunGen :: generator()
 
 	return &(this->rec_sizes);
 }
-
-// Note:
-// 1. fetch records using the fetch function and store in the class variable of
-//    a queue;
-// 2. the fetch function takes care of the how many records are fetched and till
-// 3. put the queue through the tournament tree
-// 4. write the current run and redo
-// 5. write to the file etc. is done using a dbfile instance
