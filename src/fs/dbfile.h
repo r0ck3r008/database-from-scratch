@@ -1,43 +1,39 @@
 #ifndef DBFILE_H
 #define DBFILE_H
 
-#include"file.h"
+#include"comparison_engine.h"
+#include"record.h"
 #include"db/schema.h"
-#include"lex/comparison.h"
+#include"heap.h"
 
 typedef enum
 {
-	heap, sorted, tree
+	Heap, Sorted, tree;
 } fType;
+
+struct SortInfo
+{
+	OrderMaker *order;
+	int run_len;
+};
 
 class DBFile
 {
-	//vars
-	File *file;
-	Page *pg;
-	off_t curr_pg;
-	Record *head;
-	int dirty;
-	ComparisonEngine *cmp;
 private:
-	//functions
-	void writeback();
-	void fetch(off_t);
-	void set_dirty();
-	void unset_dirty();
-	int chk_dirty();
+	Heap *heap;
+	Sorted *sorted;
+
 public:
 	DBFile();
 	~DBFile();
-	int Create(const char *, fType, void *);
 	int Open(const char *);
-	void MoveFirst();
+	int Create(const char *, fType, SortInfo *);
 	void Add(Record *);
+	void Load(Schema *, const char *);
+	void MoveFirst();
 	int GetNext(Record *);
 	int GetNext(Record *, CNF *, Record *);
-	void Load(Schema *, const char *);
 	int Close();
 };
-
 
 #endif
