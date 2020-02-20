@@ -2,50 +2,48 @@
 #include<unistd.h>
 #include<string.h>
 
-#include "heap.h"
 #include "glbl/defs.h"
+#include "heap.h"
 
-Heap :: Heap()
+HeapFile :: HeapFile(File *file, Page *pg)
 {
-	this->file=new File;
+	this->file=file;
 	this->head=NULL;
 	this->dirty=0;
 	this->curr_pg=0;
-	this->pg=new Page;
+	this->pg=pg;
 	this->cmp=new ComparisonEngine;
 }
 
-Heap :: ~Heap()
+HeapFile :: ~HeapFile()
 {
 	delete this->cmp;
-	delete this->pg;
-	delete this->file;
 }
 
 //private functions
-void Heap :: set_dirty()
+void HeapFile :: set_dirty()
 {
 	this->dirty=1;
 }
 
-void Heap :: unset_dirty()
+void HeapFile :: unset_dirty()
 {
 	this->dirty=0;
 }
 
-int Heap :: chk_dirty()
+int HeapFile :: chk_dirty()
 {
 	return this->dirty ? 1 : 0;
 }
 
-void Heap :: writeback()
+void HeapFile :: writeback()
 {
 	this->file->AddPage(this->pg, this->curr_pg++);
 	this->pg->EmptyItOut();
 	this->unset_dirty();
 }
 
-void Heap :: fetch(off_t pg_num)
+void HeapFile :: fetch(off_t pg_num)
 {
 	if(this->chk_dirty())
 		this->writeback();
@@ -57,14 +55,14 @@ void Heap :: fetch(off_t pg_num)
 
 
 //public functions
-int Heap :: Create(const char *fname)
+int HeapFile :: Create(const char *fname)
 {
 	if(!this->file->Open(0, fname))
 		return 0;
 	return 1;
 }
 
-int Heap :: Open(const char *fname)
+int HeapFile :: Open(const char *fname)
 {
 	//TODO
 	//dummy proofing, use stat to acertain that the file exists
@@ -74,7 +72,7 @@ int Heap :: Open(const char *fname)
 	return 1;
 }
 
-void Heap :: MoveFirst()
+void HeapFile :: MoveFirst()
 {
 	if(this->curr_pg)
 		this->fetch(0);
@@ -82,7 +80,7 @@ void Heap :: MoveFirst()
 		this->writeback();
 }
 
-int Heap :: GetNext(Record *placeholder)
+int HeapFile :: GetNext(Record *placeholder)
 {
 	//GetNext doesnt need to care about which page is currently loaded or if
 	//the dirty bit is set, since that is taken care of in MoveToFirst
@@ -104,7 +102,7 @@ int Heap :: GetNext(Record *placeholder)
 	return 1;
 }
 
-int Heap :: GetNext(Record *placeholder, CNF *cnf, Record *literal)
+int HeapFile :: GetNext(Record *placeholder, CNF *cnf, Record *literal)
 {
 	while(1) {
 		int stat=this->GetNext(placeholder);
@@ -118,7 +116,7 @@ int Heap :: GetNext(Record *placeholder, CNF *cnf, Record *literal)
 	return 1;
 }
 
-void Heap :: Add(Record *placeholder)
+void HeapFile :: Add(Record *placeholder)
 {
 	off_t curr_len=this->file->GetLength();
 
@@ -143,7 +141,7 @@ void Heap :: Add(Record *placeholder)
 		this->set_dirty();
 }
 
-void Heap :: Load(Schema *sch, const char *fname)
+void HeapFile :: Load(Schema *sch, const char *fname)
 {
 	FILE *f=NULL;
 	if((f=fopen(fname, "r"))==NULL) {
@@ -173,7 +171,7 @@ void Heap :: Load(Schema *sch, const char *fname)
 	fclose(f);
 }
 
-int Heap :: Close()
+int HeapFile :: Close()
 {
 	if(this->chk_dirty())
 		this->writeback();

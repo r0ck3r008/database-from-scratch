@@ -5,7 +5,7 @@
 #include"db/schema.h"
 #include"lex/comparison.h"
 
-class Heap
+class HeapFile
 {
 	//vars
 	File *file;
@@ -22,8 +22,8 @@ private:
 	void unset_dirty();
 	int chk_dirty();
 public:
-	Heap();
-	~Heap();
+	HeapFile(File *, Page *);
+	~HeapFile();
 	int Create(const char *);
 	int Open(const char *);
 	void MoveFirst();
