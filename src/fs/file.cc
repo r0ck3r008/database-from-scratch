@@ -257,6 +257,7 @@ int File :: Open (int fileLen, const char *fName) {
 		// read in the first few bits, which is the page size
 		lseek (myFilDes, 0, SEEK_SET);
 		read (myFilDes, &curLength, sizeof (off_t));
+		read (myFilDes, &type, sizeof(off_t));
 
 	} else {
 		curLength = 0;
@@ -276,17 +277,27 @@ int File :: Close () {
 
 	// write out the current length in pages
 	lseek (myFilDes, 0, SEEK_SET);
-	int stat=write (myFilDes, &curLength, sizeof (off_t));
-	if(stat==-1)
+	if(write (myFilDes, &curLength, sizeof (off_t))==-1)
+		return 0;
+
+	if(write(myFilDes, &type, sizeof(off_t))==-1)
 		return 0;
 
 	// close the file
-	stat=close (myFilDes);
-	if(stat==-1)
+	if(close (myFilDes))
 		return 0;
 
 	return 1;
 
 }
 
+fType File :: get_type()
+{
+	return this->type;
+}
+
+void File :: set_type(fType type)
+{
+	this->type=type;
+}
 

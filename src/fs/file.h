@@ -1,11 +1,12 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include "mem/two_way_list.cc"
-#include "record.h"
-#include "db/schema.h"
-#include "lex/comparison.h"
-#include "lex/comparison_engine.h"
+#include"record.h"
+#include"mem/two_way_list.cc"
+#include"db/schema.h"
+#include"lex/comparison.h"
+#include"lex/comparison_engine.h"
+#include"glbl/defs.h"
 
 class Record;
 
@@ -51,6 +52,7 @@ private:
 
 	int myFilDes;
 	off_t curLength;
+	fType type;
 
 public:
 
@@ -76,7 +78,10 @@ public:
 	// are before the page to be written are zeroed out
 	void AddPage (Page *addMe, off_t whichPage);
 
+	fType get_type();
+	void set_type(fType);
 	// closes the file and returns 0 on error and 1 on success
+
 	int Close ();
 
 };
