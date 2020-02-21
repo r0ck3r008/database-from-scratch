@@ -28,7 +28,7 @@ int RunGen :: setup_dbf()
 {
 	//first instance
 	dbf=new DBFile;
-	if(!this->dbf->Create("bin/runs.bin", heap, NULL)) {
+	if(!this->dbf->Create("bin/runs.bin", Heap, NULL)) {
 		std :: cerr << "Error in creating run dbfile!\n";
 		return 0;
 	}
