@@ -47,7 +47,7 @@ void *consumer (void *arg) {
 
 	if (t->write) {
 		sprintf (outfile, "%s.bigq", rela->path ());
-		dbfile.Create (outfile, heap, NULL);
+		dbfile.Create (outfile, Heap, NULL);
 	}
 
 	int err = 0;
@@ -128,7 +128,7 @@ void test_dbfile () {
 
 	DBFile dbfile;
 	cout << " DBFile will be created at " << rela->path () << endl;
-	dbfile.Create (rela->path(), heap, NULL);
+	dbfile.Create (rela->path(), Heap, NULL);
 
 	char tbl_path[100]; // construct path of the tpch flat text file
 	sprintf (tbl_path, "%s%s.tbl", tpch_dir, rela->name());
