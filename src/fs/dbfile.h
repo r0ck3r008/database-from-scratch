@@ -1,15 +1,12 @@
 #ifndef DBFILE_H
 #define DBFILE_H
 
-#include"comparison_engine.h"
+#include"file.h"
 #include"record.h"
-#include"db/schema.h"
 #include"heap.h"
-
-typedef enum
-{
-	Heap, Sorted, tree;
-} fType;
+#include"lex/comparison_engine.h"
+#include"db/schema.h"
+#include"glbl/defs.h"
 
 struct SortInfo
 {
@@ -20,14 +17,16 @@ struct SortInfo
 class DBFile
 {
 private:
-	Heap *heap;
-	Sorted *sorted;
+	HeapFile *heap;
+	fType type;
+	File *file;
+	Page *pg;
 
 public:
 	DBFile();
 	~DBFile();
-	int Open(const char *);
 	int Create(const char *, fType, SortInfo *);
+	int Open(const char *);
 	void Add(Record *);
 	void Load(Schema *, const char *);
 	void MoveFirst();
