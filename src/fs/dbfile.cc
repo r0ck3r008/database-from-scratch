@@ -40,7 +40,7 @@ int DBFile :: Create(const char *fname, fType type, SortInfo *info)
 		this->file->set_type(Heap);
 	}
 
-	if(!this->file->Open(1, fname))
+	if(!this->file->Open(0, fname))
 		ret=0;
 	this->type=type;
 	return ret;
@@ -48,9 +48,18 @@ int DBFile :: Create(const char *fname, fType type, SortInfo *info)
 
 int DBFile :: Open(const char *fname)
 {
-	if(!this->file->Open(0, fname))
+	if(!this->file->Open(1, fname))
 		return 0;
 	this->type=this->file->get_type();
+
+	switch(this->type) {
+	case Sorted:
+		break;
+	case Tree:
+		break;
+	default:
+		this->heap=new HeapFile(this->file, this->pg);
+	}
 	return 1;
 }
 
