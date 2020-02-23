@@ -37,20 +37,18 @@ int DBFile :: Create(const char *fname, fType type, SortInfo *info)
 				<< ". Falling Back to Heap!\n";
 
 		this->heap=new HeapFile(this->file, this->pg);
-		this->file->set_type(Heap);
+		if(!this->heap->Create(fname))
+			ret=0;
 	}
+	this->file->set_type(type);
 
-	if(!this->file->Open(0, fname))
-		ret=0;
 	this->type=type;
 	return ret;
 }
 
 int DBFile :: Open(const char *fname)
 {
-	if(!this->file->Open(1, fname))
-		return 0;
-	this->type=this->file->get_type();
+	int ret=1;
 
 	switch(this->type) {
 	case Sorted:
@@ -59,8 +57,12 @@ int DBFile :: Open(const char *fname)
 		break;
 	default:
 		this->heap=new HeapFile(this->file, this->pg);
+		if(!this->heap->Open(fname))
+			ret=0;
 	}
-	return 1;
+
+	this->type=this->file->get_type();
+	return ret;
 }
 
 void DBFile :: Add(Record *in)
