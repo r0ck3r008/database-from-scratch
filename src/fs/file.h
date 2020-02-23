@@ -47,13 +47,17 @@ public:
 };
 
 
+struct metadata
+{
+	off_t curLength;
+	fType type;
+};
+
 class File {
 private:
 
 	int myFilDes;
-	off_t curLength;
-	fType type;
-
+	struct metadata *data;
 public:
 
 	File ();
