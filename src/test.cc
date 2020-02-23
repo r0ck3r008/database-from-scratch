@@ -33,7 +33,7 @@ void *producer (void *arg) {
 
 	cout << " producer: inserted " << counter << " recs into the pipe\n";
 
-	return NULL;
+	pthread_exit(NULL);
 }
 
 void *consumer (void *arg) {
@@ -88,7 +88,7 @@ void *consumer (void *arg) {
 		cerr << " consumer: " <<  err << " recs failed sorted order test \n" << endl;
 	}
 
-	return NULL;
+	pthread_exit(NULL);
 }
 
 
