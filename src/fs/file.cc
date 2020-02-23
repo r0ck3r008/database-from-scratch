@@ -158,9 +158,11 @@ void Page :: FromBinary (char *bits) {
 }
 
 File :: File () {
+	this->data=new struct metadata;
 }
 
 File :: ~File () {
+	delete data;
 }
 
 
@@ -169,8 +171,9 @@ void File :: GetPage (Page *putItHere, off_t whichPage) {
 	// this is because the first page has no data
 	whichPage++;
 
-	if (whichPage >= curLength) {
-		cerr << "whichPage " << whichPage << " length " << curLength << endl;
+	if (whichPage >= this->data->curLength) {
+		cerr << "whichPage " << whichPage << " length "
+			<< this->data->curLength << endl;
 		cerr << "BAD: you tried to read past the end of the file\n";
 		exit (1);
 	}
@@ -198,17 +201,17 @@ void File :: AddPage (Page *addMe, off_t whichPage) {
 
 	// if we are trying to add past the end of the file, then
 	// zero all of the pages out
-	if (whichPage >= curLength) {
+	if (whichPage >= this->data->curLength) {
 
 		// do the zeroing
-		for (off_t i = curLength; i < whichPage; i++) {
+		for (off_t i = this->data->curLength; i < whichPage; i++) {
 			int foo = 0;
 			lseek (myFilDes, PAGE_SIZE * i, SEEK_SET);
 			write (myFilDes, &foo, sizeof (int));
 		}
 
 		// set the size
-		curLength = whichPage + 1;
+		this->data->curLength = whichPage + 1;
 	}
 
 	// now write the page
@@ -256,11 +259,11 @@ int File :: Open (int fileLen, const char *fName) {
 
 		// read in the first few bits, which is the page size
 		lseek (myFilDes, 0, SEEK_SET);
-		read (myFilDes, &curLength, sizeof (off_t));
-		read (myFilDes, &type, sizeof(off_t));
+		read (myFilDes, this->data,
+			sizeof (struct metadata));
 
 	} else {
-		curLength = 0;
+		this->data->curLength = 0;
 	}
 
 	return 1;
@@ -269,7 +272,7 @@ int File :: Open (int fileLen, const char *fName) {
 
 
 off_t File :: GetLength () {
-	return curLength;
+	return this->data->curLength;
 }
 
 
@@ -277,10 +280,7 @@ int File :: Close () {
 
 	// write out the current length in pages
 	lseek (myFilDes, 0, SEEK_SET);
-	if(write (myFilDes, &curLength, sizeof (off_t))==-1)
-		return 0;
-
-	if(write(myFilDes, &type, sizeof(off_t))==-1)
+	if(write (myFilDes, this->data, sizeof (struct metadata))==-1)
 		return 0;
 
 	// close the file
@@ -293,11 +293,11 @@ int File :: Close () {
 
 fType File :: get_type()
 {
-	return this->type;
+	return this->data->type;
 }
 
 void File :: set_type(fType type)
 {
-	this->type=type;
+	this->data->type=type;
 }
 
