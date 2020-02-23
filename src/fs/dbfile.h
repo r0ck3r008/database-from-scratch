@@ -4,6 +4,7 @@
 #include"file.h"
 #include"record.h"
 #include"heap.h"
+#include"sorted.h"
 #include"lex/comparison_engine.h"
 #include"db/schema.h"
 #include"glbl/defs.h"
@@ -18,6 +19,7 @@ class DBFile
 {
 private:
 	HeapFile *heap;
+	SortedFile *sorted;
 	fType type;
 	File *file;
 	Page *pg;
