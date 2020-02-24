@@ -22,7 +22,7 @@ private:
 	void unset_dirty();
 	int chk_dirty();
 public:
-	HeapFile(File *, Page *);
+	HeapFile();
 	~HeapFile();
 	int Create(const char *);
 	int Open(const char *);

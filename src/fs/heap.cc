@@ -5,18 +5,20 @@
 #include "glbl/defs.h"
 #include "heap.h"
 
-HeapFile :: HeapFile(File *file, Page *pg)
+HeapFile :: HeapFile()
 {
-	this->file=file;
+	this->file=new File;
+	this->pg=new Page;
 	this->head=NULL;
 	this->dirty=0;
 	this->curr_pg=0;
-	this->pg=pg;
 	this->cmp=new ComparisonEngine;
 }
 
 HeapFile :: ~HeapFile()
 {
+	delete this->file;
+	delete this->pg;
 	delete this->cmp;
 }
 
@@ -59,6 +61,7 @@ int HeapFile :: Create(const char *fname)
 {
 	if(!this->file->Open(0, fname))
 		return 0;
+	this->file->set_type(Heap);
 	return 1;
 }
 
