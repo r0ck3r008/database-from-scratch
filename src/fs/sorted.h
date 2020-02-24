@@ -3,6 +3,9 @@
 
 #include"mem/bigq.h"
 #include"mem/pipe.h"
+#include"lex/comparison_engine.h"
+#include"lex/comparison.h"
+#include"db/schema.h"
 #include"file.h"
 #include"record.h"
 #include"dbfile.h"
@@ -23,7 +26,7 @@ private:
 	int chk_dirty();
 	void fetch(int);
 public:
-	SortedFile(File *, Page *, struct SortInfo *);
+	SortedFile(struct SortInfo *);
 	~SortedFile();
 	int Create(const char *);
 	int Open(const char *);

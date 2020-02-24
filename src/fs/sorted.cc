@@ -1,5 +1,6 @@
 #include<unistd.h>
 
+#include"glbl/defs.h"
 #include"sorted.h"
 
 void SortedFile :: set_dirty()
@@ -17,6 +18,8 @@ void SortedFile :: set_dirty()
 
 void SortedFile :: unset_dirty()
 {
+	this->in_pipe->ShutDown();
+	//TODO merging
 	this->dirty=0;
 }
 
@@ -27,14 +30,19 @@ int SortedFile :: chk_dirty()
 
 void SortedFile :: fetch(int pg_num)
 {
+	if(this->chk_dirty())
+		this->unset_dirty();
+
+	this->pg->EmptyItOut();
 	this->file->GetPage(this->pg, pg_num);
 	this->curr_pg=pg_num;
 }
 
-SortedFile :: SortedFile(File *file, Page *pg, struct SortInfo *s_info)
+//public
+SortedFile :: SortedFile(struct SortInfo *s_info)
 {
-	this->file=file;
-	this->pg=pg;
+	this->file=new File;
+	this->pg=new Page;
 	this->s_info=s_info;
 	this->bigq=NULL;
 	this->in_pipe=NULL;
@@ -44,7 +52,6 @@ SortedFile :: SortedFile(File *file, Page *pg, struct SortInfo *s_info)
 	this->curr_pg=0;
 }
 
-//public
 SortedFile :: ~SortedFile()
 {
 	if(this->in_pipe!=NULL)
@@ -53,6 +60,8 @@ SortedFile :: ~SortedFile()
 		delete this->out_pipe;
 	if(this->bigq!=NULL)
 		delete this->bigq;
+	delete this->pg;
+	delete this->file;
 }
 
 int SortedFile :: Create(const char *fname)
@@ -60,6 +69,7 @@ int SortedFile :: Create(const char *fname)
 	int ret=1;
 	if(!this->file->Open(0, fname))
 		ret=0;
+	this->file->set_type(Sorted);
 	return ret;
 }
 
@@ -124,6 +134,18 @@ int SortedFile :: GetNext(Record *placeholder)
 	int ret=1;
 	if(this->chk_dirty())
 		this->MoveFirst();
+
+	int stat=this->pg->GetFirst(placeholder);
+	if(!stat) {
+		if(this->curr_pg!=(this->file->GetLength())-2) {
+			this->fetch((this->curr_pg+1));
+			ret=this->GetNext(placeholder);
+		} else {
+			ret=0;
+		}
+	} else {
+		this->head=placeholder;
+	}
 
 	return ret;
 }
