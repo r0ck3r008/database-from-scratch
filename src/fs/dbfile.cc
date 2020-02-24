@@ -2,8 +2,6 @@
 
 DBFile :: DBFile()
 {
-	this->file=new File;
-	this->pg=new Page;
 }
 
 DBFile :: ~DBFile()
@@ -16,8 +14,21 @@ DBFile :: ~DBFile()
 	default:
 		delete this->heap;
 	}
-	delete file;
-	delete pg;
+}
+
+int DBFile :: get_type(const char *fname)
+{
+	File *f=new File;
+	if(!f->Open(1, fname))
+		return 0;
+
+	this->type=f->get_type();
+
+	if(!f->Close())
+		return 0;
+	delete f;
+
+	return 1;
 }
 
 int DBFile :: Create(const char *fname, fType type, SortInfo *info)
@@ -26,21 +37,18 @@ int DBFile :: Create(const char *fname, fType type, SortInfo *info)
 
 	switch(type) {
 	case Sorted:
-		this->file->set_type(Sorted);
 		break;
 	case Tree:
-		this->file->set_type(Tree);
 		break;
 	default:
 		if(type!=Heap)
 			std :: cerr << "Unrecognized type: " << type
 				<< ". Falling Back to Heap!\n";
 
-		this->heap=new HeapFile(this->file, this->pg);
+		this->heap=new HeapFile;
 		if(!this->heap->Create(fname))
 			ret=0;
 	}
-	this->file->set_type(type);
 
 	this->type=type;
 	return ret;
@@ -49,6 +57,10 @@ int DBFile :: Create(const char *fname, fType type, SortInfo *info)
 int DBFile :: Open(const char *fname)
 {
 	int ret=1;
+	if(!this->get_type(fname))
+		std :: cerr << "Error in getting type of: "
+			<< fname <<
+			". Any further execution is unpridictiable!\n";
 
 	switch(this->type) {
 	case Sorted:
@@ -56,12 +68,11 @@ int DBFile :: Open(const char *fname)
 	case Tree:
 		break;
 	default:
-		this->heap=new HeapFile(this->file, this->pg);
+		this->heap=new HeapFile;
 		if(!this->heap->Open(fname))
 			ret=0;
 	}
 
-	this->type=this->file->get_type();
 	return ret;
 }
 

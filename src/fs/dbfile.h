@@ -9,6 +9,8 @@
 #include"db/schema.h"
 #include"glbl/defs.h"
 
+class SortedFile;
+
 struct SortInfo
 {
 	OrderMaker *order;
@@ -21,9 +23,9 @@ private:
 	HeapFile *heap;
 	SortedFile *sorted;
 	fType type;
-	File *file;
-	Page *pg;
 
+private:
+	int get_type(const char *);
 public:
 	DBFile();
 	~DBFile();
