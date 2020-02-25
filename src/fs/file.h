@@ -1,5 +1,6 @@
 #ifndef FILE_H
 #define FILE_H
+#define NEED_STRUCTS
 
 #include"record.h"
 #include"mem/two_way_list.cc"
@@ -46,13 +47,6 @@ public:
 
 };
 
-
-struct metadata
-{
-	off_t curLength;
-	fType type;
-};
-
 class File {
 private:
 
@@ -84,12 +78,12 @@ public:
 
 	fType get_type();
 	void set_type(fType);
+	struct SortInfo *get_info();
+	void set_info(struct SortInfo *);
 	// closes the file and returns 0 on error and 1 on success
 
 	int Close ();
 
 };
-
-
 
 #endif
