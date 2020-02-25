@@ -8,6 +8,7 @@ DBFile :: ~DBFile()
 {
 	switch(this->type) {
 	case Sorted:
+		delete this->sorted;
 		break;
 	case Tree:
 		break;
@@ -37,6 +38,9 @@ int DBFile :: Create(const char *fname, fType type, SortInfo *info)
 
 	switch(type) {
 	case Sorted:
+		this->sorted=new SortedFile(info);
+		if(!this->sorted->Create(fname))
+			ret=0;
 		break;
 	case Tree:
 		break;
@@ -64,6 +68,9 @@ int DBFile :: Open(const char *fname)
 
 	switch(this->type) {
 	case Sorted:
+		this->sorted=new SortedFile(NULL);
+		if(!this->sorted->Open(fname))
+			ret=0;
 		break;
 	case Tree:
 		break;
@@ -80,6 +87,7 @@ void DBFile :: Add(Record *in)
 {
 	switch(this->type) {
 	case Sorted:
+		this->sorted->Add(in);
 		break;
 	case Tree:
 		break;
@@ -92,6 +100,7 @@ void DBFile :: Load(Schema *sch, const char *fname)
 {
 	switch(this->type) {
 	case Sorted:
+		this->sorted->Load(sch, fname);
 		break;
 	case Tree:
 		break;
@@ -105,6 +114,7 @@ void DBFile :: MoveFirst()
 {
 	switch(this->type) {
 	case Sorted:
+		this->sorted->MoveFirst();
 		break;
 	case Tree:
 		break;
@@ -118,6 +128,8 @@ int DBFile :: GetNext(Record *placeholder)
 	int ret=1;
 	switch(this->type) {
 	case Sorted:
+		if(!this->sorted->GetNext(placeholder))
+			ret=0;
 		break;
 	case Tree:
 		break;
@@ -134,6 +146,8 @@ int DBFile :: GetNext(Record *placeholder, CNF *cnf, Record *literal)
 	int ret=1;
 	switch(this->type) {
 	case Sorted:
+		if(!this->sorted->GetNext(placeholder, cnf, literal))
+			ret=0;
 		break;
 	case Tree:
 		break;
@@ -150,6 +164,8 @@ int DBFile :: Close()
 	int ret=1;
 	switch(this->type) {
 	case Sorted:
+		if(!this->sorted->Close())
+			ret=0;
 		break;
 	case Tree:
 		break;
