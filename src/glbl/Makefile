@@ -7,4 +7,4 @@ timer.o: timer.cc timer.h
 	${COMPILER} ${COMPILER_FLAGS} timer.cc
 
 clean:
-	rm ./*.o
+	rm -f ./*.o

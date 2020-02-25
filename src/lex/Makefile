@@ -24,6 +24,6 @@ lex.yy.o: lexer.l
 	gcc ${COMPILER_FLAGS} lex.yy.c
 
 clean:
-	rm ./*.o
-	rm y.tab.*
-	rm lex.yy.c
+	rm -f ./*.o
+	rm -f y.tab.*
+	rm -f lex.yy.c

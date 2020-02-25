@@ -19,4 +19,4 @@ sorted.o: sorted.cc sorted.h
 	${COMPILER} ${COMPILER_FLAGS} sorted.cc
 
 clean:
-	rm ./*.o
+	rm -f ./*.o

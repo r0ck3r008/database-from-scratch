@@ -22,4 +22,4 @@ run_gen.o: run_gen.cc run_gen.h
 	${COMPILER} ${COMPILER_FLAGS} run_gen.cc
 
 clean:
-	rm ./*.o
+	rm -f ./*.o

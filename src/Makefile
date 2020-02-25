@@ -51,12 +51,12 @@ clean_objs:
 	make -C mem clean
 	make -C lex clean
 	make -C glbl clean
-	rm ./*.o
+	rm -f ./*.o
 
 distclean: clean
 	rm tpch-dbgen/*.tbl
 	rm out/*.bin
 
-clean:
+clean: clean_objs
 	make -C tpch-dbgen clean
 	rm ./*.out
