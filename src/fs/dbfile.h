@@ -1,5 +1,6 @@
 #ifndef DBFILE_H
 #define DBFILE_H
+#define NEED_STRUCTS
 
 #include"file.h"
 #include"record.h"
@@ -10,12 +11,6 @@
 #include"glbl/defs.h"
 
 class SortedFile;
-
-struct SortInfo
-{
-	OrderMaker *order;
-	int run_len;
-};
 
 class DBFile
 {
