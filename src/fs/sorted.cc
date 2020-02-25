@@ -4,8 +4,9 @@
 #include<unistd.h>
 #include<errno.h>
 
-#include"glbl/defs.h"
 #include"sorted.h"
+
+const char *old_path="bin/tmp_sorted.bin";
 
 void SortedFile :: set_dirty()
 {
@@ -187,6 +188,7 @@ int SortedFile :: Create(const char *fname)
 	this->file->set_type(Sorted);
 	this->fname=fname;
 	this->create=1;
+	this->file->set_info(this->s_info);
 	return ret;
 }
 
@@ -198,6 +200,7 @@ int SortedFile :: Open(const char *fname)
 	this->fetch(0);
 	this->fname=fname;
 	this->create=0;
+	this->s_info=this->file->get_info();
 	return ret;
 }
 
@@ -268,6 +271,13 @@ int SortedFile :: GetNext(Record *placeholder)
 	} else {
 		this->head=placeholder;
 	}
+
+	return ret;
+}
+
+int SortedFile :: GetNext(Record *placeholder, CNF *cnf, Record *literal)
+{
+	int ret=1;
 
 	return ret;
 }

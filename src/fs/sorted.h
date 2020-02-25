@@ -1,16 +1,14 @@
 #ifndef SORTED_H
 #define SORTED_H
 
+#include"file.h"
+#include"record.h"
+#include"dbfile.h"
 #include"mem/bigq.h"
 #include"mem/pipe.h"
 #include"lex/comparison_engine.h"
 #include"lex/comparison.h"
 #include"db/schema.h"
-#include"file.h"
-#include"record.h"
-#include"dbfile.h"
-
-const char *old_path="bin/tmp_sorted.bin";
 
 class DBFile;
 
