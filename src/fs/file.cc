@@ -301,3 +301,13 @@ void File :: set_type(fType type)
 	this->data->type=type;
 }
 
+struct SortInfo *File :: get_info()
+{
+	return this->data->s_info;
+}
+
+void File :: set_info(struct SortInfo *s_info)
+{
+	this->data->s_info=s_info;
+}
+
