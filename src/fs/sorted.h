@@ -12,6 +12,8 @@
 
 const char *old_path="bin/tmp_sorted.bin";
 
+class DBFile;
+
 class SortedFile
 {
 	File *file;
