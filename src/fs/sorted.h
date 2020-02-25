@@ -10,12 +10,15 @@
 #include"record.h"
 #include"dbfile.h"
 
+const char *old_path="bin/tmp_sorted.bin";
+
 class SortedFile
 {
 	File *file;
 	Page *pg;
 	BigQ *bigq;
 	Pipe *in_pipe, *out_pipe;
+	int create;
 	struct SortInfo *s_info;
 	int dirty, curr_pg;
 	Record *head;
@@ -25,6 +28,7 @@ private:
 	DBFile *setup_int_dbf(int);
 	int feed();
 	int writeback();
+	int reboot();
 	void set_dirty();
 	int unset_dirty();
 	int chk_dirty();
