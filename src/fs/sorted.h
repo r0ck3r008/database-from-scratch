@@ -19,10 +19,14 @@ class SortedFile
 	struct SortInfo *s_info;
 	int dirty, curr_pg;
 	Record *head;
+	const char *fname;
 
 private:
+	DBFile *setup_int_dbf(int);
+	int feed();
+	int writeback();
 	void set_dirty();
-	void unset_dirty();
+	int unset_dirty();
 	int chk_dirty();
 	void fetch(int);
 public:
