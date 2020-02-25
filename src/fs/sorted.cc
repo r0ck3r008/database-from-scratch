@@ -5,22 +5,97 @@
 
 void SortedFile :: set_dirty()
 {
-	if(this->in_pipe==NULL)
-		this->in_pipe=new Pipe(100);
-	if(this->out_pipe==NULL)
-		this->out_pipe=new Pipe(100);
-	if(this->bigq==NULL)
-		this->bigq=new BigQ(this->in_pipe, this->out_pipe,
-					this->s_info->order,
-					this->s_info->run_len);
+	//flush old pipes and bigq and generate new
+	if(this->in_pipe!=NULL)
+		delete this->in_pipe;
+	this->in_pipe=new Pipe(100);
+
+	if(this->out_pipe!=NULL)
+		delete this->out_pipe;
+	this->out_pipe=new Pipe(100);
+
+	if(this->bigq!=NULL)
+		delete this->bigq;
+	this->bigq=new BigQ(this->in_pipe, this->out_pipe,
+				this->s_info->order,
+				this->s_info->run_len);
 	this->dirty=1;
 }
 
-void SortedFile :: unset_dirty()
+DBFile *SortedFile :: setup_int_dbf(int create)
 {
+	DBFile *int_dbf=new DBFile;
+	if(create) {
+		if(!int_dbf->Create("bin/tmp_sorted.bin", Sorted,
+					this->s_info))
+			return NULL;
+	} else {
+		if(!int_dbf->Open(this->fname))
+			return NULL;
+	}
+
+	return int_dbf;
+}
+
+int SortedFile :: feed()
+{
+	DBFile *int_dbf=NULL;
+	if((int_dbf=this->setup_int_dbf(0)))
+		return 0;
+
+	Record *tmp=new Record;
+	while(1) {
+		if(!int_dbf->GetNext(tmp))
+			break;
+		this->in_pipe->Insert(tmp);
+		delete tmp;
+		tmp=new Record;
+	}
+
 	this->in_pipe->ShutDown();
-	//TODO merging
+	if(!int_dbf->Close())
+		return 0;
+
+	delete int_dbf;
+	delete tmp;
+
+	return 1;
+}
+
+int SortedFile :: writeback()
+{
+	DBFile *int_dbf=NULL;
+	if((int_dbf=this->setup_int_dbf(1))==NULL)
+		return 0;
+
+	Record *tmp=new Record;
+	while(1) {
+		if(!this->out_pipe->Remove(tmp))
+			break;
+		int_dbf->Add(tmp);
+		delete tmp;
+		tmp=new Record;
+	}
+
+	if(!int_dbf->Close())
+		return 0;
+
+	delete tmp;
+	delete int_dbf;
+
+	return 1;
+}
+
+int SortedFile :: unset_dirty()
+{
+	if(!this->feed())
+		return 0;
+
+	if(!this->writeback())
+		return 0;
+
 	this->dirty=0;
+	return 1;
 }
 
 int SortedFile :: chk_dirty()
@@ -31,7 +106,10 @@ int SortedFile :: chk_dirty()
 void SortedFile :: fetch(int pg_num)
 {
 	if(this->chk_dirty())
-		this->unset_dirty();
+		if(!this->unset_dirty()) {
+			std :: cerr << "Error in writingback!\n";
+			_exit(-1);
+		}
 
 	this->pg->EmptyItOut();
 	this->file->GetPage(this->pg, pg_num);
@@ -70,6 +148,7 @@ int SortedFile :: Create(const char *fname)
 	if(!this->file->Open(0, fname))
 		ret=0;
 	this->file->set_type(Sorted);
+	this->fname=fname;
 	return ret;
 }
 
@@ -79,6 +158,7 @@ int SortedFile :: Open(const char *fname)
 	if(!this->file->Open(1, fname))
 		ret=0;
 	this->fetch(0);
+	this->fname=fname;
 	return ret;
 }
 
@@ -123,7 +203,10 @@ void SortedFile :: Load(Schema *sch, const char *fname)
 void SortedFile :: MoveFirst()
 {
 	if(this->chk_dirty())
-		this->unset_dirty();
+		if(!this->unset_dirty()) {
+			std :: cerr << "Error in writingback!\n";
+			_exit(-1);
+		}
 
 	if(!this->curr_pg)
 		this->fetch(0);
@@ -153,6 +236,9 @@ int SortedFile :: GetNext(Record *placeholder)
 int SortedFile :: Close()
 {
 	int ret=1;
+	if(this->chk_dirty())
+		if(!this->unset_dirty())
+			ret=0;
 
 	return ret;
 }
