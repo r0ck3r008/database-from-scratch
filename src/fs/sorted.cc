@@ -128,6 +128,9 @@ int SortedFile :: unset_dirty()
 	if(!this->writeback())
 		return 0;
 
+	if(!this->reboot())
+		return 0;
+
 	this->dirty=0;
 	return 1;
 }
