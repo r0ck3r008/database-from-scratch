@@ -1,4 +1,8 @@
+#include<string.h>
+#include<sys/types.h>
+#include<sys/stat.h>
 #include<unistd.h>
+#include<errno.h>
 
 #include"glbl/defs.h"
 #include"sorted.h"
@@ -26,7 +30,7 @@ DBFile *SortedFile :: setup_int_dbf(int create)
 {
 	DBFile *int_dbf=new DBFile;
 	if(create) {
-		if(!int_dbf->Create("bin/tmp_sorted.bin", Sorted,
+		if(!int_dbf->Create(old_path, Sorted,
 					this->s_info))
 			return NULL;
 	} else {
@@ -39,26 +43,26 @@ DBFile *SortedFile :: setup_int_dbf(int create)
 
 int SortedFile :: feed()
 {
-	DBFile *int_dbf=NULL;
-	if((int_dbf=this->setup_int_dbf(0)))
-		return 0;
+	if(!this->create) {
+		DBFile *int_dbf=NULL;
+		if((int_dbf=this->setup_int_dbf(0)))
+			return 0;
 
-	Record *tmp=new Record;
-	while(1) {
-		if(!int_dbf->GetNext(tmp))
-			break;
-		this->in_pipe->Insert(tmp);
+		Record *tmp=new Record;
+		while(1) {
+			if(!int_dbf->GetNext(tmp))
+				break;
+			this->in_pipe->Insert(tmp);
+			delete tmp;
+			tmp=new Record;
+		}
+		if(!int_dbf->Close())
+			return 0;
+		delete int_dbf;
 		delete tmp;
-		tmp=new Record;
 	}
 
 	this->in_pipe->ShutDown();
-	if(!int_dbf->Close())
-		return 0;
-
-	delete int_dbf;
-	delete tmp;
-
 	return 1;
 }
 
@@ -82,6 +86,36 @@ int SortedFile :: writeback()
 
 	delete tmp;
 	delete int_dbf;
+
+	return 1;
+}
+
+int SortedFile :: reboot()
+{
+	//rename current tmp file to this one
+	if(!this->file->Close())
+		return 0;
+	delete this->file;
+	delete this->pg;
+	this->file=new File;
+	this->pg=new Page;
+	this->curr_pg=0;
+	this->head=NULL;
+	if(remove(this->fname)<0) {
+		std :: cerr << "Error in removing old file!"
+			<< strerror(errno) << std :: endl;
+		return 0;
+	}
+
+	if(rename(old_path, this->fname)<0) {
+		std :: cerr << "Error in renaming from "
+			<< old_path << " to " << this->fname
+			<< strerror(errno) << std :: endl;
+		return 0;
+	}
+
+	if(!this->Open(this->fname))
+		return 0;
 
 	return 1;
 }
@@ -149,6 +183,7 @@ int SortedFile :: Create(const char *fname)
 		ret=0;
 	this->file->set_type(Sorted);
 	this->fname=fname;
+	this->create=1;
 	return ret;
 }
 
@@ -159,6 +194,7 @@ int SortedFile :: Open(const char *fname)
 		ret=0;
 	this->fetch(0);
 	this->fname=fname;
+	this->create=0;
 	return ret;
 }
 
