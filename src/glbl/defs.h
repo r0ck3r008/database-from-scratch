@@ -14,6 +14,24 @@ enum fType {Heap, Sorted, Tree};
 
 unsigned int Random_Generate();
 
+#ifdef NEED_STRUCTS
+
+#include"lex/comparison.h"
+
+struct SortInfo
+{
+	struct OrderMaker *order;
+	int run_len;
+};
+
+struct metadata
+{
+	int curLength;
+	fType type;
+	struct SortInfo *s_info;
+};
+
+#endif
 
 #endif
 
