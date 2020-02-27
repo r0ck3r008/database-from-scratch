@@ -22,7 +22,7 @@ Tournament tour(4, NULL);
 
 TEST (DBFILETEST, DBCreate) {
 
-	EXPECT_EQ(dbfile.Create (rela->path(), heap, NULL), 1);
+	EXPECT_EQ(dbfile.Create (rela->path(), Heap, NULL), 1);
 	char tbl_path[100]; // construct path of the tpch flat text file
 	sprintf (tbl_path, "%s%s.tbl", tpch_dir, rela->name());
 	cout << " tpch file will be loaded from " << tbl_path << endl;
