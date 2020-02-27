@@ -96,23 +96,23 @@ void setup () {
 	rel=new relation *[8];
 
 	//curbing memory leaks
-	sch[0]=new Schema(catalog_path, supplier);
-	sch[1]=new Schema(catalog_path, partsupp);
-	sch[2]=new Schema(catalog_path, part);
-	sch[3]=new Schema(catalog_path, nation);
-	sch[4]=new Schema(catalog_path, lineitem);
-	sch[5]=new Schema(catalog_path, region);
+	sch[0]=new Schema(catalog_path, nation);
+	sch[1]=new Schema(catalog_path, region);
+	sch[2]=new Schema(catalog_path, customer);
+	sch[3]=new Schema(catalog_path, part);
+	sch[4]=new Schema(catalog_path, partsupp);
+	sch[5]=new Schema(catalog_path, supplier);
 	sch[6]=new Schema(catalog_path, orders);
-	sch[7]=new Schema(catalog_path, customer);
+	sch[7]=new Schema(catalog_path, lineitem);
 
-	rel[0]= new relation (supplier, sch[0], dbfile_dir);
-	rel[1]= new relation (partsupp, sch[1], dbfile_dir);
-	rel[2]= new relation (part, sch[2], dbfile_dir);
-	rel[3]= new relation (nation, sch[3], dbfile_dir);
-	rel[4]= new relation (lineitem, sch[4], dbfile_dir);
-	rel[5]= new relation (region, sch[5], dbfile_dir);
+	rel[0]= new relation (nation, sch[0], dbfile_dir);
+	rel[1]= new relation (region, sch[1], dbfile_dir);
+	rel[2]= new relation (customer, sch[2], dbfile_dir);
+	rel[3]= new relation (part, sch[3], dbfile_dir);
+	rel[4]= new relation (partsupp, sch[4], dbfile_dir);
+	rel[5]= new relation (supplier, sch[5], dbfile_dir);
 	rel[6]= new relation (orders, sch[6], dbfile_dir);
-	rel[7]= new relation (customer, sch[7], dbfile_dir);
+	rel[7]= new relation (lineitem, sch[7], dbfile_dir);
 }
 
 void cleanup () {
