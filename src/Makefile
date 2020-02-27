@@ -9,7 +9,7 @@ main_all: main_bin clean_objs
 
 gtest_all: gtest_bin clean_objs
 
-test_bin: test.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_bin
+test_bin: test.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_bin heap_gen.out
 	$(COMPILER) test.o ${ALL_OBJS} ${LINKER_FLAGS} test.out
 
 test.o: test.cc test.h
@@ -26,6 +26,12 @@ gtest_bin: gtest.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_bin
 
 gtest.o: gtest.cc
 	${COMPILER} ${COMPILER_FLAGS} gtest.cc
+
+heap_gen.out: heap_gen.o
+	${COMPILER} heap_gen.o ${ALL_OBJS} ${LINKER_FLAGS} heap_gen.out
+
+heap_gen.o: heap_gen.cc
+	${COMPILER} ${COMPILER_FLAGS} heap_gen.cc
 
 db_objs:
 	make -C db
