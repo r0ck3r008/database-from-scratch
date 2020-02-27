@@ -3,35 +3,31 @@ COMPILER_FLAGS :=-g -c
 LINKER_FLAGS := -lfl -lgtest -lpthread -o
 ALL_OBJS := db/schema.o fs/file.o fs/record.o fs/dbfile.o fs/heap.o fs/sorted.o mem/two_way_list.o mem/pipe.o mem/tournament.o mem/bigq.o mem/run_gen.o mem/run_merge.o lex/comparison.o lex/comparison_engine.o lex/lex.yy.o lex/y.tab.o glbl/timer.o
 
-all: test_bin clean_objs
+all: test.out gtest.out heap_gen.out test_bigq.out clean_objs
 
-main_all: main_bin clean_objs
+test.out: test.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_bin
+	${COMPILER} tests/test.o ${ALL_OBJS} ${LINKER_FLAGS} test.out
 
-gtest_all: gtest_bin clean_objs
+gtest.out: gtest.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_bin
+	$(COMPILER) tests/gtest.o ${ALL_OBJS} ${LINKER_FLAGS} gtest.out
 
-test_bin: test.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_bin heap_gen.out
-	$(COMPILER) test.o ${ALL_OBJS} ${LINKER_FLAGS} test.out
+heap_gen.out: heap_gen.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_bin
+	${COMPILER} tests/heap_gen.o ${ALL_OBJS} ${LINKER_FLAGS} heap_gen.out
 
-test.o: test.cc test.h
-	${COMPILER} ${COMPILER_FLAGS} test.cc
+test_bigq.out: test_bigq.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_bin
+	${COMPILER} tests/test_bigq.o ${ALL_OBJS} ${LINKER_FLAGS} test_bigq.out
 
-main_bin: main.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_bin
-	${COMPILER} main.o ${ALL_OBJS} ${LINKER_FLAGS} main.out
+test.o:
+	make -C tests/ test.o
 
-main.o: main.cc
-	${COMPILER} ${COMPILER_FLAGS} main.cc
+gtest.o:
+	make -C tests/ gtest.o
 
-gtest_bin: gtest.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_bin
-	$(COMPILER) gtest.o ${ALL_OBJS} ${LINKER_FLAGS} gtest.out
+heap_gen.o:
+	make -C tests/ heap_gen.o
 
-gtest.o: gtest.cc
-	${COMPILER} ${COMPILER_FLAGS} gtest.cc
-
-heap_gen.out: heap_gen.o
-	${COMPILER} heap_gen.o ${ALL_OBJS} ${LINKER_FLAGS} heap_gen.out
-
-heap_gen.o: heap_gen.cc
-	${COMPILER} ${COMPILER_FLAGS} heap_gen.cc
+test_bigq.o:
+	make -C tests/ test_bigq.o
 
 db_objs:
 	make -C db
@@ -57,6 +53,7 @@ clean_objs:
 	make -C mem clean
 	make -C lex clean
 	make -C glbl clean
+	make -C tests clean
 	rm -f ./*.o
 
 distclean: clean
