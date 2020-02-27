@@ -57,9 +57,10 @@ clean_objs:
 	rm -f ./*.o
 
 distclean: clean
-	rm tpch-dbgen/*.tbl
-	rm out/*.bin
+	rm -f tpch-dbgen/*.tbl
+	rm -f bin/*.bin
+	rm -f bin/*.bin.bigq
 
 clean: clean_objs
 	make -C tpch-dbgen clean
-	rm ./*.out
+	rm -f ./*.out
