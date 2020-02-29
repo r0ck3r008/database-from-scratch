@@ -5,7 +5,7 @@
 #include "glbl/defs.h"
 #include "heap.h"
 
-HeapFile :: HeapFile()
+HeapFile :: HeapFile(const char *fname)
 {
 	this->file=new File;
 	this->pg=new Page;
@@ -13,6 +13,7 @@ HeapFile :: HeapFile()
 	this->dirty=0;
 	this->curr_pg=0;
 	this->cmp=new ComparisonEngine;
+	this->fname=fname;
 }
 
 HeapFile :: ~HeapFile()
@@ -52,24 +53,25 @@ void HeapFile :: fetch(off_t pg_num)
 	else
 		this->curr_pg=pg_num;
 
-	this->file->GetPage(this->pg, pg_num);
+	if(pg_num<this->file->GetLength())
+		this->file->GetPage(this->pg, pg_num);
 }
 
 
 //public functions
-int HeapFile :: Create(const char *fname)
+int HeapFile :: Create()
 {
-	if(!this->file->Open(0, fname))
+	if(!this->file->Open(0, this->fname))
 		return 0;
 	this->file->set_type(Heap);
 	return 1;
 }
 
-int HeapFile :: Open(const char *fname)
+int HeapFile :: Open()
 {
 	//TODO
 	//dummy proofing, use stat to acertain that the file exists
-	if(!this->file->Open(1, fname))
+	if(!this->file->Open(1, this->fname))
 		return 0;
 	this->fetch(0);
 	return 1;
@@ -85,8 +87,8 @@ void HeapFile :: MoveFirst()
 
 int HeapFile :: GetNext(Record *placeholder)
 {
-	//GetNext doesnt need to care about which page is currently loaded or if
-	//the dirty bit is set, since that is taken care of in MoveToFirst
+	if(this->chk_dirty())
+		this->MoveFirst();
 
 	while(1) {
 		int stat=this->pg->GetFirst(placeholder);
@@ -123,7 +125,7 @@ void HeapFile :: Add(Record *placeholder)
 {
 	off_t curr_len=this->file->GetLength();
 
-	if(curr_len==0 || this->curr_pg==curr_len-1) {
+	if(curr_len==0 || this->curr_pg==curr_len-2) {
 		//this is on latest page
 		//check size and writeback if necessary
 		if(this->pg->get_curr_size() + placeholder->get_size() >
