@@ -46,7 +46,7 @@ void SortedHelper :: set_dirty()
 
 	this->in_pipe=new Pipe(100);
 	this->out_pipe=new Pipe(100);
-	this->bigq=new BigQ(in_pipe, out_pipe, this->f_info->s_info->order,
+	this->bigq=new BigQ(in_pipe, out_pipe, &(this->f_info->s_info->order),
 				this->f_info->s_info->run_len);
 
 	this->dirty=1;
@@ -164,6 +164,8 @@ int SortedHelper :: unset_dirty()
 			return 0;
 
 	this->dirty=0;
+
+	return 1;
 }
 
 int SortedHelper :: fetch_curr_pg()
