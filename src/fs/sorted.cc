@@ -1,223 +1,112 @@
-#include<string.h>
-#include<sys/types.h>
-#include<sys/stat.h>
 #include<unistd.h>
-#include<errno.h>
 
 #include"sorted.h"
 
-const char *old_path="bin/tmp_sorted.bin";
-
-void SortedFile :: set_dirty()
+file_info :: file_info(struct SortInfo *s_info, const char *fname, File *file,
+			Page *pg)
 {
-	//flush old pipes and bigq and generate new
-	if(this->in_pipe!=NULL)
-		delete this->in_pipe;
-	this->in_pipe=new Pipe(100);
-
-	if(this->out_pipe!=NULL)
-		delete this->out_pipe;
-	this->out_pipe=new Pipe(100);
-
-	if(this->bigq!=NULL)
-		delete this->bigq;
-	this->bigq=new BigQ(this->in_pipe, this->out_pipe,
-				this->s_info->order,
-				this->s_info->run_len);
-	this->dirty=1;
-}
-
-DBFile *SortedFile :: setup_int_dbf(int create)
-{
-	DBFile *int_dbf=new DBFile;
-	if(create) {
-		if(!int_dbf->Create(old_path, Sorted,
-					this->s_info))
-			return NULL;
-	} else {
-		if(!int_dbf->Open(this->fname))
-			return NULL;
-	}
-
-	return int_dbf;
-}
-
-int SortedFile :: feed()
-{
-	if(!this->create) {
-		DBFile *int_dbf=NULL;
-		if((int_dbf=this->setup_int_dbf(0)))
-			return 0;
-
-		Record *tmp=new Record;
-		while(1) {
-			if(!int_dbf->GetNext(tmp))
-				break;
-			this->in_pipe->Insert(tmp);
-			delete tmp;
-			tmp=new Record;
-		}
-		if(!int_dbf->Close())
-			return 0;
-		delete int_dbf;
-		delete tmp;
-	}
-
-	this->in_pipe->ShutDown();
-	return 1;
-}
-
-int SortedFile :: writeback()
-{
-	DBFile *int_dbf=NULL;
-	if((int_dbf=this->setup_int_dbf(1))==NULL)
-		return 0;
-
-	Record *tmp=new Record;
-	while(1) {
-		if(!this->out_pipe->Remove(tmp))
-			break;
-		int_dbf->Add(tmp);
-		delete tmp;
-		tmp=new Record;
-	}
-
-	if(!int_dbf->Close())
-		return 0;
-
-	delete tmp;
-	delete int_dbf;
-
-	return 1;
-}
-
-int SortedFile :: reboot()
-{
-	//rename current tmp file to this one
-	if(!this->file->Close())
-		return 0;
-	delete this->file;
-	delete this->pg;
-	this->file=new File;
-	this->pg=new Page;
-	this->curr_pg=0;
-	this->head=NULL;
-	if(remove(this->fname)<0) {
-		std :: cerr << "Error in removing old file!"
-			<< strerror(errno) << std :: endl;
-		return 0;
-	}
-
-	if(rename(old_path, this->fname)<0) {
-		std :: cerr << "Error in renaming from "
-			<< old_path << " to " << this->fname
-			<< strerror(errno) << std :: endl;
-		return 0;
-	}
-
-	if(!this->Open(this->fname))
-		return 0;
-
-	return 1;
-}
-
-int SortedFile :: unset_dirty()
-{
-	if(!this->feed())
-		return 0;
-
-	if(!this->writeback())
-		return 0;
-
-	if(!this->reboot())
-		return 0;
-
-	this->dirty=0;
-	return 1;
-}
-
-int SortedFile :: chk_dirty()
-{
-	return (this->dirty) ? 1 : 0;
-}
-
-void SortedFile :: fetch(int pg_num)
-{
-	if(this->chk_dirty())
-		if(!this->unset_dirty()) {
-			std :: cerr << "Error in writingback!\n";
-			_exit(-1);
-		}
-
-	this->pg->EmptyItOut();
-	this->file->GetPage(this->pg, pg_num);
-	this->curr_pg=pg_num;
-}
-
-//public
-SortedFile :: SortedFile(struct SortInfo *s_info)
-{
-	this->file=new File;
-	this->pg=new Page;
 	this->s_info=s_info;
-	this->bigq=NULL;
-	this->in_pipe=NULL;
-	this->out_pipe=NULL;
+	this->fname=fname;
+	this->file=file;
+	this->pg=pg;
+}
+
+SortedFile :: SortedFile(struct SortInfo *s_info, const char *fname)
+{
 	this->head=NULL;
-	this->dirty=0;
-	this->curr_pg=0;
+	File *file=new File;
+	Page *pg=new Page;
+	this->f_info=new file_info(s_info, fname, file, pg);
+	this->helper=new SortedHelper(this->f_info);
 }
 
 SortedFile :: ~SortedFile()
 {
-	if(this->in_pipe!=NULL)
-		delete this->in_pipe;
-	if(this->out_pipe!=NULL)
-		delete this->out_pipe;
-	if(this->bigq!=NULL)
-		delete this->bigq;
-	delete this->pg;
-	delete this->file;
+	delete this->f_info->file;
+	delete this->helper;
+	delete this->f_info->pg;
 }
 
-int SortedFile :: Create(const char *fname)
+int SortedFile :: fetch(int pg_num)
 {
-	int ret=1;
-	if(!this->file->Open(0, fname))
-		ret=0;
-	this->file->set_type(Sorted);
-	this->fname=fname;
-	this->create=1;
-	this->file->set_info(this->s_info);
-	return ret;
+	if(this->helper->chk_dirty())
+		if(!this->helper->unset_dirty())
+			return 0;
+
+	int curr_len=this->f_info->file->GetLength();
+	if(pg_num<curr_len) {
+		this->f_info->pg->EmptyItOut();
+		this->f_info->file->GetPage(this->f_info->pg, pg_num);
+		this->helper->set_curr_pg(pg_num);
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
-int SortedFile :: Open(const char *fname)
+int SortedFile :: Create()
 {
-	int ret=1;
-	if(!this->file->Open(1, fname))
-		ret=0;
-	this->fetch(0);
-	this->fname=fname;
-	this->create=0;
-	this->s_info=this->file->get_info();
-	return ret;
+	if(!this->f_info->file->Open(0, this->f_info->fname))
+		return 0;
+	this->helper->set_create(1);
+	this->f_info->file->set_type(Sorted);
+	this->f_info->file->set_info(this->f_info->s_info);
+
+	return 1;
 }
 
-void SortedFile :: Add(Record *in)
+int SortedFile :: Open()
 {
-	if(!this->chk_dirty())
-		this->set_dirty();
+	if(!this->f_info->file->Open(1, this->f_info->fname))
+		return 0;
 
-	this->in_pipe->Insert(in);
+	if(!this->f_info->file->GetLength())
+		this->helper->set_create(1);
+	else
+		this->helper->set_create(0);
+	this->f_info->s_info=this->f_info->file->get_info();
+	return 1;
+}
+
+void SortedFile :: Add(Record *placeholder)
+{
+	if(!this->helper->chk_dirty())
+		this->helper->set_dirty();
+
+	if(this->helper->get_create()) {
+		off_t curr_len=this->f_info->file->GetLength();
+		int curr_pg=this->helper->fetch_curr_pg();
+		if(curr_len==0 || curr_pg==curr_len-2) {
+			//this is on latest page
+			//check size and writeback if necessary
+			if(this->f_info->pg->get_curr_size() +
+					placeholder->get_size() > PAGE_SIZE) {
+				this->f_info->file->AddPage(this->f_info->pg,
+								curr_pg+1);
+				this->f_info->pg->EmptyItOut();
+			}
+		} else {
+			//fetch latest page for writing... this is a read write
+			//alternating situation
+			this->fetch(curr_len-1);
+		}
+
+		if(!this->f_info->pg->Append(placeholder)) {
+			std :: cerr << "Error in adding record!\n";
+			_exit(-1);
+		}
+
+	} else {
+		this->helper->Add(placeholder);
+	}
 }
 
 void SortedFile :: Load(Schema *sch, const char *fname)
 {
 	FILE *f=NULL;
 	if((f=fopen(fname, "r"))==NULL) {
-		std :: cerr << "Error in opening the file "
-			<< fname << "!\n";
+		std :: cerr << "Error in opening the file " << fname
+			<< std :: endl;
 		_exit(-1);
 	}
 
@@ -225,10 +114,11 @@ void SortedFile :: Load(Schema *sch, const char *fname)
 	while(1) {
 		int stat=tmp->SuckNextRecord(sch, f);
 		if(!stat) {
-			if(!feof)
-				std :: cerr << "Error!\n";
+			if(!feof(f))
+				std :: cerr << "Error in reading the file "
+					<< fname << std :: endl;
 			else
-				std :: cerr << "EOF!\n";
+				std :: cout << "EOF!\n";
 			break;
 		}
 
@@ -244,33 +134,41 @@ void SortedFile :: Load(Schema *sch, const char *fname)
 
 void SortedFile :: MoveFirst()
 {
-	if(this->chk_dirty())
-		if(!this->unset_dirty()) {
-			std :: cerr << "Error in writingback!\n";
+	if(this->helper->chk_dirty())
+		if(!this->helper->unset_dirty()) {
+			std :: cerr << "Error in unsetting dirty!\n";
 			_exit(-1);
 		}
 
-	if(!this->curr_pg)
-		this->fetch(0);
+	int curr_len=this->f_info->file->GetLength();
+	if(!this->fetch(0)) {
+		std :: cerr << "Error in fetching page 0\n";
+		_exit(-1);
+	}
 }
 
 int SortedFile :: GetNext(Record *placeholder)
 {
-	int ret=1;
-	if(this->chk_dirty())
+	if(this->helper->chk_dirty())
 		this->MoveFirst();
+	int curr_len=this->f_info->file->GetLength();
+	int curr_pg=this->helper->fetch_curr_pg();
 
-	int stat=this->pg->GetFirst(placeholder);
-	if(!stat) {
-		if(this->curr_pg!=(this->file->GetLength())-2) {
-			this->fetch((this->curr_pg+1));
-			ret=this->GetNext(placeholder);
+	int ret=1;
+	while(ret) {
+		int stat=this->f_info->pg->GetFirst(placeholder);
+		if(!stat) {
+			if(curr_pg!=curr_len-2)
+				if(!this->fetch(curr_pg+1))
+					ret=0;
+			else
+				ret=0;
 		} else {
-			ret=0;
+			break;
 		}
-	} else {
-		this->head=placeholder;
 	}
+
+	this->head=placeholder;
 
 	return ret;
 }
@@ -284,10 +182,11 @@ int SortedFile :: GetNext(Record *placeholder, CNF *cnf, Record *literal)
 
 int SortedFile :: Close()
 {
-	int ret=1;
-	if(this->chk_dirty())
-		if(!this->unset_dirty())
-			ret=0;
+	if(this->helper->chk_dirty())
+		if(!this->helper->unset_dirty())
+			return 0;
 
-	return ret;
+	if(!this->f_info->file->Close())
+		return 0;
+	return 1;
 }
