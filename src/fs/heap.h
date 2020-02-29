@@ -14,6 +14,7 @@ class HeapFile
 	Record *head;
 	int dirty;
 	ComparisonEngine *cmp;
+	const char *fname;
 private:
 	//functions
 	void writeback();
@@ -22,10 +23,10 @@ private:
 	void unset_dirty();
 	int chk_dirty();
 public:
-	HeapFile();
+	HeapFile(const char *);
 	~HeapFile();
-	int Create(const char *);
-	int Open(const char *);
+	int Create();
+	int Open();
 	void MoveFirst();
 	void Add(Record *);
 	int GetNext(Record *);
