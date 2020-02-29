@@ -63,7 +63,16 @@ void Comparison :: Print () {
 }
 
 
+OrderMaker &OrderMaker :: operator= (const OrderMaker &in)
+{
+	this->numAtts=in.numAtts;
+	for(int i=0; i<MAX_ANDS; i++) {
+		this->whichAtts[i]=in.whichAtts[i];
+		this->whichTypes[i]=in.whichTypes[i];
+	}
 
+	return *this;
+}
 
 OrderMaker :: OrderMaker() {
 	numAtts = 0;

@@ -1,5 +1,13 @@
 #include"dbfile.h"
 
+struct SortInfo &SortInfo :: operator= (const struct SortInfo &in)
+{
+	this->run_len=in.run_len;
+	this->order=in.order;
+
+	return *this;
+}
+
 DBFile :: DBFile()
 {
 }

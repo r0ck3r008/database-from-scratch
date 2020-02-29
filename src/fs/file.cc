@@ -303,11 +303,19 @@ void File :: set_type(fType type)
 
 struct SortInfo *File :: get_info()
 {
-	return this->data->s_info;
+	return &(this->data->s_info);
 }
 
 void File :: set_info(struct SortInfo *s_info)
 {
-	this->data->s_info=s_info;
+	this->data->s_info=*s_info;
 }
 
+struct metadata& metadata :: operator= (const struct metadata& in)
+{
+	this->curLength=in.curLength;
+	this->type=in.type;
+	this->s_info=in.s_info;
+
+	return *this;
+}
