@@ -25,6 +25,23 @@ SortedHelper :: ~SortedHelper()
 		delete bigq;
 }
 
+int SortedHelper :: fetch(int pg_num)
+{
+	if(this->chk_dirty())
+		if(!this->unset_dirty())
+			return 0;
+
+	int curr_len=this->f_info->file->GetLength();
+	if(pg_num<curr_len) {
+		this->f_info->pg->EmptyItOut();
+		this->f_info->file->GetPage(this->f_info->pg, pg_num);
+		this->set_curr_pg(pg_num);
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 void SortedHelper :: set_create(int val)
 {
 	this->create=val;
@@ -100,7 +117,7 @@ int SortedHelper :: writeback(DBFile *dbf)
 			break;
 
 		if(dbf==NULL)
-			this->Add(tmp);
+			this->Add(tmp, 1);
 		else
 			dbf->Add(tmp);
 		delete tmp;
@@ -139,20 +156,46 @@ int SortedHelper :: reboot()
 	return 1;
 }
 
-void SortedHelper :: Add(Record *placeholder)
+void SortedHelper :: Add(Record *placeholder, int internal)
 {
 	if(!this->chk_dirty())
 		this->set_dirty();
 
-	this->in_pipe->Insert(placeholder);
+	if(internal && this->get_create()) {
+		off_t curr_len=this->f_info->file->GetLength();
+		int curr_pg=this->fetch_curr_pg();
+		if(curr_len==0 || curr_pg==curr_len-2) {
+			//this is on latest page
+			//check size and writeback if necessary
+			if(this->f_info->pg->get_curr_size() +
+					placeholder->get_size() > PAGE_SIZE) {
+				this->f_info->file->AddPage(this->f_info->pg,
+								curr_pg+1);
+				this->f_info->pg->EmptyItOut();
+			}
+		} else {
+			//fetch latest page for writing... this is a read write
+			//alternating situation
+			this->fetch(curr_len-1);
+		}
+
+		if(!this->f_info->pg->Append(placeholder)) {
+			std :: cerr << "Error in adding record!\n";
+			_exit(-1);
+		}
+
+	} else {
+		this->in_pipe->Insert(placeholder);
+	}
 }
 
 int SortedHelper :: unset_dirty()
 {
+	DBFile *int_dbf=NULL;
+
 	if(!this->feed())
 		return 0;
 
-	DBFile *int_dbf=NULL;
 	if(!this->create) {
 		int_dbf=this->setup_dbf(1);
 	}
@@ -162,9 +205,7 @@ int SortedHelper :: unset_dirty()
 	if(!this->create)
 		if(!this->reboot())
 			return 0;
-
 	this->dirty=0;
-
 	return 1;
 }
 

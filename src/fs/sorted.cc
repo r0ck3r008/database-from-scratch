@@ -27,23 +27,6 @@ SortedFile :: ~SortedFile()
 	delete this->f_info->pg;
 }
 
-int SortedFile :: fetch(int pg_num)
-{
-	if(this->helper->chk_dirty())
-		if(!this->helper->unset_dirty())
-			return 0;
-
-	int curr_len=this->f_info->file->GetLength();
-	if(pg_num<curr_len) {
-		this->f_info->pg->EmptyItOut();
-		this->f_info->file->GetPage(this->f_info->pg, pg_num);
-		this->helper->set_curr_pg(pg_num);
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
 int SortedFile :: Create()
 {
 	if(!this->f_info->file->Open(0, this->f_info->fname))
@@ -73,32 +56,7 @@ void SortedFile :: Add(Record *placeholder)
 	if(!this->helper->chk_dirty())
 		this->helper->set_dirty();
 
-	if(this->helper->get_create()) {
-		off_t curr_len=this->f_info->file->GetLength();
-		int curr_pg=this->helper->fetch_curr_pg();
-		if(curr_len==0 || curr_pg==curr_len-2) {
-			//this is on latest page
-			//check size and writeback if necessary
-			if(this->f_info->pg->get_curr_size() +
-					placeholder->get_size() > PAGE_SIZE) {
-				this->f_info->file->AddPage(this->f_info->pg,
-								curr_pg+1);
-				this->f_info->pg->EmptyItOut();
-			}
-		} else {
-			//fetch latest page for writing... this is a read write
-			//alternating situation
-			this->fetch(curr_len-1);
-		}
-
-		if(!this->f_info->pg->Append(placeholder)) {
-			std :: cerr << "Error in adding record!\n";
-			_exit(-1);
-		}
-
-	} else {
-		this->helper->Add(placeholder);
-	}
+	this->helper->Add(placeholder, 0);
 }
 
 void SortedFile :: Load(Schema *sch, const char *fname)
@@ -141,7 +99,7 @@ void SortedFile :: MoveFirst()
 		}
 
 	int curr_len=this->f_info->file->GetLength();
-	if(!this->fetch(0)) {
+	if(!this->helper->fetch(0)) {
 		std :: cerr << "Error in fetching page 0\n";
 		_exit(-1);
 	}
@@ -159,7 +117,7 @@ int SortedFile :: GetNext(Record *placeholder)
 		int stat=this->f_info->pg->GetFirst(placeholder);
 		if(!stat) {
 			if(curr_pg!=curr_len-2)
-				if(!this->fetch(curr_pg+1))
+				if(!this->helper->fetch(curr_pg+1))
 					ret=0;
 			else
 				ret=0;

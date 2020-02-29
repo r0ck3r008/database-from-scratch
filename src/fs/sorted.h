@@ -47,12 +47,13 @@ public:
 	~SortedHelper();
 	void set_create(int);
 	int get_create();
+	int fetch(int);
 	void set_dirty();
 	int unset_dirty();
 	int fetch_curr_pg();
 	void set_curr_pg(int);
 	int chk_dirty();
-	void Add(Record *);
+	void Add(Record *, int);
 };
 
 class SortedFile
@@ -61,9 +62,6 @@ private:
 	SortedHelper *helper;
 	Record *head;
 	struct file_info *f_info;
-
-private:
-	int fetch(int);
 
 public:
 	SortedFile(struct SortInfo *,
