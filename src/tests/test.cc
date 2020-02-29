@@ -44,7 +44,7 @@ void test1 () {
 
 	OrderMaker o;
 	rela->get_sort_order (o);
-	struct SortInfo startup = {&o, runlen};
+	struct SortInfo startup = {o, runlen};
 	DBFile dbfile;
 	cout << "\n output to dbfile : " << rela->path () << endl;
 	dbfile.Create (rela->path(), Sorted, &startup);
