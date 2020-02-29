@@ -1,7 +1,7 @@
 COMPILER := g++
 COMPILER_FLAGS := -g -c
 
-all: file.o record.o dbfile.o heap.o sorted.o
+all: file.o record.o dbfile.o heap.o sorted.o sort_helper.o
 
 file.o: file.cc file.h
 	${COMPILER} ${COMPILER_FLAGS} file.cc
@@ -17,6 +17,9 @@ heap.o: heap.cc heap.h
 
 sorted.o: sorted.cc sorted.h
 	${COMPILER} ${COMPILER_FLAGS} sorted.cc
+
+sort_helper.o: sort_helper.cc sorted.h
+	${COMPILER} ${COMPILER_FLAGS} sort_helper.cc
 
 clean:
 	rm -f ./*.o
