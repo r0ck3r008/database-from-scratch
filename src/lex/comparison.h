@@ -50,6 +50,7 @@ class OrderMaker {
 
 public:
 
+	OrderMaker &operator= (const OrderMaker &);
 	// creates an empty OrdermMaker
 	OrderMaker();
 

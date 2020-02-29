@@ -20,15 +20,19 @@ unsigned int Random_Generate();
 
 struct SortInfo
 {
-	struct OrderMaker *order;
+	struct OrderMaker order;
 	int run_len;
+	//defined at fs/dbfile.cc
+	struct SortInfo &operator= (const struct SortInfo &);
 };
 
 struct metadata
 {
 	int curLength;
 	fType type;
-	struct SortInfo *s_info;
+	struct SortInfo s_info;
+	//defined at fs/file.cc
+	struct metadata &operator= (const struct metadata &);
 };
 
 #endif
