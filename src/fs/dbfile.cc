@@ -38,8 +38,8 @@ int DBFile :: Create(const char *fname, fType type, SortInfo *info)
 
 	switch(type) {
 	case Sorted:
-		this->sorted=new SortedFile(info);
-		if(!this->sorted->Create(fname))
+		this->sorted=new SortedFile(info, fname);
+		if(!this->sorted->Create())
 			ret=0;
 		break;
 	case Tree:
@@ -49,8 +49,8 @@ int DBFile :: Create(const char *fname, fType type, SortInfo *info)
 			std :: cerr << "Unrecognized type: " << type
 				<< ". Falling Back to Heap!\n";
 
-		this->heap=new HeapFile;
-		if(!this->heap->Create(fname))
+		this->heap=new HeapFile(fname);
+		if(!this->heap->Create())
 			ret=0;
 	}
 
@@ -68,15 +68,15 @@ int DBFile :: Open(const char *fname)
 
 	switch(this->type) {
 	case Sorted:
-		this->sorted=new SortedFile(NULL);
-		if(!this->sorted->Open(fname))
+		this->sorted=new SortedFile(NULL, fname);
+		if(!this->sorted->Open())
 			ret=0;
 		break;
 	case Tree:
 		break;
 	default:
-		this->heap=new HeapFile;
-		if(!this->heap->Open(fname))
+		this->heap=new HeapFile(fname);
+		if(!this->heap->Open())
 			ret=0;
 	}
 

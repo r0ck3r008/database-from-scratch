@@ -21,6 +21,7 @@ private:
 
 private:
 	int get_type(const char *);
+
 public:
 	DBFile();
 	~DBFile();
