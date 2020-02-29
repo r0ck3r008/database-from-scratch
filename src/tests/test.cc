@@ -36,18 +36,15 @@ int add_data (FILE *src, int numrecs, int &res) {
 
 // create a dbfile interactively
 void test1 () {
-
-
-	OrderMaker o;
-	rela->get_sort_order (o);
-
 	int runlen = 0;
 	while (runlen < 1) {
 		cout << "\t\n specify runlength:\n\t ";
 		cin >> runlen;
 	}
-	struct SortInfo startup = {&o, runlen};
 
+	OrderMaker o;
+	rela->get_sort_order (o);
+	struct SortInfo startup = {&o, runlen};
 	DBFile dbfile;
 	cout << "\n output to dbfile : " << rela->path () << endl;
 	dbfile.Create (rela->path(), Sorted, &startup);
@@ -63,12 +60,13 @@ void test1 () {
 
 	int proc = 1, res = 1, tot = 0;
 	while (proc && res) {
-		int x = 0;
+		int x = 1;
 		while (x < 1 || x > 3) {
 			cout << "\n select option for : " << rela->path () << endl;
 			cout << " \t 1. add a few (1 to 1k recs)\n";
 			cout << " \t 2. add a lot (1k to 1e+06 recs) \n";
 			cout << " \t 3. run some query \n \t ";
+
 			cin >> x;
 		}
 		if (x < 3) {
