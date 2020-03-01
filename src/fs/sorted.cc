@@ -116,11 +116,12 @@ int SortedFile :: GetNext(Record *placeholder)
 	while(ret) {
 		int stat=this->f_info->pg->GetFirst(placeholder);
 		if(!stat) {
-			if(curr_pg!=curr_len-2)
+			if(curr_pg!=curr_len-2) {
 				if(!this->helper->fetch(curr_pg+1))
 					ret=0;
-			else
+			} else {
 				ret=0;
+			}
 		} else {
 			break;
 		}
