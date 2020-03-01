@@ -37,9 +37,9 @@ private:
 	struct file_info *f_info;
 	int dirty, create, curr_pg;
 private:
-	DBFile *setup_dbf(int);
+	int setup_dbf(DBFile **, int);
 	int feed();
-	int writeback(DBFile *);
+	int writeback(DBFile **);
 	int reboot();
 
 public:

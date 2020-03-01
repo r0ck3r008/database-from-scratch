@@ -1,6 +1,8 @@
 #include<stdio.h>
 #include<string.h>
 #include<errno.h>
+#include<sys/types.h>
+#include<sys/stat.h>
 #include<unistd.h>
 
 #include"sorted.h"
@@ -72,22 +74,24 @@ void SortedHelper :: set_dirty()
 int SortedHelper :: feed()
 {
 	if(!this->create) {
-		DBFile *dbf=NULL;
-		if((dbf=this->setup_dbf(0))==NULL)
+		DBFile **dbf=new DBFile *;
+		if(!this->setup_dbf(dbf, 0))
 			return 0;
 
 		Record *tmp=new Record;
-
 		while(1) {
-			if(!dbf->GetNext(tmp))
+			if(!(*dbf)->GetNext(tmp))
 				break;
-
 			this->in_pipe->Insert(tmp);
 			delete tmp;
 			tmp=new Record;
+			std :: cerr << "Getting next!\n";
 		}
 
+		if(!(*dbf)->Close())
+			return 0;
 		delete tmp;
+		delete *dbf;
 		delete dbf;
 	}
 
@@ -95,20 +99,21 @@ int SortedHelper :: feed()
 	return 1;
 }
 
-DBFile *SortedHelper :: setup_dbf(int create_flag)
+int SortedHelper :: setup_dbf(DBFile **dbf, int create_flag)
 {
-	DBFile *int_dbf=new DBFile;
-	if(create_flag)
-		if(!int_dbf->Create(tmp_name, Sorted, this->f_info->s_info))
-			return NULL;
-	else
-		if(!int_dbf->Open(this->f_info->fname))
-			return NULL;
+	*dbf=new DBFile;
+	if(create_flag) {
+		if(!(*dbf)->Create(tmp_name, Sorted, this->f_info->s_info))
+			return 0;
+	} else {
+		if(!(*dbf)->Open(this->f_info->fname))
+			return 0;
+	}
 
-	return int_dbf;
+	return 1;
 }
 
-int SortedHelper :: writeback(DBFile *dbf)
+int SortedHelper :: writeback(DBFile **dbf)
 {
 	Record *tmp=new Record;
 	while(1) {
@@ -116,12 +121,28 @@ int SortedHelper :: writeback(DBFile *dbf)
 		if(!stat)
 			break;
 
-		if(dbf==NULL)
+		if(*dbf==NULL)
 			this->Add(tmp, 1);
 		else
-			dbf->Add(tmp);
+			(*dbf)->Add(tmp);
 		delete tmp;
 		tmp=new Record;
+	}
+
+	if(*dbf!=NULL) {
+		if(!(*dbf)->Close())
+			return 0;
+		delete *dbf;
+		delete dbf;
+	}
+
+	struct stat buf;
+	if(stat("bin/runs.bin", &buf)==0) {
+		if(unlink("bin/runs.bin")<0) {
+			std :: cerr << "Error in deleting old runs file!"
+				<< strerror(errno) << std :: endl;
+			_exit(-1);
+		}
 	}
 
 	delete tmp;
@@ -136,7 +157,7 @@ int SortedHelper :: reboot()
 	this->f_info->pg->EmptyItOut();
 	delete this->f_info->pg;
 
-	if(remove(this->f_info->fname)<0) {
+	if(unlink(this->f_info->fname)<0) {
 		std :: cerr << "Error in removing Old file!\n"
 			<< strerror(errno) << std :: endl;
 		_exit(-1);
@@ -158,20 +179,18 @@ int SortedHelper :: reboot()
 
 void SortedHelper :: Add(Record *placeholder, int internal)
 {
-	if(!this->chk_dirty())
-		this->set_dirty();
-
 	if(internal && this->get_create()) {
 		off_t curr_len=this->f_info->file->GetLength();
 		int curr_pg=this->fetch_curr_pg();
-		if(curr_len==0 || curr_pg==curr_len-2) {
+		if(curr_len==0 || curr_pg==curr_len-1) {
 			//this is on latest page
 			//check size and writeback if necessary
 			if(this->f_info->pg->get_curr_size() +
 					placeholder->get_size() > PAGE_SIZE) {
 				this->f_info->file->AddPage(this->f_info->pg,
-								curr_pg+1);
+								curr_pg);
 				this->f_info->pg->EmptyItOut();
+				this->curr_pg++;
 			}
 		} else {
 			//fetch latest page for writing... this is a read write
@@ -183,7 +202,6 @@ void SortedHelper :: Add(Record *placeholder, int internal)
 			std :: cerr << "Error in adding record!\n";
 			_exit(-1);
 		}
-
 	} else {
 		this->in_pipe->Insert(placeholder);
 	}
@@ -191,13 +209,17 @@ void SortedHelper :: Add(Record *placeholder, int internal)
 
 int SortedHelper :: unset_dirty()
 {
-	DBFile *int_dbf=NULL;
+	this->dirty=0;
+	DBFile **int_dbf=new DBFile *;
+	*int_dbf=NULL;
 
 	if(!this->feed())
 		return 0;
 
 	if(!this->create) {
-		int_dbf=this->setup_dbf(1);
+		if(!this->setup_dbf(int_dbf, 1)) {
+			return 0;
+		}
 	}
 	if(!this->writeback(int_dbf))
 		return 0;
@@ -205,7 +227,6 @@ int SortedHelper :: unset_dirty()
 	if(!this->create)
 		if(!this->reboot())
 			return 0;
-	this->dirty=0;
 	return 1;
 }
 
