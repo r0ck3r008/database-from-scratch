@@ -20,7 +20,7 @@ int add_data (FILE *src, int numrecs, int &res) {
 
 	int proc = 0;
 	int xx = 20000;
-	while ((res = temp->SuckNextRecord (rela->schema (), src)) && ++proc < numrecs) {
+	while (proc++ < numrecs && (res = temp->SuckNextRecord (rela->schema (), src))) {
 		dbfile.Add (temp);
 		if (proc == xx) cerr << "\t ";
 		if (proc % xx == 0) cerr << ".";
@@ -30,7 +30,7 @@ int add_data (FILE *src, int numrecs, int &res) {
 
 	delete temp;
 	dbfile.Close ();
-	return proc;
+	return proc-1;
 }
 
 
@@ -70,8 +70,7 @@ void test1 () {
 			cin >> x;
 		}
 		if (x < 3) {
-//			proc = add_data (tblfile,lrand48()%(int)pow(1e3,x)+(x-1)*1000, res);
-			proc = add_data (tblfile , 1000, res);
+			proc = add_data (tblfile,lrand48()%(int)pow(1e3,x)+(x-1)*1000, res);
 			tot += proc;
 			if (proc)
 				cout << "\n\t added " << proc << " recs..so far " << tot << endl;
