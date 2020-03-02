@@ -36,6 +36,7 @@ public:
 	int GetFirst (Record *firstOne);
 
 	int get_curr_size();
+	int get_curr_recs();
 
 	// this appends the record to the end of a page.  The return value
 	// is a one on success and a aero if there is no more space

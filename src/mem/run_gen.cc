@@ -82,6 +82,7 @@ exit:
 std :: vector <int> *RunGen :: generator()
 {
 	int flag=1;
+	int count=0;
 	while(flag) {
 		Record **rec;
 		std :: vector <Record *> rec_vec;
@@ -98,9 +99,11 @@ std :: vector <int> *RunGen :: generator()
 //			delete rec;
 		}
 		if(stat==-1) {
-			std :: cerr << "End of records!\n";
+			std :: cerr << "End of records!" << "Records: "
+				<< count + rec_count << std :: endl;
 			flag=0;
 		}
+		count+=rec_count;
 		//sort
 		Tournament *tour=new Tournament(rec_count, this->comp);
 		for(int i=0; i<rec_count; i++) {

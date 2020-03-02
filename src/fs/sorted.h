@@ -39,7 +39,7 @@ private:
 private:
 	int setup_dbf(DBFile **, int);
 	int feed();
-	int writeback(DBFile **);
+	int writeback(int);
 	int reboot();
 
 public:
@@ -47,9 +47,9 @@ public:
 	~SortedHelper();
 	void set_create(int);
 	int get_create();
-	int fetch(int);
-	void set_dirty();
-	int unset_dirty();
+	int fetch(int, int);
+	void set_dirty(int);
+	int unset_dirty(int);
 	int fetch_curr_pg();
 	void set_curr_pg(int);
 	int chk_dirty();
@@ -61,11 +61,12 @@ class SortedFile
 private:
 	SortedHelper *helper;
 	Record *head;
+	int pseudo;
 	struct file_info *f_info;
 
 public:
 	SortedFile(struct SortInfo *,
-			const char *);
+			const char *, int);
 	~SortedFile();
 	int Create();
 	int Open();

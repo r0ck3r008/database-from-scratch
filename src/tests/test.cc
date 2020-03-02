@@ -70,7 +70,8 @@ void test1 () {
 			cin >> x;
 		}
 		if (x < 3) {
-			proc = add_data (tblfile,lrand48()%(int)pow(1e3,x)+(x-1)*1000, res);
+//			proc = add_data (tblfile,lrand48()%(int)pow(1e3,x)+(x-1)*1000, res);
+			proc = add_data (tblfile , 1000, res);
 			tot += proc;
 			if (proc)
 				cout << "\n\t added " << proc << " recs..so far " << tot << endl;

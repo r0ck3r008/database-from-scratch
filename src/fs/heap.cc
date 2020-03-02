@@ -125,7 +125,7 @@ void HeapFile :: Add(Record *placeholder)
 {
 	off_t curr_len=this->file->GetLength();
 
-	if(curr_len==0 || this->curr_pg==curr_len-2) {
+	if(curr_len==0 || this->curr_pg==curr_len-1) {
 		//this is on latest page
 		//check size and writeback if necessary
 		if(this->pg->get_curr_size() + placeholder->get_size() >

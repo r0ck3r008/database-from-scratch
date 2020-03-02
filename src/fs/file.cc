@@ -65,6 +65,11 @@ int Page :: get_curr_size()
 	return this->curSizeInBytes;
 }
 
+int Page :: get_curr_recs()
+{
+	return this->numRecs;
+}
+
 int Page :: Append (Record *addMe) {
 	char *b = addMe->GetBits();
 

@@ -46,7 +46,7 @@ int DBFile :: Create(const char *fname, fType type, SortInfo *info)
 
 	switch(type) {
 	case Sorted:
-		this->sorted=new SortedFile(info, fname);
+		this->sorted=new SortedFile(info, fname, 0);
 		if(!this->sorted->Create())
 			ret=0;
 		break;
@@ -76,7 +76,7 @@ int DBFile :: Open(const char *fname)
 
 	switch(this->type) {
 	case Sorted:
-		this->sorted=new SortedFile(NULL, fname);
+		this->sorted=new SortedFile(NULL, fname, 0);
 		if(!this->sorted->Open())
 			ret=0;
 		break;
