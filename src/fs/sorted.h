@@ -61,6 +61,7 @@ class SortedFile
 private:
 	SortedHelper *helper;
 	Record *head;
+	OrderMaker *query;
 	int pseudo;
 	struct file_info *f_info;
 
@@ -75,6 +76,9 @@ public:
 	void Load(Schema *, const char *);
 	int GetNext(Record *);
 	int GetNext(Record *, CNF *, Record *);
+	int get_next_no_query(Record *, CNF *, Record *);
+	int get_next_query(Record *, CNF *, Record *);
+	int binary_search(Record *, CNF *, Record *);
 	int Close();
 };
 

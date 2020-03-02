@@ -23,6 +23,7 @@ SortedFile :: SortedFile(struct SortInfo *s_info, const char *fname, int pseudo)
 	this->f_info=new file_info(s_info, fname, file, pg);
 	this->helper=new SortedHelper(this->f_info);
 	this->pseudo=pseudo;
+	this->query=NULL;
 }
 
 SortedFile :: ~SortedFile()
@@ -139,13 +140,6 @@ int SortedFile :: GetNext(Record *placeholder)
 	return 1;
 }
 
-int SortedFile :: GetNext(Record *placeholder, CNF *cnf, Record *literal)
-{
-	int ret=1;
-
-	return ret;
-}
-
 int SortedFile :: Close()
 {
 	if(this->helper->chk_dirty())
@@ -167,4 +161,109 @@ int SortedFile :: Close()
 		}
 	}
 	return 1;
+}
+
+int SortedFile :: GetNext (Record *fetchme, CNF *cnf, Record *literal)
+{
+	if(this->helper->chk_dirty()) {
+		if(!this->helper->unset_dirty(pseudo))
+			return 0;
+	}
+
+	ComparisonEngine comp;
+
+	if (this->query==NULL) {
+		// query does not exist
+		this->query = new OrderMaker;
+		if (query->QueryOrderGen(&(this->f_info->s_info->order),
+						cnf) > 0) {
+			// query generated successfully
+			query->Print ();
+			if (this->binary_search(fetchme, cnf, literal)) {
+				// Found
+				return 1;
+			} else {
+				// binary search fails
+				return 0;
+			}
+		} else {
+			//query generated but is empty
+			return this->get_next_no_query(fetchme, cnf, literal);
+		}
+	} else {
+		// query exists
+		if (this->query->get_num_attrs() == 0) {
+			// invalid query
+			return this->get_next_no_query(fetchme, cnf, literal);
+		} else {
+			// valid query
+			return this->get_next_query(fetchme, cnf, literal);
+		}
+	}
+}
+
+int SortedFile :: get_next_query(Record *fetchme, CNF *cnf, Record *literal)
+{
+	ComparisonEngine comp;
+
+	while (this->GetNext(fetchme)) {
+		if (!comp.Compare (literal, query, fetchme,
+					&(this->f_info->s_info->order))){
+			if (comp.Compare (fetchme, literal, cnf)){
+				return 1;
+			}
+		}else {
+			break;
+		}
+	}
+	return 0;
+}
+
+int SortedFile :: get_next_no_query(Record *fetchme, CNF *cnf, Record *literal)
+{
+	ComparisonEngine comp;
+
+	while (this->GetNext(fetchme)) {
+		if (comp.Compare (fetchme, literal, cnf)){
+			return 1;
+		}
+	}
+	return 0;
+}
+
+int SortedFile :: binary_search(Record *fetchme, CNF *cnf, Record *literal)
+{
+	off_t first = this->helper->fetch_curr_pg();
+	off_t last = this->f_info->file->GetLength () - 1;
+	off_t mid = first;
+
+	Page *page = new Page;
+
+	ComparisonEngine comp;
+
+	while (true) {
+		mid = (first + last) / 2;
+		this->f_info->file->GetPage(page, mid);
+		if (page->GetFirst (fetchme)) {
+			if (comp.Compare (literal, this->query, fetchme, &(this->f_info->s_info->order)) <= 0) {
+				last = mid - 1;
+				if (last <= first) break;
+			} else {
+				first = mid + 1;
+				if (last <= first) break;
+			}
+		} else {
+			break;
+		}
+	}
+
+	if (comp.Compare (fetchme, literal, cnf)) {
+		delete this->f_info->pg;
+		this->helper->set_curr_pg(mid);
+		this->f_info->pg = page;
+		return 1;
+	} else {
+		delete page;
+		return 0;
+	}
 }
