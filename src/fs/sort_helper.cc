@@ -79,16 +79,13 @@ int SortedHelper :: feed()
 			return 0;
 		dbf->MoveFirst();
 		Record *tmp=new Record;
-//		int count=0;
 		while(1) {
 			if(!dbf->GetNext(tmp))
 				break;
 			this->in_pipe->Insert(tmp);
 			tmp=new Record;
-//			count++;
 		}
 
-//		std :: cout << "Fed " << count << " recs to bigq!\n";
 		if(!dbf->Close())
 			return 0;
 		delete tmp;
@@ -107,14 +104,12 @@ int SortedHelper :: writeback(int flag)
 							tmp_name, 1);
 		if(!sorted->Create())
 			return 0;
-//		int count=0;
 		while(1) {
 			int stat=this->out_pipe->Remove(tmp);
 			if(!stat)
 				break;
 
 			sorted->Add(tmp);
-//			count++;
 			delete tmp;
 			tmp=new Record;
 		}
@@ -122,7 +117,6 @@ int SortedHelper :: writeback(int flag)
 			return 0;
 		delete tmp;
 		delete sorted;
-//		std :: cout << "Added " << count << " recs to tmp file!\n";
 	} else {
 		this->f_info->file->AddPage(this->f_info->pg, this->curr_pg++);
 		this->f_info->pg->EmptyItOut();
