@@ -13,6 +13,7 @@ class Comparison {
 
 	friend class ComparisonEngine;
 	friend class CNF;
+	friend class OrderMaker;
 
 	Target operand1;
 	int whichAtt1;
@@ -36,7 +37,7 @@ public:
 
 
 class Schema;
-
+class CNF;
 // This structure encapsulates a sort order for records
 class OrderMaker {
 
@@ -60,6 +61,8 @@ public:
 
 	// print to the screen
 	void Print ();
+	int QueryOrderGen(OrderMaker *, CNF *);
+	int get_num_attrs();
 };
 
 class Record;
@@ -70,6 +73,7 @@ class Record;
 class CNF {
 
 	friend class ComparisonEngine;
+	friend class OrderMaker;
 
 	Comparison orList[MAX_ANDS][MAX_ORS];
 

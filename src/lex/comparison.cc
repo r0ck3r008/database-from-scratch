@@ -126,7 +126,65 @@ void OrderMaker :: Print () {
 	}
 }
 
+int OrderMaker :: get_num_attrs()
+{
+	return this->numAtts;
+}
 
+int OrderMaker :: QueryOrderGen(OrderMaker *order, CNF *cnf)
+{
+	this->numAtts = 0;
+	bool found = false;
+
+	for (int i = 0; i < order->numAtts; ++i) {
+		for (int j = 0; j < cnf->numAnds; ++j) {
+			if (cnf->orLens[j] != 1) {
+				continue;
+			}
+
+			if (cnf->orList[j][0].op != Equals) {
+				continue;
+			}
+
+			if ((cnf->orList[i][0].operand1==Left
+				&& cnf->orList[i][0].operand2==Left) ||
+				(cnf->orList[i][0].operand2==Right
+				&& cnf->orList[i][0].operand1==Right) ||
+				(cnf->orList[i][0].operand1==Left
+				&& cnf->orList[i][0].operand2==Right) ||
+				(cnf->orList[i][0].operand1==Right
+				&& cnf->orList[i][0].operand2==Left)) {
+				continue;
+			}
+
+			if (cnf->orList[j][0].operand1==Left &&
+			cnf->orList[j][0].whichAtt1==order->whichAtts[i]) {
+				this->whichAtts[this->numAtts]=
+					cnf->orList[i][0].whichAtt2;
+				this->whichTypes[this->numAtts]=
+					cnf->orList[i][0].attType;
+				this->numAtts++;
+				found = true;
+				break;
+			}
+
+			if (cnf->orList[j][0].operand2 == Left &&
+			cnf->orList[j][0].whichAtt2 == order->whichAtts[i]) {
+				this->whichAtts[this->numAtts]=
+					cnf->orList[i][0].whichAtt1;
+				this->whichTypes[this->numAtts]=
+					cnf->orList[i][0].attType;
+				this->numAtts++;
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			break;
+		}
+	}
+	return this->numAtts;
+}
 
 int CNF :: GetSortOrders (OrderMaker &left, OrderMaker &right) {
 
@@ -623,5 +681,3 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *mySchema,
 	remove("sdafdsfFFDSDA");
 	remove("hkljdfgkSDFSDF");
 }
-
-
