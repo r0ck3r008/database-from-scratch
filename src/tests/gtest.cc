@@ -1,13 +1,14 @@
-#include "gtest/gtest.h"
+#include<gtest/gtest.h>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<string.h>
+#include<errno.h>
+#include<unistd.h>
+
 #include "lex/comparison.h"
 #include "fs/dbfile.h"
 #include "lex/comparison_engine.h"
 #include "test.h"
-#include "sys/types.h"
-#include "sys/stat.h"
-#include "unistd.h"
-#include "string.h"
-#include "errno.h"
 #include "mem/run_gen.h"
 #include "mem/tournament.h"
 
