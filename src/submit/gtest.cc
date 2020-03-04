@@ -11,15 +11,15 @@
 #include "test.h"
 #include "run_gen.h"
 #include "tournament.h"
+#include "sorted.h"
 
 relation *rela;
 DBFile dbfile;
 int runLength = 4;
 RunGen rgen(NULL, runLength, NULL);
 Tournament tour(4, NULL);
-// const char *dbfile_dir = "out/"; // dir where binary heap files should be stored
-// const char *tpch_dir ="tpch-dbgen/"; // dir where dbgen tpch files (extension *.tbl) can be found
-// const char *catalog_path = "db/catalog"; // full path of the catalog file
+SortedFile sorted(NULL, NULL, 1);
+Record *placeholder = new Record();
 
 TEST (DBFILETEST, DBCreate) {
 
@@ -60,20 +60,23 @@ TEST(TOURNAMENTTEST, InvalidNumberOfPlayer)
 {
 	ASSERT_DEATH(Tournament tou(0, NULL), "Invalid number of players!");
 }
+
+TEST(SORTEDFILETEST, GetNext)
+{
+	//required to have sorted customer.bin file
+	dbfile.Open("bin/customer.bin");
+	EXPECT_EQ(dbfile.GetNext(placeholder), 1);
+	dbfile.Close();
+}
+
 int main (int argc, char **argv) {
 
 	testing::InitGoogleTest(&argc, argv);
 
 	setup();
 
-	int stat;
-	for(int i=0; i<8; i++) {
-	rela = rel [i];
-	stat=RUN_ALL_TESTS();
-	if(stat)
-		break;
-	}
-
+	rela=rel[2];
+	int stat=RUN_ALL_TESTS();
 	cleanup();
 	return stat;
 }
