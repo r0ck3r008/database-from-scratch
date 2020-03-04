@@ -1,6 +1,8 @@
 #include<sys/types.h>
 #include<sys/stat.h>
 #include<unistd.h>
+#include<string.h>
+#include<errno.h>
 
 #include"sorted.h"
 
@@ -137,11 +139,9 @@ int SortedHelper :: unset_dirty(int pseudo)
 		return 0;
 
 	if(!pseudo) {
-		struct stat buf;
-		if(stat("bin/runs.bin", &buf)==0) {
-			if(unlink("bin/runs.bin")<0)
-				return 0;
-		}
+		if(!this->reboot())
+			return 0;
+
 	}
 
 	return 1;
@@ -180,4 +180,27 @@ void SortedHelper :: set_curr_pg(int pg_num)
 int SortedHelper :: chk_dirty()
 {
 	return ((this->dirty) ? 1 : 0);
+}
+
+int SortedHelper :: reboot()
+{
+	if(!this->f_info->file->Close())
+		return 0;
+
+	struct stat buf;
+	if(stat("bin/runs.bin", &buf)==0) {
+		if(unlink("bin/runs.bin")<0)
+			return 0;
+	}
+
+	if(!stat(tmp_name, &buf)) {
+		if(rename(tmp_name, this->f_info->fname)<0) {
+			std :: cerr << "Error in renaming!"
+				<< strerror(errno) << std :: endl;
+			_exit(-1);
+		}
+	}
+
+	if(!this->f_info->file->Open(1, this->f_info->fname))
+		return 0;
 }

@@ -149,17 +149,6 @@ int SortedFile :: Close()
 	if(!this->f_info->file->Close())
 		return 0;
 
-	//TODO
-	//Take care of moving the tmp file when someone switches between reading
-	//an writing without closing the file
-	struct stat buf;
-	if(!this->pseudo && !stat(tmp_name, &buf)) {
-		if(rename(tmp_name, this->f_info->fname)<0) {
-			std :: cerr << "Error in renaming!"
-				<< strerror(errno) << std :: endl;
-			_exit(-1);
-		}
-	}
 	return 1;
 }
 
@@ -175,7 +164,7 @@ int SortedFile :: GetNext (Record *fetchme, CNF *cnf, Record *literal)
 	if (this->query==NULL) {
 		// query does not exist
 		this->query = new OrderMaker;
-		if (query->QueryOrderGen(&(this->f_info->s_info->order),
+		if (query->query_generator(&(this->f_info->s_info->order),
 						cnf) > 0) {
 			// query generated successfully
 			query->Print ();

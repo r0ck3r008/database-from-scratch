@@ -40,7 +40,6 @@ private:
 	int setup_dbf(DBFile **, int);
 	int feed();
 	int writeback(int);
-	int reboot();
 
 public:
 	SortedHelper(struct file_info *);
@@ -54,6 +53,7 @@ public:
 	void set_curr_pg(int);
 	int chk_dirty();
 	void Add(Record *, int);
+	int reboot();
 };
 
 class SortedFile
