@@ -1,6 +1,6 @@
 #define NEED_STRUCT
 
-#include<pthread.h>
+#include <pthread.h>
 #include<math.h>
 
 #include"bigq.h"
@@ -20,17 +20,18 @@ int add_data (FILE *src, int numrecs, int &res) {
 
 	int proc = 0;
 	int xx = 20000;
-	while (proc++ < numrecs && (res = temp->SuckNextRecord (rela->schema (), src))) {
+	while (proc < numrecs && (res = temp->SuckNextRecord (rela->schema (), src))) {
 		dbfile.Add (temp);
 		if (proc == xx) cerr << "\t ";
 		if (proc % xx == 0) cerr << ".";
 		delete temp;
 		temp=new Record;
+		proc++;
 	}
 
 	delete temp;
 	dbfile.Close ();
-	return (proc>0) ? (proc-1) : 0;
+	return (proc);
 }
 
 
@@ -70,7 +71,10 @@ void test1 () {
 			cin >> x;
 		}
 		if (x < 3) {
-			proc = add_data (tblfile,lrand48()%(int)pow(1e3,x)+(x-1)*1000, res);
+			int rand_num=lrand48()%(int)pow(1e3,x)+(x-1)*1000;
+			if(rand_num==0)
+				continue;
+			proc = add_data (tblfile, rand_num, res);
 			tot += proc;
 			if (proc)
 				cout << "\n\t added " << proc << " recs..so far " << tot << endl;
