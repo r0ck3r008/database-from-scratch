@@ -61,7 +61,7 @@ public:
 
 	// print to the screen
 	void Print ();
-	int QueryOrderGen(OrderMaker *, CNF *);
+	int query_generator(OrderMaker *, CNF *);
 	int get_num_attrs();
 };
 

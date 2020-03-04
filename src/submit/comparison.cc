@@ -131,7 +131,7 @@ int OrderMaker :: get_num_attrs()
 	return this->numAtts;
 }
 
-int OrderMaker :: QueryOrderGen(OrderMaker *order, CNF *cnf)
+int OrderMaker :: query_generator(OrderMaker *order, CNF *cnf)
 {
 	this->numAtts = 0;
 	bool found = false;
