@@ -1,6 +1,11 @@
+src/submit/tmp/*
+!src/submit/tmp/.gitkeep
 src/tmp/*
 !src/tmp/.gitkeep
 src/bin/*
-src/.vscode
 !src/bin/.gitkeep
+src/submit/bin/*
+!src/submit/bin/.gitkeep
 src/*.out
+src/submit/*.out
+src/.vscode
