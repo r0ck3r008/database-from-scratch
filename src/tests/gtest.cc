@@ -10,14 +10,15 @@
 #include "errno.h"
 #include "mem/run_gen.h"
 #include "mem/tournament.h"
-#include "fs/heap.h"
+#include "fs/sorted.h"
 
 relation *rela;
 DBFile dbfile;
 int runLength = 4;
 RunGen rgen(NULL, runLength, NULL);
 Tournament tour(4, NULL);
-HeapFile heapfile(NULL);
+SortedFile sorted(NULL, NULL, 1);
+Record *placeholder = new Record();
 
 TEST (DBFILETEST, DBCreate) {
 
@@ -56,12 +57,15 @@ TEST (TOURNAMENTTEST, Promote)
 
 TEST(TOURNAMENTTEST, InvalidNumberOfPlayer)
 {
-	ASSERT_DEATH(Tournament tou(0, NULL), "");
+	ASSERT_DEATH(Tournament tou(0, NULL), "Invalid number of players!");
 }
 
-TEST(HEAPFILETEST, Open)
+TEST(SORTEDFILETEST, GetNext)
 {
-	EXPECT_EQ(heapfile.Open(), 0);
+	//required to have sorted customer.bin file
+	dbfile.Open("bin/customer.bin");
+	EXPECT_EQ(dbfile.GetNext(placeholder), 1);
+	dbfile.Close();
 }
 
 int main (int argc, char **argv) {
