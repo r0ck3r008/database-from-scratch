@@ -1,12 +1,12 @@
 #ifndef FUNCTION_H
 #define FUNCTION_H
-#include "Record.h"
-#include "ParseTree.h"
+#include "fs/record.h"
+#include "parse_tree.h"
 
 #define MAX_DEPTH 100
 
 
-enum ArithOp {PushInt, PushDouble, ToDouble, ToDouble2Down, 
+enum ArithOp {PushInt, PushDouble, ToDouble, ToDouble2Down,
 	IntUnaryMinus, IntMinus, IntPlus, IntDivide, IntMultiply,
 	DblUnaryMinus, DblMinus, DblPlus, DblDivide, DblMultiply};
 
@@ -14,7 +14,7 @@ struct Arithmatic {
 
 	ArithOp myOp;
 	int recInput;
-	void *litInput;	
+	void *litInput;
 };
 
 class Function {

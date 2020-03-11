@@ -1,10 +1,10 @@
 #ifndef REL_OP_H
 #define REL_OP_H
 
-#include "Pipe.h"
-#include "DBFile.h"
-#include "Record.h"
-#include "Function.h"
+#include "mem/pipe.h"
+#include "fs/dbfile.h"
+#include "fs/record.h"
+#include "function.h"
 
 class RelationalOp {
 	public:

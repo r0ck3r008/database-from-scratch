@@ -1,25 +1,25 @@
- 
+
 %{
 
-	#include "ParseTree.h" 
+#include "ParseTree.h"
 	#include <stdio.h>
 	#include <string.h>
 	#include <stdlib.h>
 	#include <iostream>
 
-	extern "C" int yyfunclex();
+extern "C" int yyfunclex();
 	extern "C" int yyfuncparse();
 	extern "C" void yyfuncerror(char *s);
-  
-	// this is the final parse tree that is returned	
-	struct FuncOperator *finalfunc;	
+
+// this is the final parse tree that is returned
+	struct FuncOperator *finalfunc;
 
 %}
 
 // this stores all of the types returned by production rules
 %union {
- 	struct FuncOperand *myOperand;
-	struct FuncOperator *myOperator; 
+	struct FuncOperand *myOperand;
+	struct FuncOperator *myOperator;
 	char *actualChars;
 	char whichOne;
 }
@@ -30,7 +30,7 @@
 
 %type <myOperand> SimpleExp
 %type <myOperator> CompoundExp
-%type <whichOne> Op 
+%type <whichOne> Op
 
 %start CompoundExp
 
@@ -38,68 +38,68 @@
 //******************************************************************************
 // SECTION 3
 //******************************************************************************
-/* This is the PRODUCTION RULES section which defines how to "understand" the 
+/* This is the PRODUCTION RULES section which defines how to "understand" the
  * input language and what action to take for each "statment"
  */
 
 %%
 
 CompoundExp: SimpleExp Op CompoundExp
-{
-	$$ = (struct FuncOperator *) malloc (sizeof (struct FuncOperator));	
+	   {
+	$$ = (struct FuncOperator *) malloc (sizeof (struct FuncOperator));
 	$$->leftOperator = (struct FuncOperator *) malloc (sizeof (struct FuncOperator));
 	$$->leftOperator->leftOperator = NULL;
 	$$->leftOperator->leftOperand = $1;
 	$$->leftOperator->right = NULL;
 	$$->leftOperand = NULL;
 	$$->right = $3;
-	$$->code = $2;	
+	$$->code = $2;
 
-	finalfunc = $$;
+finalfunc = $$;
 }
 
 | '(' CompoundExp ')' Op CompoundExp
 {
-	$$ = (struct FuncOperator *) malloc (sizeof (struct FuncOperator));	
+	$$ = (struct FuncOperator *) malloc (sizeof (struct FuncOperator));
 	$$->leftOperator = $2;
 	$$->leftOperand = NULL;
 	$$->right = $5;
-	$$->code = $4;	
+	$$->code = $4;
 
-	finalfunc = $$;
+finalfunc = $$;
 }
 
 | '(' CompoundExp ')'
 {
 	$$ = $2;
 
-	finalfunc = $$;
+finalfunc = $$;
 }
 
 | SimpleExp
 {
-	$$ = (struct FuncOperator *) malloc (sizeof (struct FuncOperator));	
+	$$ = (struct FuncOperator *) malloc (sizeof (struct FuncOperator));
 	$$->leftOperator = NULL;
 	$$->leftOperand = $1;
-	$$->right = NULL;	
+	$$->right = NULL;
 
-	finalfunc = $$;
+finalfunc = $$;
 }
 
 | '-' CompoundExp
 {
-	$$ = (struct FuncOperator *) malloc (sizeof (struct FuncOperator));	
+	$$ = (struct FuncOperator *) malloc (sizeof (struct FuncOperator));
 	$$->leftOperator = $2;
 	$$->leftOperand = NULL;
-	$$->right = NULL;	
+	$$->right = NULL;
 	$$->code = '-';
 
-	finalfunc = $$;
+finalfunc = $$;
 }
 ;
 
 Op: '-'
-{
+  {
 	$$ = '-';
 }
 
@@ -120,30 +120,30 @@ Op: '-'
 ;
 
 
-SimpleExp: 
+SimpleExp:
 
 Float
 {
-        // construct and send up the operand containing the FP number
-        $$ = (struct FuncOperand *) malloc (sizeof (struct FuncOperand));
-        $$->code = DOUBLE;
-        $$->value = $1;
-} 
+	// construct and send up the operand containing the FP number
+	$$ = (struct FuncOperand *) malloc (sizeof (struct FuncOperand));
+	$$->code = DOUBLE;
+	$$->value = $1;
+}
 
 | Int
 {
-        // construct and send up the operand containing the integer
-        $$ = (struct FuncOperand *) malloc (sizeof (struct FuncOperand));
-        $$->code = INT;
-        $$->value = $1;
-} 
+	// construct and send up the operand containing the integer
+	$$ = (struct FuncOperand *) malloc (sizeof (struct FuncOperand));
+	$$->code = INT;
+	$$->value = $1;
+}
 
 | Name
 {
-        // construct and send up the operand containing the name
-        $$ = (struct FuncOperand *) malloc (sizeof (struct FuncOperand));
-        $$->code = NAME;
-        $$->value = $1;
+	// construct and send up the operand containing the name
+	$$ = (struct FuncOperand *) malloc (sizeof (struct FuncOperand));
+	$$->code = NAME;
+	$$->value = $1;
 }
 ;
 

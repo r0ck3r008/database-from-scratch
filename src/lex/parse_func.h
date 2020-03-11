@@ -32,7 +32,7 @@ struct FuncOperator {
 	// these are the operators on the left and on the right
 	struct FuncOperator *leftOperator;
 	struct FuncOperand *leftOperand;
-	struct FuncOperator *right;	
+	struct FuncOperator *right;
 
 };
 
