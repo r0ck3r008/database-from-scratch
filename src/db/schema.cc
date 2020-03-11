@@ -1,10 +1,10 @@
+#include "Schema.h"
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
 
-#include "schema.h"
-
-int Schema :: Find (const char *attName) {
+int Schema :: Find (char *attName) {
 
 	for (int i = 0; i < numAtts; i++) {
 		if (!strcmp (attName, myAtts[i].name)) {
@@ -16,7 +16,7 @@ int Schema :: Find (const char *attName) {
 	return -1;
 }
 
-Type Schema :: FindType (const char *attName) {
+Type Schema :: FindType (char *attName) {
 
 	for (int i = 0; i < numAtts; i++) {
 		if (!strcmp (attName, myAtts[i].name)) {
@@ -36,7 +36,31 @@ Attribute *Schema :: GetAtts () {
 	return myAtts;
 }
 
-Schema :: Schema (const char *fName, const char *relName) {
+
+Schema :: Schema (char *fpath, int num_atts, Attribute *atts) {
+	fileName = strdup (fpath);
+	numAtts = num_atts;
+	myAtts = new Attribute[numAtts];
+	for (int i = 0; i < numAtts; i++ ) {
+		if (atts[i].myType == Int) {
+			myAtts[i].myType = Int;
+		}
+		else if (atts[i].myType == Double) {
+			myAtts[i].myType = Double;
+		}
+		else if (atts[i].myType == String) {
+			myAtts[i].myType = String;
+		} 
+		else {
+			cout << "Bad attribute type for " << atts[i].myType << "\n";
+			delete [] myAtts;
+			exit (1);
+		}
+		myAtts[i].name = strdup (atts[i].name);
+	}
+}
+
+Schema :: Schema (char *fName, char *relName) {
 
 	FILE *foo = fopen (fName, "r");
 
@@ -50,7 +74,7 @@ Schema :: Schema (const char *fName, const char *relName) {
 	if (strcmp (space, "BEGIN")) {
 		cout << "Unfortunately, this does not seem to be a schema file.\n";
 		exit (1);
-	}
+	}	
 
 	while (1) {
 
@@ -90,7 +114,7 @@ Schema :: Schema (const char *fName, const char *relName) {
 	while (1) {
 		fscanf (foo, "%s", space);
 		if (!strcmp (space, "END")) {
-			break;
+			break;		
 		} else {
 			fscanf (foo, "%s", space);
 			numAtts++;
@@ -111,7 +135,7 @@ Schema :: Schema (const char *fName, const char *relName) {
 	for (int i = 0; i < numAtts; i++ ) {
 
 		// read in the attribute name
-		fscanf (foo, "%s", space);
+		fscanf (foo, "%s", space);	
 		myAtts[i].name = strdup (space);
 
 		// read in the attribute type
@@ -132,9 +156,6 @@ Schema :: Schema (const char *fName, const char *relName) {
 }
 
 Schema :: ~Schema () {
-	for(int i=0; i<numAtts; i++)
-		free(myAtts[i].name);
-	free(this->fileName);
 	delete [] myAtts;
 	myAtts = 0;
 }
