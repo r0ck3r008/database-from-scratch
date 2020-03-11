@@ -49,6 +49,8 @@ public:
 
 	int get_size();
 
+	int ComposeRecord(Schema *, const char *);
+
 	// reads the next record from a pointer to a text file; also requires
 	// that the schema be given; returns a 0 if there is no data left or
 	// if there is an error and returns a 1 otherwise
