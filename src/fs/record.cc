@@ -320,50 +320,69 @@ void Record :: MergeRecords (Record *left, Record *right, int numAttsLeft,
 	}
 }
 
-void Record :: Print (Schema *mySchema) {
+void Record :: Print(Schema *sch)
+{
+	char *buf=this->deserialize(sch);
 
+	cout << buf;
+	delete[] buf;
+}
+
+char *Record :: deserialize (Schema *mySchema) {
+
+	char *buf=new char[1024];
+	explicit_bzero(buf, sizeof(char)*1024);
 	int n = mySchema->GetNumAtts();
 	Attribute *atts = mySchema->GetAtts();
+	buf[0]='\0';
 
 	// loop through all of the attributes
 	for (int i = 0; i < n; i++) {
 
 		// print the attribute name
-		cout << atts[i].name << ": ";
-
+//		cout << atts[i].name << ": ";
+		sprintf(buf, "%s%s: ", buf, atts[i].name);
 		// use the i^th slot at the head of the record to get the
 		// offset to the correct attribute in the record
 		int pointer = ((int *) bits)[i + 1];
 
 		// here we determine the type, which given in the schema;
 		// depending on the type we then print out the contents
-		cout << "[";
+//		cout << "[";
+		sprintf(buf, "%s[", buf);
 
 		// first is integer
 		if (atts[i].myType == Int) {
 			int *myInt = (int *) &(bits[pointer]);
-			cout << *myInt;
+//			cout << *myInt;
+			sprintf(buf, "%s%d", buf, *myInt);
 
 			// then is a double
 		} else if (atts[i].myType == Double) {
 			double *myDouble = (double *) &(bits[pointer]);
-			cout << *myDouble;
+//			cout << *myDouble;
+			sprintf(buf, "%s%d", buf, *myDouble);
 
 			// then is a character string
 		} else if (atts[i].myType == String) {
 			char *myString = (char *) &(bits[pointer]);
-			cout << myString;
+//			cout << myString;
+			sprintf(buf, "%s%s", buf, myString);
 		}
 
-		cout << "]";
+//		cout << "]";
+		sprintf(buf, "%s]", buf);
 
 		// print out a comma as needed to make things pretty
 		if (i != n - 1) {
-			cout << ", ";
+//			cout << ", ";
+			sprintf(buf, "%s, ", buf);
 		}
 	}
 
-	cout << "\n";
+//	cout << "\n";
+	sprintf(buf, "%s\n", buf);
+	return buf;
 }
 
 
