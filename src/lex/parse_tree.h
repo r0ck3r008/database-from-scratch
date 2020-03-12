@@ -1,3 +1,5 @@
+#ifndef PARSE_TREE_H
+#define PARSE_TREE_H
 
 // these are the different types of operators that can appear
 // in a CNF expression
@@ -52,5 +54,4 @@ struct AndList {
 
 };
 
-
-
+#endif
