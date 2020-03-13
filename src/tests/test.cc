@@ -1,6 +1,6 @@
 #include "test.h"
-#include "BigQ.h"
-#include "RelOp.h"
+#include "mem/bigq.h"
+#include "lex/rel_op.h"
 #include <pthread.h>
 
 Attribute IA = {"int", Int};
@@ -90,7 +90,7 @@ void init_SF_c (char *pred_str, int numpgs) {
 	SF_c.Use_n_Pages (numpgs);
 }
 
-// select * from partsupp where ps_supplycost <1.03 
+// select * from partsupp where ps_supplycost <1.03
 // expected output: 31 records
 void q1 () {
 
@@ -166,7 +166,7 @@ void q3 () {
 }
 
 
-// select sum (ps_supplycost) from supplier, partsupp 
+// select sum (ps_supplycost) from supplier, partsupp
 // where s_suppkey = ps_suppkey;
 // expected output: 4.00406e+08
 void q4 () {
@@ -251,7 +251,7 @@ void q5 () {
 	cout << " query5 finished..output written to file " << fwpath << "\n";
 }
 
-// select sum (ps_supplycost) from supplier, partsupp 
+// select sum (ps_supplycost) from supplier, partsupp
 // where s_suppkey = ps_suppkey groupby s_nationkey;
 // expected output: 25 rows
 void q6 () {
@@ -298,10 +298,10 @@ void q6 () {
 
 	Schema sum_sch ("sum_sch", 1, &DA);
 	int cnt = clear_pipe (_out, &sum_sch, true);
-	cout << " query6 returned sum for " << cnt << " groups (expected 25 groups)\n"; 
+	cout << " query6 returned sum for " << cnt << " groups (expected 25 groups)\n";
 }
 
-void q7 () { 
+void q7 () {
 	/*
 	   select sum(ps_supplycost)
 	   from part, supplier, partsupp
@@ -313,11 +313,11 @@ ANSWER: 274251601.96 (5.91 sec)
 
 possible plan:
 SF(s_acctbal > 2500) => _s
-SF(p_partkey = p_partkey) => _p 
-SF(ps_partkey = ps_partkey) => _ps  
-On records from pipes _p and _ps: 
+SF(p_partkey = p_partkey) => _p
+SF(ps_partkey = ps_partkey) => _ps 
+On records from pipes _p and _ps:
 J(p_partkey = ps_partkey) => _p_ps
-On _s and _p_ps: 
+On _s and _p_ps:
 J(s_suppkey = ps_suppkey) => _s_p_ps
 On _s_p_ps:
 S(s_supplycost) => __s_p_ps
@@ -325,7 +325,7 @@ On __s_p_ps:
 W(__s_p_ps)
 
 Legend:
-SF : select all records that satisfy some simple cnf expr over recs from in_file 
+SF : select all records that satisfy some simple cnf expr over recs from in_file
 SP: same as SF but recs come from in_pipe
 J: select all records (from left_pipe x right_pipe) that satisfy a cnf expression
 P: project some atts from in-pipe
@@ -337,11 +337,11 @@ W: write out records from in_pipe to a file using out_schema
 	cout << " TBA\n";
 }
 
-void q8 () { 
+void q8 () {
 	/*
 	   select l_orderkey, l_partkey, l_suppkey
 	   from lineitem
-	   where l_returnflag = 'R' and l_discount < 0.04 or 
+	   where l_returnflag = 'R' and l_discount < 0.04 or
 	   l_returnflag = 'R' and l_shipmode = 'MAIL';
 
 ANSWER: 671392 rows in set (29.45 sec)
@@ -364,7 +364,7 @@ int main (int argc, char *argv[]) {
 		exit (0);
 	}
 
-	void (*query_ptr[]) () = {&q1, &q2, &q3, &q4, &q5, &q6, &q7, &q8};  
+	void (*query_ptr[]) () = {&q1, &q2, &q3, &q4, &q5, &q6, &q7, &q8}; 
 	void (*query) ();
 	int qindx = atoi (argv[1]);
 
