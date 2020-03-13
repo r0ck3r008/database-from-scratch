@@ -6,8 +6,6 @@
 void *run_thr(void *a)
 {
 	struct thr_args *arg=(struct thr_args *)a;
-	char **retval=new char *;
-	*retval=new char[256];
 
 	Record *tmp=new Record;
 	while(1) {
@@ -24,7 +22,7 @@ void *run_thr(void *a)
 	}
 
 	delete tmp;
-	pthread_exit((void **)retval);
+	pthread_exit(NULL);
 }
 
 WriteOut :: WriteOut()
@@ -43,7 +41,7 @@ void WriteOut :: Run(Pipe *in_pipe, FILE *f, Schema *sch)
 	this->arg->f=f;
 	this->arg->sch=sch;
 
-	int stat=pthread_create(&(this->tid), NULL, run_thr, NULL);
+	int stat=pthread_create(&(this->tid), NULL, run_thr, (void *)this->arg);
 	if(!stat) {
 		std :: cerr << "Error in starting the thread "
 			<< strerror(stat) << std :: endl;
@@ -53,20 +51,15 @@ void WriteOut :: Run(Pipe *in_pipe, FILE *f, Schema *sch)
 
 void WriteOut :: WaitUntilDone()
 {
-	void **retval;
-	int stat=pthread_join(this->tid, retval);
+	int stat=pthread_join(this->tid, NULL);
 
 	if(!stat) {
 		std :: cerr << "Error in joining the new thread: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);
 	} else {
-		std :: cout << "Thread Exited successfully: "
-			<< *(char **)retval;
+		std :: cout << "Thread Exited successfully\n";
 	}
-
-	delete[] *(char **)retval;
-	delete (char **)retval;
 }
 
 void WriteOut :: Use_n_Pages(int n)

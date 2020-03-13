@@ -6,15 +6,11 @@
 void *run_thr(void *input)
 {
 	struct thr_args *arg=(struct thr_args *)input;
-	char **retval=new char *;
-	*retval=new char[256];
 
 	Record *tmp=new Record;
 	while(1) {
-		if(!arg->dbf->GetNext(tmp, arg->cnf, arg->literal)) {
-			sprintf(*retval, "End of records!\n");
+		if(!arg->dbf->GetNext(tmp, arg->cnf, arg->literal))
 			break;
-		}
 		arg->out_pipe->Insert(tmp);
 
 		delete tmp;
@@ -23,7 +19,7 @@ void *run_thr(void *input)
 
 	delete tmp;
 	arg->out_pipe->ShutDown();
-	pthread_exit((void **)retval);
+	pthread_exit(NULL);
 }
 
 SelectFile :: SelectFile()
@@ -42,7 +38,7 @@ void SelectFile :: Run(DBFile *dbf, Pipe *out_pipe, CNF *cnf, Record *literal)
 	this->arg->out_pipe=out_pipe;
 	this->arg->cnf=cnf;
 	this->arg->literal=literal;
-	int stat=pthread_create(&(this->tid), NULL, run_thr, NULL);
+	int stat=pthread_create(&(this->tid), NULL, run_thr, (void *)this->arg);
 	if(!stat) {
 		std :: cerr << "Error in creating the thread: "
 			<< strerror(stat) << std :: endl;
@@ -57,17 +53,12 @@ void SelectFile :: Use_n_Pages(int n)
 
 void SelectFile :: WaitUntilDone()
 {
-	void **retval;
-	int stat=pthread_join(this->tid, retval);
+	int stat=pthread_join(this->tid, NULL);
 	if(!stat) {
 		std :: cerr << "Error in joining to the thread: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);
 	} else {
-		std :: cout << "Thread Exited Successfully: "
-			<< *(char **)retval << std :: endl;
+		std :: cout << "Thread Exited Successfully\n";
 	}
-
-	delete[] *(char **)retval;
-	delete (char **)retval;
 }

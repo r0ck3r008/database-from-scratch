@@ -16,8 +16,6 @@ SelectPipe :: ~SelectPipe()
 
 void *run_thr(void *a)
 {
-	char **retval=new char *;
-	*retval=new char[256];
 	struct thr_args *arg=(struct thr_args *)a;
 
 	Record *tmp=new Record;
@@ -35,7 +33,7 @@ void *run_thr(void *a)
 
 	arg->out_pipe->ShutDown();
 	delete tmp;
-	pthread_exit((void **)retval);
+	pthread_exit(NULL);
 }
 
 void SelectPipe :: Run(Pipe *in_pipe, Pipe *out_pipe, CNF *cnf, Record *literal)
@@ -57,20 +55,15 @@ void SelectPipe :: Run(Pipe *in_pipe, Pipe *out_pipe, CNF *cnf, Record *literal)
 
 void SelectPipe :: WaitUntilDone()
 {
-	void **retval;
-	int stat=pthread_join(this->tid, retval);
+	int stat=pthread_join(this->tid, NULL);
 
 	if(!stat) {
 		std :: cerr << "Error in joining the thread: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);
 	} else {
-		std :: cout << "Thread successfully exited with: "
-			<< *(char **)retval << std :: endl;
+		std :: cout << "Thread successfully exited with\n";
 	}
-
-	delete[] *(char **)retval;
-	delete (char **)retval;
 }
 
 void SelectPipe :: Use_n_Pages(int n)
