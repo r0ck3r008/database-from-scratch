@@ -1,11 +1,11 @@
 #include<string.h>
 #include<unistd.h>
 
-#include"../rel_op.h"
+#include"project.h"
 
 void *run_thr(void *a)
 {
-	struct thr_args *arg=(struct thr_args *)a;
+	struct project_args *arg=(struct project_args *)a;
 
 	Record *tmp=new Record;
 	while(1) {
@@ -25,7 +25,7 @@ void *run_thr(void *a)
 
 Project :: Project()
 {
-	this->arg=new struct thr_args;
+	this->arg=new struct project_args;
 }
 
 Project :: ~Project()

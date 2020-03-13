@@ -1,11 +1,11 @@
 #include<string.h>
 #include<unistd.h>
 
-#include"../rel_op.h"
+#include"join.h"
 
 void *run_thr(void *a)
 {
-	struct thr_args *arg=(struct thr_args *)a;
+	struct join_args *arg=(struct join_args *)a;
 	char **retval=new char *;
 	*retval=new char[256];
 
@@ -18,8 +18,6 @@ void *run_thr(void *a)
 			break;
 		arg->comp->rec1=&tmp1;
 		arg->comp->rec2=&tmp2;
-		if(Compare(comp))
-			arg->out_pipe->Insert
 	}
 
 	pthread_exit((void **)retval);
@@ -27,7 +25,7 @@ void *run_thr(void *a)
 
 Join :: Join()
 {
-	this->arg=new struct thr_args;
+	this->arg=new struct join_args;
 }
 
 Join :: ~Join()

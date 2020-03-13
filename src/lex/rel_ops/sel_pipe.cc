@@ -1,11 +1,11 @@
 #include<string.h>
 #include<unistd.h>
 
-#include"../rel_op.h"
+#include"sel_pipe.h"
 
 SelectPipe :: SelectPipe()
 {
-	this->arg=new struct thr_args;
+	this->arg=new struct pipe_args;
 }
 
 SelectPipe :: ~SelectPipe()
@@ -16,7 +16,7 @@ SelectPipe :: ~SelectPipe()
 
 void *run_thr(void *a)
 {
-	struct thr_args *arg=(struct thr_args *)a;
+	struct pipe_args *arg=(struct pipe_args *)a;
 
 	Record *tmp=new Record;
 	while(1) {

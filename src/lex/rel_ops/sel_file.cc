@@ -1,11 +1,11 @@
 #include<string.h>
 #include<unistd.h>
 
-#include"../rel_op.h"
+#include"sel_file.h"
 
 void *run_thr(void *input)
 {
-	struct thr_args *arg=(struct thr_args *)input;
+	struct file_args *arg=(struct file_args *)input;
 
 	Record *tmp=new Record;
 	while(1) {
@@ -24,7 +24,7 @@ void *run_thr(void *input)
 
 SelectFile :: SelectFile()
 {
-	this->arg=new struct thr_args;
+	this->arg=new struct file_args;
 }
 
 SelectFile :: ~SelectFile()
