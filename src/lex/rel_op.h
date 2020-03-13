@@ -13,13 +13,13 @@ struct thr_args
 {
 public:
 	DBFile *dbf;
-	Pipe *in_pipe;
-	Pipe *out_pipe;
+	Pipe *in_pipe, *in_pipeR, *out_pipe;
 	CNF *cnf;
 	Record *literal;
 	struct comparator *comp;
 	FILE *f;
 	Schema *sch;
+	int *keep, atts_in, atts_out;
 };
 
 class RelationalOp
@@ -66,7 +66,14 @@ public:
 
 class Project : public RelationalOp
 {
+private:
+	struct thr_args *arg;
+	pthread_t tid;
+	int max_pgs;
+
 public:
+	Project();
+	~Project();
 	void Run (Pipe *, Pipe *, int *, int, int);
 	void WaitUntilDone ();
 	void Use_n_Pages (int);
@@ -74,7 +81,14 @@ public:
 
 class Join : public RelationalOp
 {
+private:
+	struct thr_args *arg;
+	pthread_t tid;
+	int max_pgs;
+
 public:
+	Join();
+	~Join();
 	void Run (Pipe *, Pipe *, Pipe *, CNF *, Record *);
 	void WaitUntilDone ();
 	void Use_n_Pages (int);
