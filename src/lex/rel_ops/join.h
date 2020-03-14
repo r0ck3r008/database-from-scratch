@@ -9,7 +9,10 @@ public:
 	Pipe *in_pipe;
 	Pipe *in_pipeR;
 	Pipe *out_pipe;
-	struct comparator *comp;
+	CNF *cnf;
+	Record *literal;
+	OrderMaker *o_left;
+	OrderMaker *o_right;
 };
 
 class Join : public RelationalOp
@@ -27,5 +30,9 @@ public:
 	void WaitUntilDone ();
 	void Use_n_Pages (int);
 };
+
+void *run_thr(void *);
+void sort_merge(struct join_args *);
+void nested_loop(struct join_args *);
 
 #endif
