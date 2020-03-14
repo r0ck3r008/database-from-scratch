@@ -28,5 +28,6 @@ public:
 
 };
 
+void *run_thr(void *);
 
 #endif

@@ -28,5 +28,6 @@ public:
 	void Use_n_Pages (int);
 };
 
+void *run_thr(void *);
 
 #endif
