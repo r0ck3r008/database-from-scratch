@@ -3,17 +3,6 @@
 
 #include"sel_pipe.h"
 
-SelectPipe :: SelectPipe()
-{
-	this->arg=new struct pipe_args;
-}
-
-SelectPipe :: ~SelectPipe()
-{
-	delete this->arg->comp;
-	delete this->arg;
-}
-
 void *run_thr(void *a)
 {
 	struct pipe_args *arg=(struct pipe_args *)a;
@@ -34,6 +23,17 @@ void *run_thr(void *a)
 	arg->out_pipe->ShutDown();
 	delete tmp;
 	pthread_exit(NULL);
+}
+
+SelectPipe :: SelectPipe()
+{
+	this->arg=new struct pipe_args;
+}
+
+SelectPipe :: ~SelectPipe()
+{
+	delete this->arg->comp;
+	delete this->arg;
 }
 
 void SelectPipe :: Run(Pipe *in_pipe, Pipe *out_pipe, CNF *cnf, Record *literal)
