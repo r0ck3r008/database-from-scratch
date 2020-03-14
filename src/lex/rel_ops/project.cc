@@ -19,6 +19,7 @@ void *run_thr(void *a)
 		tmp=new Record;
 	}
 
+	arg->out_pipe->ShutDown();
 	delete tmp;
 	pthread_exit(NULL);
 }
