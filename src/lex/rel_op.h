@@ -4,6 +4,7 @@
 #include<pthread.h>
 
 #include"mem/pipe.h"
+#include"mem/bigq.h"
 #include"fs/dbfile.h"
 #include"fs/record.h"
 #include"function.h"
@@ -24,6 +25,7 @@ public:
 #include"rel_ops/sel_pipe.h"
 #include"rel_ops/project.h"
 #include"rel_ops/join.h"
+#include"rel_ops/sum.h"
 #include"rel_ops/write_out.h"
 
 #endif
