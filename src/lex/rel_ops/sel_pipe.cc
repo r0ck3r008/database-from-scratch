@@ -3,7 +3,7 @@
 
 #include"sel_pipe.h"
 
-void *run_thr(void *a)
+void *pipe_thr(void *a)
 {
 	struct pipe_args *arg=(struct pipe_args *)a;
 
@@ -44,7 +44,8 @@ void SelectPipe :: Run(Pipe *in_pipe, Pipe *out_pipe, CNF *cnf, Record *literal)
 	this->arg->out_pipe=out_pipe;
 	this->arg->comp=comp;
 
-	int stat=pthread_create(&(this->tid), NULL, run_thr, (void *)this->arg);
+	int stat=pthread_create(&(this->tid), NULL, pipe_thr,
+				(void *)this->arg);
 	if(!stat) {
 		std :: cerr << "Error in creating the thread: "
 			<< strerror(stat) << std :: endl;

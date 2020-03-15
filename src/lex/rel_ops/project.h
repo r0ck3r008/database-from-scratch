@@ -13,7 +13,7 @@ public:
 	int atts_out;
 };
 
-class Project : public RelationalOp
+class Project
 {
 private:
 	struct project_args *arg;
@@ -27,7 +27,5 @@ public:
 	void WaitUntilDone ();
 	void Use_n_Pages (int);
 };
-
-void *run_thr(void *);
 
 #endif

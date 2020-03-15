@@ -11,7 +11,7 @@ public:
 	Schema *sch;
 };
 
-class WriteOut : public RelationalOp
+class WriteOut
 {
 private:
 	struct write_args *arg;
@@ -25,7 +25,5 @@ public:
 	void WaitUntilDone ();
 	void Use_n_Pages (int);
 };
-
-void *run_thr(void *);
 
 #endif

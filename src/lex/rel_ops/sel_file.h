@@ -12,7 +12,7 @@ public:
 	Record *literal;
 };
 
-class SelectFile : public RelationalOp
+class SelectFile
 {
 private:
 	struct file_args *arg;
@@ -27,7 +27,5 @@ public:
 	void Use_n_Pages (int);
 
 };
-
-void *run_thr(void *);
 
 #endif

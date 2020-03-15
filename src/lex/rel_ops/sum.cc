@@ -23,7 +23,7 @@ void get_sum_rec(struct sum_args *arg, int *int_res, double *double_res)
 	delete tmp;
 }
 
-void *run_thr(void *a)
+void *sum_thr(void *a)
 {
 	struct sum_args *arg=(struct sum_args *)a;
 
@@ -66,7 +66,7 @@ void Sum :: Run(Pipe *in_pipe, Pipe *out_pipe, Function *func)
 	this->args->out_pipe=out_pipe;
 	this->args->func=func;
 
-	int stat=pthread_create(&(this->tid), NULL, run_thr, NULL);
+	int stat=pthread_create(&(this->tid), NULL, sum_thr, NULL);
 	if(!stat) {
 		std :: cerr << "Erorr in creating the thread: "
 			<< strerror(stat) << std :: endl;

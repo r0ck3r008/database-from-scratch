@@ -55,38 +55,38 @@ int nAtts = 4;
 int rAtts = 3;
 
 void init_SF_ps (char *pred_str, int numpgs) {
-	dbf_ps.Open (ps->path());
-	get_cnf (pred_str, ps->schema (), cnf_ps, lit_ps);
+	dbf_ps.Open (rel[1]->path());
+	get_cnf (pred_str, rel[1]->schema (), cnf_ps, lit_ps);
 	SF_ps.Use_n_Pages (numpgs);
 }
 
 void init_SF_p (char *pred_str, int numpgs) {
-	dbf_p.Open (p->path());
-	get_cnf (pred_str, p->schema (), cnf_p, lit_p);
+	dbf_p.Open (rel[2]->path());
+	get_cnf (pred_str, rel[2]->schema (), cnf_p, lit_p);
 	SF_p.Use_n_Pages (numpgs);
 }
 
 void init_SF_s (char *pred_str, int numpgs) {
-	dbf_s.Open (s->path());
-	get_cnf (pred_str, s->schema (), cnf_s, lit_s);
+	dbf_s.Open (rel[0]->path());
+	get_cnf (pred_str, rel[0]->schema (), cnf_s, lit_s);
 	SF_s.Use_n_Pages (numpgs);
 }
 
 void init_SF_o (char *pred_str, int numpgs) {
-	dbf_o.Open (o->path());
-	get_cnf (pred_str, o->schema (), cnf_o, lit_o);
+	dbf_o.Open (rel[5]->path());
+	get_cnf (pred_str, rel[5]->schema (), cnf_o, lit_o);
 	SF_o.Use_n_Pages (numpgs);
 }
 
 void init_SF_li (char *pred_str, int numpgs) {
-	dbf_li.Open (li->path());
-	get_cnf (pred_str, li->schema (), cnf_li, lit_li);
+	dbf_li.Open (rel[7]->path());
+	get_cnf (pred_str, rel[7]->schema (), cnf_li, lit_li);
 	SF_li.Use_n_Pages (numpgs);
 }
 
 void init_SF_c (char *pred_str, int numpgs) {
-	dbf_c.Open (c->path());
-	get_cnf (pred_str, c->schema (), cnf_c, lit_c);
+	dbf_c.Open (rel[4]->path());
+	get_cnf (pred_str, rel[4]->schema (), cnf_c, lit_c);
 	SF_c.Use_n_Pages (numpgs);
 }
 
@@ -97,10 +97,10 @@ void q1 () {
 	char *pred_ps = "(ps_supplycost < 1.03)";
 	init_SF_ps (pred_ps, 100);
 
-	SF_ps.Run (dbf_ps, _ps, cnf_ps, lit_ps);
+	SF_ps.Run (&dbf_ps, &_ps, &cnf_ps, &lit_ps);
 	SF_ps.WaitUntilDone ();
 
-	int cnt = clear_pipe (_ps, ps->schema (), true);
+	int cnt = clear_pipe (_ps, rel[1]->schema (), true);
 	cout << "\n\n query1 returned " << cnt << " records \n";
 
 	dbf_ps.Close ();
@@ -121,15 +121,15 @@ void q2 () {
 	int numAttsOut = 3;
 	P_p.Use_n_Pages (buffsz);
 
-	SF_p.Run (dbf_p, _p, cnf_p, lit_p);
-	P_p.Run (_p, _out, keepMe, numAttsIn, numAttsOut);
+	SF_p.Run (&dbf_p, &_p, &cnf_p, &lit_p);
+	P_p.Run (&_p, &_out, keepMe, numAttsIn, numAttsOut);
 
 	SF_p.WaitUntilDone ();
 	P_p.WaitUntilDone ();
 
 	Attribute att3[] = {IA, SA, DA};
 	Schema out_sch ("out_sch", numAttsOut, att3);
-	int cnt = clear_pipe (_p, p->schema (), true);
+	int cnt = clear_pipe (_p, rel[2]->schema (), true);
 
 	cout << "\n\n query2 returned " << cnt << " records \n";
 
@@ -148,11 +148,11 @@ void q3 () {
 	Pipe _out (1);
 	Function func;
 	char *str_sum = "(s_acctbal + (s_acctbal * 1.05))";
-	get_cnf (str_sum, s->schema (), func);
+	get_cnf (str_sum, rel[0]->schema (), func);
 	func.Print ();
 	T.Use_n_Pages (1);
-	SF_s.Run (dbf_s, _s, cnf_s, lit_s);
-	T.Run (_s, _out, func);
+	SF_s.Run (&dbf_s, &_s, &cnf_s, &lit_s);
+	T.Run (&_s, &_out, &func);
 
 	SF_s.WaitUntilDone ();
 	T.WaitUntilDone ();
@@ -174,7 +174,7 @@ void q4 () {
 	cout << " query4 \n";
 	char *pred_s = "(s_suppkey = s_suppkey)";
 	init_SF_s (pred_s, 100);
-	SF_s.Run (dbf_s, _s, cnf_s, lit_s); // 10k recs qualified
+	SF_s.Run (&dbf_s, &_s, &cnf_s, &lit_s); // 10k recs qualified
 
 	char *pred_ps = "(ps_suppkey = ps_suppkey)";
 	init_SF_ps (pred_ps, 100);
@@ -185,7 +185,7 @@ void q4 () {
 	Pipe _s_ps (pipesz);
 	CNF cnf_p_ps;
 	Record lit_p_ps;
-	get_cnf ("(s_suppkey = ps_suppkey)", s->schema(), ps->schema(), cnf_p_ps, lit_p_ps);
+	get_cnf ("(s_suppkey = ps_suppkey)", rel[0]->schema(), rel[1]->schema(), cnf_p_ps, lit_p_ps);
 
 	int outAtts = sAtts + psAtts;
 	Attribute ps_supplycost = {"ps_supplycost", Double};
@@ -201,9 +201,9 @@ void q4 () {
 	func.Print ();
 	T.Use_n_Pages (1);
 
-	SF_ps.Run (dbf_ps, _ps, cnf_ps, lit_ps); // 161 recs qualified
-	J.Run (_s, _ps, _s_ps, cnf_p_ps, lit_p_ps);
-	T.Run (_s_ps, _out, func);
+	SF_ps.Run (&dbf_ps, &_ps, &cnf_ps, &lit_ps); // 161 recs qualified
+	J.Run (&_s, &_ps, &_s_ps, &cnf_p_ps, &lit_p_ps);
+	T.Run (&_s_ps, &_out, &func);
 
 	SF_ps.WaitUntilDone ();
 	J.WaitUntilDone ();
@@ -216,90 +216,91 @@ void q4 () {
 
 // select distinct ps_suppkey from partsupp where ps_supplycost < 100.11;
 // expected output: 9996 rows
-void q5 () {
+/*void q5 () {
 
-	char *pred_ps = "(ps_supplycost < 100.11)";
-	init_SF_ps (pred_ps, 100);
+  char *pred_ps = "(ps_supplycost < 100.11)";
+  init_SF_ps (pred_ps, 100);
 
-	Project P_ps;
-	Pipe __ps (pipesz);
-	int keepMe[] = {1};
-	int numAttsIn = psAtts;
-	int numAttsOut = 1;
-	P_ps.Use_n_Pages (buffsz);
+  Project P_ps;
+  Pipe __ps (pipesz);
+  int keepMe[] = {1};
+  int numAttsIn = psAtts;
+  int numAttsOut = 1;
+  P_ps.Use_n_Pages (buffsz);
 
-	DuplicateRemoval D;
-	// inpipe = __ps
-	Pipe ___ps (pipesz);
-	Schema __ps_sch ("__ps", 1, &IA);
+  DuplicateRemoval D;
+// inpipe = __ps
+Pipe ___ps (pipesz);
+Schema __ps_sch ("__ps", 1, &IA);
 
-	WriteOut W;
-	// inpipe = ___ps
-	char *fwpath = "ps.w.tmp";
-	FILE *writefile = fopen (fwpath, "w");
+WriteOut W;
+// inpipe = ___ps
+char *fwpath = "ps.w.tmp";
+FILE *writefile = fopen (fwpath, "w");
 
-	SF_ps.Run (dbf_ps, _ps, cnf_ps, lit_ps);
-	P_ps.Run (_ps, __ps, keepMe, numAttsIn, numAttsOut);
-	D.Run (__ps, ___ps,__ps_sch);
-	W.Run (___ps, writefile, __ps_sch);
+SF_ps.Run (dbf_ps, _ps, cnf_ps, lit_ps);
+P_ps.Run (_ps, __ps, keepMe, numAttsIn, numAttsOut);
+D.Run (__ps, ___ps,__ps_sch);
+W.Run (___ps, writefile, __ps_sch);
 
-	SF_ps.WaitUntilDone ();
-	P_ps.WaitUntilDone ();
-	D.WaitUntilDone ();
-	W.WaitUntilDone ();
+SF_ps.WaitUntilDone ();
+P_ps.WaitUntilDone ();
+D.WaitUntilDone ();
+W.WaitUntilDone ();
 
-	cout << " query5 finished..output written to file " << fwpath << "\n";
-}
+cout << " query5 finished..output written to file " << fwpath << "\n";
+}*/
 
 // select sum (ps_supplycost) from supplier, partsupp
 // where s_suppkey = ps_suppkey groupby s_nationkey;
 // expected output: 25 rows
-void q6 () {
 
-	cout << " query6 \n";
-	char *pred_s = "(s_suppkey = s_suppkey)";
-	init_SF_s (pred_s, 100);
-	SF_s.Run (dbf_s, _s, cnf_s, lit_s); // 10k recs qualified
+/*void q6 () {
 
-	char *pred_ps = "(ps_suppkey = ps_suppkey)";
-	init_SF_ps (pred_ps, 100);
+  cout << " query6 \n";
+  char *pred_s = "(s_suppkey = s_suppkey)";
+  init_SF_s (pred_s, 100);
+  SF_s.Run (&dbf_s, &_s, &cnf_s, &lit_s); // 10k recs qualified
 
-	Join J;
-	// left _s
-	// right _ps
-	Pipe _s_ps (pipesz);
-	CNF cnf_p_ps;
-	Record lit_p_ps;
-	get_cnf ("(s_suppkey = ps_suppkey)", s->schema(), ps->schema(), cnf_p_ps, lit_p_ps);
+  char *pred_ps = "(ps_suppkey = ps_suppkey)";
+  init_SF_ps (pred_ps, 100);
 
-	int outAtts = sAtts + psAtts;
-	Attribute s_nationkey = {"s_nationkey", Int};
-	Attribute ps_supplycost = {"ps_supplycost", Double};
-	Attribute joinatt[] = {IA,SA,SA,s_nationkey,SA,DA,SA,IA,IA,IA,ps_supplycost,SA};
-	Schema join_sch ("join_sch", outAtts, joinatt);
+  Join J;
+// left _s
+// right _ps
+Pipe _s_ps (pipesz);
+CNF cnf_p_ps;
+Record lit_p_ps;
+get_cnf ("(s_suppkey = ps_suppkey)", s->schema(), ps->schema(), cnf_p_ps, lit_p_ps);
 
-	GroupBy G;
-	// _s (input pipe)
-	Pipe _out (1);
-	Function func;
-	char *str_sum = "(ps_supplycost)";
-	get_cnf (str_sum, &join_sch, func);
-	func.Print ();
-	OrderMaker grp_order (&join_sch);
-	G.Use_n_Pages (1);
+int outAtts = sAtts + psAtts;
+Attribute s_nationkey = {"s_nationkey", Int};
+Attribute ps_supplycost = {"ps_supplycost", Double};
+Attribute joinatt[] = {IA,SA,SA,s_nationkey,SA,DA,SA,IA,IA,IA,ps_supplycost,SA};
+Schema join_sch ("join_sch", outAtts, joinatt);
 
-	SF_ps.Run (dbf_ps, _ps, cnf_ps, lit_ps); // 161 recs qualified
-	J.Run (_s, _ps, _s_ps, cnf_p_ps, lit_p_ps);
-	G.Run (_s_ps, _out, grp_order, func);
+GroupBy G;
+// _s (input pipe)
+Pipe _out (1);
+Function func;
+char *str_sum = "(ps_supplycost)";
+get_cnf (str_sum, &join_sch, func);
+func.Print ();
+OrderMaker grp_order (&join_sch);
+G.Use_n_Pages (1);
 
-	SF_ps.WaitUntilDone ();
-	J.WaitUntilDone ();
-	G.WaitUntilDone ();
+SF_ps.Run (dbf_ps, _ps, cnf_ps, lit_ps); // 161 recs qualified
+J.Run (_s, _ps, _s_ps, cnf_p_ps, lit_p_ps);
+G.Run (_s_ps, _out, grp_order, func);
 
-	Schema sum_sch ("sum_sch", 1, &DA);
-	int cnt = clear_pipe (_out, &sum_sch, true);
-	cout << " query6 returned sum for " << cnt << " groups (expected 25 groups)\n";
-}
+SF_ps.WaitUntilDone ();
+J.WaitUntilDone ();
+G.WaitUntilDone ();
+
+Schema sum_sch ("sum_sch", 1, &DA);
+int cnt = clear_pipe (_out, &sum_sch, true);
+cout << " query6 returned sum for " << cnt << " groups (expected 25 groups)\n";
+}*/
 
 void q7 () {
 	/*
@@ -314,7 +315,7 @@ ANSWER: 274251601.96 (5.91 sec)
 possible plan:
 SF(s_acctbal > 2500) => _s
 SF(p_partkey = p_partkey) => _p
-SF(ps_partkey = ps_partkey) => _ps 
+SF(ps_partkey = ps_partkey) => _ps
 On records from pipes _p and _ps:
 J(p_partkey = ps_partkey) => _p_ps
 On _s and _p_ps:
@@ -364,7 +365,7 @@ int main (int argc, char *argv[]) {
 		exit (0);
 	}
 
-	void (*query_ptr[]) () = {&q1, &q2, &q3, &q4, &q5, &q6, &q7, &q8}; 
+	void (*query_ptr[]) () = {&q1, &q2, &q3, &q4, &q7, &q8};
 	void (*query) ();
 	int qindx = atoi (argv[1]);
 

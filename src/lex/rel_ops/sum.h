@@ -11,7 +11,7 @@ public:
 	Function *func;
 };
 
-class Sum : public RelationalOp
+class Sum
 {
 private:
 	struct sum_args *args;
@@ -25,7 +25,5 @@ public:
 	void WaitUntilDone();
 	void Use_n_Pages(int);
 };
-
-void *run_thr(void *);
 
 #endif

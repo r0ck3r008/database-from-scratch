@@ -3,7 +3,7 @@
 
 #include"project.h"
 
-void *run_thr(void *a)
+void *project_thr(void *a)
 {
 	struct project_args *arg=(struct project_args *)a;
 
@@ -43,7 +43,8 @@ void Project :: Run(Pipe *in_pipe, Pipe *out_pipe,
 	this->arg->atts_in=atts_in;
 	this->arg->atts_out=atts_out;
 
-	int stat=pthread_create(&(this->tid), NULL, run_thr, (void *)this->arg);
+	int stat=pthread_create(&(this->tid), NULL, project_thr,
+				(void *)this->arg);
 	if(!stat) {
 		std :: cerr << "Error in cerating the thread: "
 			<< strerror(errno) << std :: endl;

@@ -88,7 +88,7 @@ void nested_loop(struct join_args *arg)
 	delete tmp1;
 }
 
-void *run_thr(void *a)
+void *join_thr(void *a)
 {
 	struct join_args *arg=(struct join_args *)a;
 	//make OrderMakers
@@ -124,7 +124,8 @@ void Join :: Run(Pipe *in_pipeL, Pipe *in_pipeR, Pipe *out_pipe,
 	this->arg->cnf=cnf;
 	this->arg->literal=literal;
 
-	int stat=pthread_create(&(this->tid), NULL, run_thr, (void *)this->arg);
+	int stat=pthread_create(&(this->tid), NULL, join_thr,
+					(void *)this->arg);
 	if(!stat) {
 		std :: cerr << "Error in creating the thread: "
 			<< strerror(stat) << std :: endl;

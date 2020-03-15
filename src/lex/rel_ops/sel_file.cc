@@ -3,7 +3,7 @@
 
 #include"sel_file.h"
 
-void *run_thr(void *input)
+void *file_thr(void *input)
 {
 	struct file_args *arg=(struct file_args *)input;
 
@@ -38,7 +38,8 @@ void SelectFile :: Run(DBFile *dbf, Pipe *out_pipe, CNF *cnf, Record *literal)
 	this->arg->out_pipe=out_pipe;
 	this->arg->cnf=cnf;
 	this->arg->literal=literal;
-	int stat=pthread_create(&(this->tid), NULL, run_thr, (void *)this->arg);
+	int stat=pthread_create(&(this->tid), NULL, file_thr,
+				(void *)this->arg);
 	if(!stat) {
 		std :: cerr << "Error in creating the thread: "
 			<< strerror(stat) << std :: endl;

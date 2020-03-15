@@ -3,7 +3,7 @@
 
 #include"write_out.h"
 
-void *run_thr(void *a)
+void *write_thr(void *a)
 {
 	struct write_args *arg=(struct write_args *)a;
 
@@ -41,7 +41,8 @@ void WriteOut :: Run(Pipe *in_pipe, FILE *f, Schema *sch)
 	this->arg->f=f;
 	this->arg->sch=sch;
 
-	int stat=pthread_create(&(this->tid), NULL, run_thr, (void *)this->arg);
+	int stat=pthread_create(&(this->tid), NULL, write_thr,
+				(void *)this->arg);
 	if(!stat) {
 		std :: cerr << "Error in starting the thread "
 			<< strerror(stat) << std :: endl;

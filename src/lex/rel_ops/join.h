@@ -15,7 +15,7 @@ public:
 	OrderMaker *o_right;
 };
 
-class Join : public RelationalOp
+class Join
 {
 private:
 	struct join_args *arg;
@@ -30,9 +30,5 @@ public:
 	void WaitUntilDone ();
 	void Use_n_Pages (int);
 };
-
-void *run_thr(void *);
-void sort_merge(struct join_args *);
-void nested_loop(struct join_args *);
 
 #endif

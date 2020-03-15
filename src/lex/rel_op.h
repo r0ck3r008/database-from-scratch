@@ -25,8 +25,8 @@ public:
 #include"rel_ops/sel_file.h"
 #include"rel_ops/sel_pipe.h"
 #include"rel_ops/project.h"
-#include"rel_ops/join.h"
 #include"rel_ops/sum.h"
+#include"rel_ops/join.h"
 #include"rel_ops/write_out.h"
 
 #endif
