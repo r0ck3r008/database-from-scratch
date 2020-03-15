@@ -46,7 +46,7 @@ void SelectPipe :: Run(Pipe *in_pipe, Pipe *out_pipe, CNF *cnf, Record *literal)
 
 	int stat=pthread_create(&(this->tid), NULL, pipe_thr,
 				(void *)this->arg);
-	if(!stat) {
+	if(stat) {
 		std :: cerr << "Error in creating the thread: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);
@@ -57,7 +57,7 @@ void SelectPipe :: WaitUntilDone()
 {
 	int stat=pthread_join(this->tid, NULL);
 
-	if(!stat) {
+	if(stat) {
 		std :: cerr << "Error in joining the thread: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);

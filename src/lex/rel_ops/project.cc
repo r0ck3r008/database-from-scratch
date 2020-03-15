@@ -45,7 +45,7 @@ void Project :: Run(Pipe *in_pipe, Pipe *out_pipe,
 
 	int stat=pthread_create(&(this->tid), NULL, project_thr,
 				(void *)this->arg);
-	if(!stat) {
+	if(stat) {
 		std :: cerr << "Error in cerating the thread: "
 			<< strerror(errno) << std :: endl;
 		_exit(-1);
@@ -56,7 +56,7 @@ void Project :: WaitUntilDone()
 {
 	int stat=pthread_join(this->tid, NULL);
 
-	if(!stat) {
+	if(stat) {
 		std :: cerr << "Error in joining the thread: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);

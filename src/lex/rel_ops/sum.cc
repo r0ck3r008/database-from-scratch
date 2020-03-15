@@ -67,7 +67,7 @@ void Sum :: Run(Pipe *in_pipe, Pipe *out_pipe, Function *func)
 	this->args->func=func;
 
 	int stat=pthread_create(&(this->tid), NULL, sum_thr, NULL);
-	if(!stat) {
+	if(stat) {
 		std :: cerr << "Erorr in creating the thread: "
 			<< strerror(stat) << std :: endl;
 	}
@@ -76,7 +76,7 @@ void Sum :: Run(Pipe *in_pipe, Pipe *out_pipe, Function *func)
 void Sum :: WaitUntilDone()
 {
 	int stat=pthread_join(this->tid, NULL);
-	if(!stat) {
+	if(stat) {
 		std :: cerr << "Error in joining the thread: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);

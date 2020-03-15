@@ -126,7 +126,7 @@ void Join :: Run(Pipe *in_pipeL, Pipe *in_pipeR, Pipe *out_pipe,
 
 	int stat=pthread_create(&(this->tid), NULL, join_thr,
 					(void *)this->arg);
-	if(!stat) {
+	if(stat) {
 		std :: cerr << "Error in creating the thread: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);
@@ -138,7 +138,7 @@ void Join :: WaitUntilDone()
 	void **retval;
 	int stat=pthread_join(this->tid, retval);
 
-	if(!stat) {
+	if(stat) {
 		std :: cerr << "Error in joining to the thread: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);

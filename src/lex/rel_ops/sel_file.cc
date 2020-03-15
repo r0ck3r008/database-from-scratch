@@ -40,7 +40,7 @@ void SelectFile :: Run(DBFile *dbf, Pipe *out_pipe, CNF *cnf, Record *literal)
 	this->arg->literal=literal;
 	int stat=pthread_create(&(this->tid), NULL, file_thr,
 				(void *)this->arg);
-	if(!stat) {
+	if(stat) {
 		std :: cerr << "Error in creating the thread: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);
@@ -55,7 +55,7 @@ void SelectFile :: Use_n_Pages(int n)
 void SelectFile :: WaitUntilDone()
 {
 	int stat=pthread_join(this->tid, NULL);
-	if(!stat) {
+	if(stat) {
 		std :: cerr << "Error in joining to the thread: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);

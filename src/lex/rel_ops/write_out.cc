@@ -43,7 +43,7 @@ void WriteOut :: Run(Pipe *in_pipe, FILE *f, Schema *sch)
 
 	int stat=pthread_create(&(this->tid), NULL, write_thr,
 				(void *)this->arg);
-	if(!stat) {
+	if(stat) {
 		std :: cerr << "Error in starting the thread "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);
@@ -54,7 +54,7 @@ void WriteOut :: WaitUntilDone()
 {
 	int stat=pthread_join(this->tid, NULL);
 
-	if(!stat) {
+	if(stat) {
 		std :: cerr << "Error in joining the new thread: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);
