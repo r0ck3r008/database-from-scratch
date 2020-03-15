@@ -355,4 +355,7 @@ Type Function :: Apply (Record &toMe, int &intResult, double &doubleResult) {
 
 }
 
-
+int Function :: get_ret_type()
+{
+	return ((this->returnsInt==1) ? 1 : 0);
+}
