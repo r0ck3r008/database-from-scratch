@@ -10,8 +10,7 @@ RunGen :: RunGen(Pipe *in_pipe, int run_len, OrderMaker *order)
 	this->run_len=run_len;
 	this->size_curr_run=0;
 	this->buf=NULL;
-	this->comp=new struct comparator(NULL, NULL, (void *)order,
-						NULL, 0);
+	this->comp=new struct comparator((void *)order, NULL, 0);
 	if(!this->setup_dbf()) {
 		std :: cerr << "Error in setting up DBFile!\n";
 		_exit(-1);

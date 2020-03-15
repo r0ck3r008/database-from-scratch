@@ -14,16 +14,15 @@ void sort_merge(struct join_args *arg)
 	Pipe out_pipeR(100);
 	BigQ bq_l(arg->in_pipe, &out_pipeL, arg->o_left, 1);
 	BigQ bq_r(arg->in_pipeR, &out_pipeR, arg->o_right, 1);
-	struct comparator comp(NULL, NULL, (void *)arg->o_left,
-				(void *)arg->o_right, 1);
+	struct comparator comp((void *)arg->o_left, (void *)arg->o_right, 1);
 
 	Record *tmp1=new Record;
 	Record *tmp2=new Record;
 	int stat1=out_pipeL.Remove(tmp1);
 	int stat2=out_pipeR.Remove(tmp2);
 	while(1) {
-		comp.rec1=&tmp1;
-		comp.rec2=&tmp2;
+		comp.rec1=tmp1;
+		comp.rec2=tmp2;
 		int stat=Compare(&comp);
 		if(stat<1) {
 			if(!stat)
@@ -52,8 +51,7 @@ void sort_merge(struct join_args *arg)
 
 void nested_loop(struct join_args *arg)
 {
-	struct comparator comp(NULL, NULL, (void *)arg->literal,
-				(void *)arg->cnf, 2);
+	struct comparator comp((void *)arg->literal, (void *)arg->cnf, 2);
 	vector<Record> vec;
 	Record *tmp1=new Record;
 	int flag=1;
@@ -76,9 +74,9 @@ void nested_loop(struct join_args *arg)
 			} else {
 				tmp2=vec[curr_num--];
 			}
-			comp.rec1=&tmp1;
+			comp.rec1=tmp1;
 			Record *tmp_ptr=&tmp2;
-			comp.rec2=&tmp_ptr;
+			comp.rec2=tmp_ptr;
 			if(Compare(&comp))
 				arg->out_pipe->Insert(tmp1);
 		}

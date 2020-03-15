@@ -20,8 +20,7 @@ RunMerge :: RunMerge(Pipe *out_pipe,
 	this->run_sizes=run_sizes;
 	this->out_pipe=out_pipe;
 	this->n_runs=this->run_sizes->size();
-	this->comp=new struct comparator(NULL, NULL, (void *)order,
-						NULL, 0);
+	this->comp=new struct comparator((void *)order, NULL, 0);
 	this->tour=new Tournament(this->n_runs, this->comp);
 	this->threads=NULL;
 }
