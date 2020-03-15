@@ -12,6 +12,7 @@
 #include "lex/parse_tree.h"
 #include "lex/comparison.h"
 #include "lex/comparison_engine.h"
+#include "lex/function.h"
 
 
 
@@ -25,10 +26,11 @@ class Record {
 
 	friend class ComparisonEngine;
 	friend class Page;
+	friend class Function;
 
 private:
 	char *bits;
-	char* GetBits ();
+	char *GetBits ();
 	void SetBits (char *bits);
 	void CopyBits(char *bits, int b_len);
 
