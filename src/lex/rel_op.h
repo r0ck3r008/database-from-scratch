@@ -7,6 +7,7 @@
 #include"mem/bigq.h"
 #include"fs/dbfile.h"
 #include"fs/record.h"
+#include"glbl/defs.h"
 #include"function.h"
 #include"comparison_engine.h"
 
