@@ -92,6 +92,9 @@ void init_SF_c (char *pred_str, int numpgs) {
 
 // select * from partsupp where ps_supplycost <1.03
 // expected output: 31 records
+// TODO
+// This query returns 31 records when we use <= and 21 when we use just <
+// Recheck
 void q1 () {
 
 	char *pred_ps = "(ps_supplycost < 1.03)";
@@ -216,7 +219,8 @@ void q4 () {
 
 // select distinct ps_suppkey from partsupp where ps_supplycost < 100.11;
 // expected output: 9996 rows
-/*void q5 () {
+void q5 () {
+	/*
 
   char *pred_ps = "(ps_supplycost < 100.11)";
   init_SF_ps (pred_ps, 100);
@@ -249,13 +253,15 @@ D.WaitUntilDone ();
 W.WaitUntilDone ();
 
 cout << " query5 finished..output written to file " << fwpath << "\n";
-}*/
+*/
+}
 
 // select sum (ps_supplycost) from supplier, partsupp
 // where s_suppkey = ps_suppkey groupby s_nationkey;
 // expected output: 25 rows
 
-/*void q6 () {
+void q6 () {
+	/*
 
   cout << " query6 \n";
   char *pred_s = "(s_suppkey = s_suppkey)";
@@ -300,7 +306,8 @@ G.WaitUntilDone ();
 Schema sum_sch ("sum_sch", 1, &DA);
 int cnt = clear_pipe (_out, &sum_sch, true);
 cout << " query6 returned sum for " << cnt << " groups (expected 25 groups)\n";
-}*/
+*/
+}
 
 void q7 () {
 	/*
@@ -365,7 +372,7 @@ int main (int argc, char *argv[]) {
 		exit (0);
 	}
 
-	void (*query_ptr[]) () = {&q1, &q2, &q3, &q4, &q7, &q8};
+	void (*query_ptr[]) () = {&q1, &q2, &q3, &q4, &q5, &q6, &q7, &q8};
 	void (*query) ();
 	int qindx = atoi (argv[1]);
 
