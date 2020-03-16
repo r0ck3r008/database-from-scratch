@@ -1,24 +1,36 @@
 COMPILER = g++
 COMPILER_FLAGS := -g -c
 LINKER_FLAGS := -lfl -lgtest -lpthread -o
-ALL_OBJS := db/*.o fs/*.o lex/*.o lex/rel_ops/*.o mem/*.o glbl/*.o
+
+REL_OPS := lex/rel_ops/*.o
+MEMS := mem/*.o
+DBS := db/*.o
+LEXS := lex/*.o
+GLBLS := glbl/*.o
+FSS := fs/*.o
+
+TEST_OUT_OBJS := tests/test.o ${REL_OPS} ${MEMS} ${DBS} ${LEXS} ${GLBLS} ${FSS}
+GTEST_OUT_OBJS := tests/gtest.o ${REL_OPS} ${MEMS} ${DBS} ${LEXS} ${GLBLS} ${FSS}
+SORTED_FILE_OUT_OBJS := tests/test_sorted_file.o ${MEMS} ${DBS} ${LEXS} ${FSS} ${GLBLS}
+HEAP_GEN_OUT_OBJS := tests/heap_gen.o ${MEMS} ${DBS} ${LEXS} ${FSS} ${GLBLS}
+TEST_BIGQ_OUT_OBJS := tests/test_bigq.o ${MEMS} ${DBS} ${LEXS} ${FSS} ${GLBLS}
 
 all: test.out gtest.out heap_gen.out test_bigq.out sorted_test_file.out clean_objs
 
 test.out: test.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs
-	${COMPILER} tests/test.o ${ALL_OBJS} ${LINKER_FLAGS} test.out
+	${COMPILER} ${TEST_OUT_OBJS} ${LINKER_FLAGS} test.out
 
 sorted_test_file.out: test_sorted_file.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs
-	${COMPILER} tests/test_sorted_file.o ${ALL_OBJS} ${LINKER_FLAGS} test_sorted_file.out
+	${COMPILER} ${SORTED_FILE_OUT_OBJS} ${LINKER_FLAGS} test_sorted_file.out
 
 gtest.out: gtest.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs
-	$(COMPILER) tests/gtest.o ${ALL_OBJS} ${LINKER_FLAGS} gtest.out
+	$(COMPILER) ${GTEST_OUT_OBJS} ${LINKER_FLAGS} gtest.out
 
 heap_gen.out: heap_gen.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs
-	${COMPILER} tests/heap_gen.o ${ALL_OBJS} ${LINKER_FLAGS} heap_gen.out
+	${COMPILER} ${HEAP_GEN_OUT_OBJS} ${LINKER_FLAGS} heap_gen.out
 
 test_bigq.out: test_bigq.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs
-	${COMPILER} tests/test_bigq.o ${ALL_OBJS} ${LINKER_FLAGS} test_bigq.out
+	${COMPILER} ${TEST_BIGQ_OUT_OBJS} ${LINKER_FLAGS} test_bigq.out
 
 test.o:
 	make -C tests/ test.o
