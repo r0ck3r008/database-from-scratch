@@ -1,3 +1,4 @@
+#include<stdlib.h>
 #include<string.h>
 #include<unistd.h>
 
@@ -27,21 +28,21 @@ void *sum_thr(void *a)
 {
 	struct sum_args *arg=(struct sum_args *)a;
 
-	Type ret_type=((arg->func->get_ret_type())==1 ? (Int) : (Double));
+	Type ret_type=((arg->func->get_ret_type()==1) ? (Int) : (Double));
 	Attribute atts;
-	atts.name="Sum";
-	atts.myType=ret_type;
-	Schema sch(NULL, 1, &atts);
+	atts.name="Double";
+	atts.myType=Double;
+	Schema sch("out_atts", 1, &atts);
 
 	int int_res=0; double double_res=0;
 	get_sum_rec(arg, &int_res, &double_res);
 
 	char *result=new char[128];
-	if(ret_type==Int)
-		sprintf(result, "%d", int_res);
-	else
-		sprintf(result, "%d", double_res);
 	Record *tmp=new Record;
+	if(ret_type==Int)
+		sprintf(result, "%d|", int_res);
+	else
+		sprintf(result, "%0.7f|", double_res);
 	tmp->ComposeRecord(&sch, result);
 	arg->out_pipe->Insert(tmp);
 
@@ -66,7 +67,8 @@ void Sum :: Run(Pipe *in_pipe, Pipe *out_pipe, Function *func)
 	this->args->out_pipe=out_pipe;
 	this->args->func=func;
 
-	int stat=pthread_create(&(this->tid), NULL, sum_thr, NULL);
+	int stat=pthread_create(&(this->tid), NULL, sum_thr,
+				(void *)this->args);
 	if(stat) {
 		std :: cerr << "Erorr in creating the thread: "
 			<< strerror(stat) << std :: endl;
