@@ -2,6 +2,8 @@
 #include "mem/bigq.h"
 #include "lex/rel_op.h"
 #include <pthread.h>
+#include<sodium.h>
+#include<unistd.h>
 
 Attribute IA = {"int", Int};
 Attribute SA = {"string", String};
@@ -179,7 +181,6 @@ void q4 () {
 	cout << " query4 \n";
 	char *pred_s = "(s_suppkey = s_suppkey)";
 	init_SF_s (pred_s, 100);
-	SF_s.Run (&dbf_s, &_s, &cnf_s, &lit_s); // 10k recs qualified
 
 	char *pred_ps = "(ps_suppkey = ps_suppkey)";
 	init_SF_ps (pred_ps, 100);
@@ -206,10 +207,12 @@ void q4 () {
 	func.Print ();
 	T.Use_n_Pages (1);
 
+	SF_s.Run (&dbf_s, &_s, &cnf_s, &lit_s); // 10k recs qualified
 	SF_ps.Run (&dbf_ps, &_ps, &cnf_ps, &lit_ps); // 161 recs qualified
-	J.Run (&_s, &_ps, &_s_ps, &cnf_p_ps, &lit_p_ps);
+	J.Run (&_s, &_ps, &_s_ps, &cnf_p_ps, &lit_p_ps, rel[0]->schema(), rel[1]->schema());
 	T.Run (&_s_ps, &_out, &func);
 
+	SF_s.WaitUntilDone();
 	SF_ps.WaitUntilDone ();
 	J.WaitUntilDone ();
 	T.WaitUntilDone ();
@@ -372,6 +375,11 @@ int main (int argc, char *argv[]) {
 	if (argc != 2) {
 		cerr << " Usage: ./test.out [1-8] \n";
 		exit (0);
+	}
+
+	if(sodium_init()<0) {
+		std :: cerr << "Error in initiating the libsodium!\n";
+		_exit(-1);
 	}
 
 	void (*query_ptr[]) () = {&q1, &q2, &q3, &q4, &q5, &q6, &q7, &q8};
