@@ -13,8 +13,8 @@ public:
 	Record *literal;
 	OrderMaker *o_left;
 	OrderMaker *o_right;
-	Schema *schL;
-	Schema *schR;
+	int nattsL, nattsR, nattsT, nattsS;
+	int *atts;
 };
 
 class Join

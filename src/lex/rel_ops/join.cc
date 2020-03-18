@@ -25,8 +25,15 @@ void sort_merge(struct join_args *arg)
 		int stat=Compare(&comp);
 		if(stat<1) {
 			if(!stat) {
+				Record tmp;
+				tmp.MergeRecords(&tmp1, &tmp2, arg->nattsL,
+								arg->nattsR,
+								arg->atts,
+								arg->nattsT,
+								arg->nattsL);
 				//merge records and push to out pipe
-				arg->out_pipe->Insert(&tmp1);
+				arg->out_pipe->Insert(&tmp);
+				explicit_bzero(&tmp, sizeof(Record));
 				explicit_bzero(&tmp1, sizeof(Record));
 			}
 			//move left pointer
@@ -75,8 +82,14 @@ void nested_loop(struct join_args *arg)
 			comp.rec1=&tmp1;
 			Record *tmp_ptr=&tmp2;
 			comp.rec2=tmp_ptr;
-			if(Compare(&comp))
+			if(Compare(&comp)) {
+				Record tmp;
+				tmp.MergeRecords(&tmp1, &tmp2, arg->nattsL,
+						arg->nattsR, arg->atts,
+						arg->nattsT, arg->nattsS);
 				arg->out_pipe->Insert(&tmp1);
+				explicit_bzero(&tmp, sizeof(Record));
+			}
 		}
 		explicit_bzero(&tmp1, sizeof(Record));
 	}
@@ -108,6 +121,7 @@ Join :: Join()
 
 Join :: ~Join()
 {
+	delete[] this->arg->atts;
 	delete this->arg;
 }
 
@@ -119,8 +133,20 @@ void Join :: Run(Pipe *in_pipeL, Pipe *in_pipeR, Pipe *out_pipe, CNF *cnf,
 	this->arg->out_pipe=out_pipe;
 	this->arg->cnf=cnf;
 	this->arg->literal=literal;
-	this->arg->schL=schL;
-	this->arg->schR=schR;
+	this->arg->nattsL=schL->GetNumAtts();
+	this->arg->nattsR=schR->GetNumAtts();
+	this->arg->nattsT=(this->arg->nattsL) + (this->arg->nattsR);
+	this->arg->nattsS=this->arg->nattsL-1;
+	int *atts=new int[this->arg->nattsT];
+	for(int i=0, j=0; i<=this->arg->nattsT; i++) {
+		if(i<this->arg->nattsL)
+			atts[i]=j++;
+		else if(i==this->arg->nattsL)
+			j=0;
+		else
+			atts[i-1]=j++;
+	}
+	this->arg->atts=atts;
 
 	int stat=pthread_create(&(this->tid), NULL, join_thr,
 					(void *)this->arg);
@@ -133,20 +159,15 @@ void Join :: Run(Pipe *in_pipeL, Pipe *in_pipeR, Pipe *out_pipe, CNF *cnf,
 
 void Join :: WaitUntilDone()
 {
-	void **retval;
-	int stat=pthread_join(this->tid, retval);
+	int stat=pthread_join(this->tid, NULL);
 
 	if(stat) {
 		std :: cerr << "Error in joining to the thread: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);
 	} else {
-		std :: cout << "Successful thread exit: "
-			<< *(char **)retval << std :: endl;
+		std :: cout << "Successful thread exit: " << std :: endl;
 	}
-
-	delete[] *(char **)retval;
-	delete *(char **)retval;
 }
 
 void Join :: Use_n_Pages(int n)
