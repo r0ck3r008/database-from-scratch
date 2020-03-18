@@ -61,7 +61,7 @@ void test1 () {
 
 	int proc = 1, res = 1, tot = 0;
 	while (proc && res) {
-		int x = 1;
+		int x = 2;
 		while (x < 1 || x > 3) {
 			cout << "\n select option for : " << rela->path () << endl;
 			cout << " \t 1. add a few (1 to 1k recs)\n";
@@ -159,13 +159,13 @@ int main (int argc, char *argv[]) {
 	int findx = 0;
 	while (findx < 1 || findx > 8) {
 		cout << "\n select table: \n";
-		cout << "\t 1. nation \n";
-		cout << "\t 2. region \n";
-		cout << "\t 3. customer \n";
-		cout << "\t 4. part \n";
-		cout << "\t 5. partsupp \n";
-		cout << "\t 6. supplier \n";
-		cout << "\t 7. orders \n";
+		cout << "\t 1. supplier \n";
+		cout << "\t 2. partsupp \n";
+		cout << "\t 3. part \n";
+		cout << "\t 4. nation \n";
+		cout << "\t 5. customer \n";
+		cout << "\t 6. orders \n";
+		cout << "\t 7. region \n";
 		cout << "\t 8. lineitem \n \t ";
 		cin >> findx;
 	}
