@@ -13,6 +13,8 @@ public:
 	Record *literal;
 	OrderMaker *o_left;
 	OrderMaker *o_right;
+	Schema *schL;
+	Schema *schR;
 };
 
 class Join
@@ -26,7 +28,8 @@ public:
 	Join();
 	~Join();
 	void Run (Pipe *, Pipe *, Pipe *,
-			CNF *, Record *);
+			CNF *, Record *,
+			Schema *, Schema *);
 	void WaitUntilDone ();
 	void Use_n_Pages (int);
 };

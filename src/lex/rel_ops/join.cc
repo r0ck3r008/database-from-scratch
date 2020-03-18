@@ -12,33 +12,32 @@ void sort_merge(struct join_args *arg)
 {
 	Pipe out_pipeL(100);
 	Pipe out_pipeR(100);
-	BigQ bq_l(arg->in_pipe, &out_pipeL, arg->o_left, 1);
-	BigQ bq_r(arg->in_pipeR, &out_pipeR, arg->o_right, 1);
+	BigQ bq_l(arg->in_pipe, &out_pipeL, arg->o_left, 8);
+	BigQ bq_r(arg->in_pipeR, &out_pipeR, arg->o_right, 8);
 	struct comparator comp((void *)arg->o_left, (void *)arg->o_right, 1);
 
-	Record *tmp1=new Record;
-	Record *tmp2=new Record;
-	int stat1=out_pipeL.Remove(tmp1);
-	int stat2=out_pipeR.Remove(tmp2);
+	Record tmp1, tmp2;
+	int stat1=out_pipeL.Remove(&tmp1);
+	int stat2=out_pipeR.Remove(&tmp2);
 	while(1) {
-		comp.rec1=tmp1;
-		comp.rec2=tmp2;
+		comp.rec1=&tmp1;
+		comp.rec2=&tmp2;
 		int stat=Compare(&comp);
 		if(stat<1) {
-			if(!stat)
+			if(!stat) {
 				//merge records and push to out pipe
-				arg->out_pipe->Insert(tmp1);
+				arg->out_pipe->Insert(&tmp1);
+				explicit_bzero(&tmp1, sizeof(Record));
+			}
 			//move left pointer
-			delete tmp1;
-			tmp1=new Record;
+			explicit_bzero(&tmp1, sizeof(Record));
 			if(stat1)
-				stat1=out_pipeL.Remove(tmp1);
+				stat1=out_pipeL.Remove(&tmp1);
 		} else {
 			//move right pointer
-			delete tmp2;
-			tmp2=new Record;
+			explicit_bzero(&tmp2, sizeof(Record));
 			if(stat2)
-				stat2=out_pipeR.Remove(tmp2);
+				stat2=out_pipeR.Remove(&tmp2);
 		}
 
 		if(!stat1 || !stat2)
@@ -46,18 +45,17 @@ void sort_merge(struct join_args *arg)
 	}
 
 	arg->out_pipe->ShutDown();
-	delete tmp1; delete tmp2;
 }
 
 void nested_loop(struct join_args *arg)
 {
 	struct comparator comp((void *)arg->literal, (void *)arg->cnf, 2);
 	vector<Record> vec;
-	Record *tmp1=new Record;
+	Record tmp1;
 	int flag=1;
 
 	while(1) {
-		int stat1=arg->in_pipe->Remove(tmp1);
+		int stat1=arg->in_pipe->Remove(&tmp1);
 		if(!stat1)
 			break;
 		int curr_num= (vec.size()!=0) ? (vec.size()) : 1;
@@ -74,18 +72,16 @@ void nested_loop(struct join_args *arg)
 			} else {
 				tmp2=vec[curr_num--];
 			}
-			comp.rec1=tmp1;
+			comp.rec1=&tmp1;
 			Record *tmp_ptr=&tmp2;
 			comp.rec2=tmp_ptr;
 			if(Compare(&comp))
-				arg->out_pipe->Insert(tmp1);
+				arg->out_pipe->Insert(&tmp1);
 		}
-		delete tmp1;
-		tmp1=new Record;
+		explicit_bzero(&tmp1, sizeof(Record));
 	}
 
 	arg->out_pipe->ShutDown();
-	delete tmp1;
 }
 
 void *join_thr(void *a)
@@ -115,14 +111,16 @@ Join :: ~Join()
 	delete this->arg;
 }
 
-void Join :: Run(Pipe *in_pipeL, Pipe *in_pipeR, Pipe *out_pipe,
-			CNF *cnf, Record *literal)
+void Join :: Run(Pipe *in_pipeL, Pipe *in_pipeR, Pipe *out_pipe, CNF *cnf,
+			Record *literal, Schema *schL, Schema *schR)
 {
 	this->arg->in_pipe=in_pipeL;
 	this->arg->in_pipeR=in_pipeR;
 	this->arg->out_pipe=out_pipe;
 	this->arg->cnf=cnf;
 	this->arg->literal=literal;
+	this->arg->schL=schL;
+	this->arg->schR=schR;
 
 	int stat=pthread_create(&(this->tid), NULL, join_thr,
 					(void *)this->arg);
