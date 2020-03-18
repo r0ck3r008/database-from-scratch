@@ -3,6 +3,8 @@
 #include<unistd.h>
 #include<vector>
 #include<sodium.h>
+#include<sys/types.h>
+#include<sys/stat.h>
 
 #include"bigq.h"
 #include"run_gen.h"
@@ -56,5 +58,14 @@ void *wrkr_run(void *a)
 	run_merge.merge_init();
 exit:
 	delete arg;
+	struct stat buf;
+	if(stat(arg->run_file, &buf)==0) {
+		if(unlink(arg->run_file)<0) {
+			std :: cerr << "Error in deleting "
+				<< arg->run_file << " file: "
+				<< strerror(errno);
+			_exit(-1);
+		}
+	}
 	pthread_exit(NULL);
 }
