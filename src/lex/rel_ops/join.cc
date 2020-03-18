@@ -165,8 +165,6 @@ void Join :: WaitUntilDone()
 		std :: cerr << "Error in joining to the thread: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);
-	} else {
-		std :: cout << "Successful thread exit: " << std :: endl;
 	}
 }
 

@@ -58,8 +58,6 @@ void Project :: WaitUntilDone()
 		std :: cerr << "Error in joining the thread: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);
-	} else {
-		std :: cout << "Exited successfully\n";
 	}
 }
 

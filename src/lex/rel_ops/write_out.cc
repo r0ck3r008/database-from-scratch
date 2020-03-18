@@ -56,8 +56,6 @@ void WriteOut :: WaitUntilDone()
 		std :: cerr << "Error in joining the new thread: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);
-	} else {
-		std :: cout << "Thread Exited successfully\n";
 	}
 }
 
