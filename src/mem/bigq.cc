@@ -50,15 +50,11 @@ void *wrkr_run(void *a)
 	//instantiate
 	struct thread_arg *arg=wrkr_init((struct thread_arg *)a);
 
-	RunGen *run_gen=new RunGen(arg->in_pipe, arg->run_len, arg->order,
-					arg->run_file);
-	std :: vector <int> *rec_sizes=run_gen->generator();
-	RunMerge *run_merge=new RunMerge(arg->out_pipe, rec_sizes, arg->order,
-						arg->run_file);
-	run_merge->merge_init();
+	RunGen run_gen(arg->in_pipe, arg->run_len, arg->order, arg->run_file);
+	std :: vector <int> *rec_sizes=run_gen.generator();
+	RunMerge run_merge(arg->out_pipe, rec_sizes, arg->order, arg->run_file);
+	run_merge.merge_init();
 exit:
 	delete arg;
-	delete run_merge;
-	delete run_gen;
 	pthread_exit(NULL);
 }
