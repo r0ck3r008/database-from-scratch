@@ -14,6 +14,7 @@ struct thread_arg
 	Pipe *out_pipe;
 	int run_len;
 	OrderMaker *order;
+	char *run_file;
 public:
 	thread_arg(Pipe *, Pipe *,
 			int, OrderMaker *,

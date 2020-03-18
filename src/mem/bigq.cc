@@ -2,11 +2,11 @@
 #include<errno.h>
 #include<unistd.h>
 #include<vector>
+#include<sodium.h>
 
 #include"bigq.h"
 #include"run_gen.h"
 #include"run_merge.h"
-#include"glbl/timer.h"
 
 thread_arg :: thread_arg(Pipe *in_pipe, Pipe *out_pipe,
 				int run_len, OrderMaker *order,
@@ -16,6 +16,9 @@ thread_arg :: thread_arg(Pipe *in_pipe, Pipe *out_pipe,
 	this->out_pipe=out_pipe;
 	this->order=order;
 	this->run_len=run_len;
+	uint32_t rand_num=randombytes_uniform(10000);
+	this->run_file=new char[128];
+	sprintf(this->run_file, "bin/runs_%d.bin", rand_num);
 }
 
 BigQ :: BigQ(Pipe *in_pipe, Pipe *out_pipe,
@@ -47,29 +50,15 @@ void *wrkr_run(void *a)
 	//instantiate
 	struct thread_arg *arg=wrkr_init((struct thread_arg *)a);
 
-	timer *t1=new timer;
-	timer *t2=new timer;
-	t1->start_timer();
-	RunGen *run_gen=new RunGen(arg->in_pipe, arg->run_len, arg->order);
+	RunGen *run_gen=new RunGen(arg->in_pipe, arg->run_len, arg->order,
+					arg->run_file);
 	std :: vector <int> *rec_sizes=run_gen->generator();
-	t1->stop_timer();
-	struct timeval diff=t1->get_tt();
-//	std :: cerr << "[BigQ Worker] Time taken for Run Generation: "
-//		<< diff.tv_usec/1000.00 << " milliseconds!\n";
-
-
-	t2->start_timer();
-	RunMerge *run_merge=new RunMerge(arg->out_pipe, rec_sizes, arg->order);
+	RunMerge *run_merge=new RunMerge(arg->out_pipe, rec_sizes, arg->order,
+						arg->run_file);
 	run_merge->merge_init();
-	t2->stop_timer();
-	diff=t2->get_tt();
-//	std :: cerr << "[BigQ Worker] Time taken for Merging Runs: "
-//		<< diff.tv_usec/1000.00 << " milliseconds!\n";
 exit:
 	delete arg;
 	delete run_merge;
 	delete run_gen;
-	delete t1;
-	delete t2;
 	pthread_exit(NULL);
 }

@@ -4,13 +4,14 @@
 
 #include"run_gen.h"
 
-RunGen :: RunGen(Pipe *in_pipe, int run_len, OrderMaker *order)
+RunGen :: RunGen(Pipe *in_pipe, int run_len, OrderMaker *order, char *run_file)
 {
 	this->in_pipe=in_pipe;
 	this->run_len=run_len;
 	this->size_curr_run=0;
 	this->buf=NULL;
 	this->comp=new struct comparator((void *)order, NULL, 0);
+	this->run_file=run_file;
 	if(!this->setup_dbf()) {
 		std :: cerr << "Error in setting up DBFile!\n";
 		_exit(-1);
@@ -27,7 +28,7 @@ int RunGen :: setup_dbf()
 {
 	//first instance
 	dbf=new DBFile;
-	if(!this->dbf->Create("bin/runs.bin", Heap, NULL)) {
+	if(!this->dbf->Create(this->run_file, Heap, NULL)) {
 		std :: cerr << "Error in creating run dbfile!\n";
 		return 0;
 	}
