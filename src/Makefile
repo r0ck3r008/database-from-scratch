@@ -1,6 +1,6 @@
 COMPILER = g++
 COMPILER_FLAGS := -g -c
-LINKER_FLAGS := -lfl -lgtest -lpthread -o
+LINKER_FLAGS := -lfl -lgtest -lpthread -lsodium -o
 
 REL_OPS := lex/rel_ops/*.o
 MEMS := mem/*.o
