@@ -7,17 +7,15 @@ void *file_thr(void *input)
 {
 	struct file_args *arg=(struct file_args *)input;
 
-	Record *tmp=new Record;
+	Record tmp;
 	while(1) {
-		if(!arg->dbf->GetNext(tmp, arg->cnf, arg->literal))
+		if(!arg->dbf->GetNext(&tmp, arg->cnf, arg->literal))
 			break;
-		arg->out_pipe->Insert(tmp);
+		arg->out_pipe->Insert(&tmp);
 
-		delete tmp;
-		tmp=new Record;
+		explicit_bzero(&tmp, sizeof(Record));
 	}
 
-	delete tmp;
 	arg->out_pipe->ShutDown();
 	pthread_exit(NULL);
 }

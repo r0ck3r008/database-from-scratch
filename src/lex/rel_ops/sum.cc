@@ -6,22 +6,20 @@
 
 void get_sum_rec(struct sum_args *arg, int *int_res, double *double_res)
 {
-	Record *tmp=new Record;
+	Record tmp;
 	while(1) {
 		int curr_int_res=0; double curr_double_res=0;
-		int stat=arg->in_pipe->Remove(tmp);
+		int stat=arg->in_pipe->Remove(&tmp);
 		if(!stat)
 			break;
-		arg->func->Apply(*tmp, curr_int_res, curr_double_res);
+		arg->func->Apply(tmp, curr_int_res, curr_double_res);
 		//since one of them is gonna be 0 anyway, why not add both
 		//Plus and if statement would make things harder to read anyway
 		*int_res+=curr_int_res;
 		*double_res+=curr_double_res;
 
-		delete tmp;
-		tmp=new Record;
+		explicit_bzero(&tmp, sizeof(Record));
 	}
-	delete tmp;
 }
 
 void *sum_thr(void *a)
@@ -38,15 +36,14 @@ void *sum_thr(void *a)
 	get_sum_rec(arg, &int_res, &double_res);
 
 	char *result=new char[128];
-	Record *tmp=new Record;
+	Record tmp;
 	if(ret_type==Int)
 		sprintf(result, "%d|", int_res);
 	else
 		sprintf(result, "%0.7f|", double_res);
-	tmp->ComposeRecord(&sch, result);
-	arg->out_pipe->Insert(tmp);
+	tmp.ComposeRecord(&sch, result);
+	arg->out_pipe->Insert(&tmp);
 
-	delete tmp;
 	arg->out_pipe->ShutDown();
 	pthread_exit(NULL);
 }

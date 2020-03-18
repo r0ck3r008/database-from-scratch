@@ -7,21 +7,19 @@ void *write_thr(void *a)
 {
 	struct write_args *arg=(struct write_args *)a;
 
-	Record *tmp=new Record;
+	Record tmp;
 	while(1) {
-		int stat=arg->in_pipe->Remove(tmp);
+		int stat=arg->in_pipe->Remove(&tmp);
 		if(!stat)
 			break;
-		if(!tmp->check_null()) {
-			char *buf=tmp->deserialize(arg->sch);
+		if(!tmp.check_null()) {
+			char *buf=tmp.deserialize(arg->sch);
 			fprintf(arg->f, "%s", buf);
 			delete[] buf;
 		}
-		delete tmp;
-		tmp=new Record;
+		explicit_bzero(&tmp, sizeof(Record));
 	}
 
-	delete tmp;
 	pthread_exit(NULL);
 }
 

@@ -7,21 +7,19 @@ void *pipe_thr(void *a)
 {
 	struct pipe_args *arg=(struct pipe_args *)a;
 
-	Record *tmp=new Record;
+	Record tmp;
 	while(1) {
-		int stat=arg->in_pipe->Remove(tmp);
+		int stat=arg->in_pipe->Remove(&tmp);
 		if(!stat)
 			break;
-		arg->comp->rec1=tmp;
+		arg->comp->rec1=&tmp;
 		if(Compare(arg->comp))
-			arg->out_pipe->Insert(tmp);
+			arg->out_pipe->Insert(&tmp);
 
-		delete tmp;
-		tmp=new Record;
+		explicit_bzero(&tmp, sizeof(Record));
 	}
 
 	arg->out_pipe->ShutDown();
-	delete tmp;
 	pthread_exit(NULL);
 }
 

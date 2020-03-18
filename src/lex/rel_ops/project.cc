@@ -7,20 +7,18 @@ void *project_thr(void *a)
 {
 	struct project_args *arg=(struct project_args *)a;
 
-	Record *tmp=new Record;
+	Record tmp;
 	while(1) {
-		int stat=arg->in_pipe->Remove(tmp);
+		int stat=arg->in_pipe->Remove(&tmp);
 		if(!stat)
 			break;
-		tmp->Project(arg->keep, arg->atts_out, arg->atts_in);
-		arg->out_pipe->Insert(tmp);
+		tmp.Project(arg->keep, arg->atts_out, arg->atts_in);
+		arg->out_pipe->Insert(&tmp);
 
-		delete tmp;
-		tmp=new Record;
+		explicit_bzero(&tmp, sizeof(Record));
 	}
 
 	arg->out_pipe->ShutDown();
-	delete tmp;
 	pthread_exit(NULL);
 }
 
