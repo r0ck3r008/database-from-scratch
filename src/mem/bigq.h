@@ -23,8 +23,12 @@ public:
 
 class BigQ
 {
+private:
+	pthread_t tid;
+
 public:
 	BigQ(Pipe *, Pipe *, OrderMaker *, int);
+	~BigQ();
 };
 
 void *wrkr_run(void *);

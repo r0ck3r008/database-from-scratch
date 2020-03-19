@@ -20,7 +20,7 @@ thread_arg :: thread_arg(Pipe *in_pipe, Pipe *out_pipe,
 	this->run_len=run_len;
 	long int rand_num=random();
 	this->run_file=new char[128];
-	sprintf(this->run_file, "bin/runs_%d.bin", rand_num);
+	sprintf(this->run_file, "bin/runs_%ld.bin", rand_num);
 }
 
 BigQ :: BigQ(Pipe *in_pipe, Pipe *out_pipe,
@@ -29,10 +29,20 @@ BigQ :: BigQ(Pipe *in_pipe, Pipe *out_pipe,
 	struct thread_arg *arg=new struct thread_arg(in_pipe, out_pipe,
 							run_len, order,
 							NULL, NULL);
-	pthread_t wrkr_tid;
-	int stat=pthread_create(&wrkr_tid, NULL, wrkr_run, (void *)arg);
+
+	int stat=pthread_create(&(this->tid), NULL, wrkr_run, (void *)arg);
 	if(stat) {
 		std :: cerr << "Error in creating wrkr thread of BigQ: "
+			<< strerror(stat) << std :: endl;
+		_exit(-1);
+	}
+}
+
+BigQ :: ~BigQ()
+{
+	int stat=pthread_join(this->tid, NULL);
+	if(stat) {
+		std :: cerr << "Error in joining to wrkr thread of bigq: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);
 	}
@@ -57,7 +67,6 @@ void *wrkr_run(void *a)
 	RunMerge run_merge(arg->out_pipe, rec_sizes, arg->order, arg->run_file);
 	run_merge.merge_init();
 exit:
-	delete arg;
 	struct stat buf;
 	if(stat(arg->run_file, &buf)==0) {
 		if(unlink(arg->run_file)<0) {
@@ -67,5 +76,7 @@ exit:
 			_exit(-1);
 		}
 	}
+	delete[] arg->run_file;
+	delete arg;
 	pthread_exit(NULL);
 }
