@@ -98,11 +98,8 @@ std :: vector <int> *RunGen :: generator()
 			rec_count++;
 //			delete rec;
 		}
-		if(stat==-1) {
-			std :: cerr << "End of records!" << "Records: "
-				<< count + rec_count << std :: endl;
+		if(stat==-1)
 			flag=0;
-		}
 		count+=rec_count;
 		//sort
 		Tournament *tour=new Tournament(rec_count, this->comp);
