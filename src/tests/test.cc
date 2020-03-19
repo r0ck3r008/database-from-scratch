@@ -1,9 +1,11 @@
-#include "test.h"
-#include "mem/bigq.h"
-#include "lex/rel_op.h"
-#include <pthread.h>
+#include<pthread.h>
 #include<sodium.h>
 #include<unistd.h>
+
+#include"test.h"
+#include"mem/bigq.h"
+#include"lex/rel_op.h"
+#include"glbl/timer.h"
 
 Attribute IA = {"int", Int};
 Attribute SA = {"string", String};
@@ -102,11 +104,18 @@ void q1 () {
 	char *pred_ps = "(ps_supplycost < 1.03)";
 	init_SF_ps (pred_ps, 100);
 
+	timer t;
+	t.start_timer();
+
 	SF_ps.Run (&dbf_ps, &_ps, &cnf_ps, &lit_ps);
 	SF_ps.WaitUntilDone ();
 
+	t.stop_timer();
+	struct timeval diff=t.get_tt();
+
 	int cnt = clear_pipe (_ps, rel[1]->schema (), true);
-	cout << "\n\n query1 returned " << cnt << " records \n";
+	cout << "\n\n query1 returned " << cnt << " records and took "
+		<< diff.tv_usec/1000.00 << " milliseconds!\n";
 
 	dbf_ps.Close ();
 }
@@ -128,17 +137,23 @@ void q2 () {
 	int numAttsOut = 3;
 	P_p.Use_n_Pages (buffsz);
 
+	timer t;
+	t.start_timer();
+
 	SF_p.Run (&dbf_p, &_p, &cnf_p, &lit_p);
 	P_p.Run (&_p, &_out, keepMe, numAttsIn, numAttsOut);
-
 	SF_p.WaitUntilDone ();
 	P_p.WaitUntilDone ();
+
+	t.stop_timer();
+	struct timeval diff=t.get_tt();
 
 	Attribute att3[] = {IA, SA, DA};
 	Schema out_sch ("out_sch", numAttsOut, att3);
 	int cnt = clear_pipe (_p, &out_sch, true);
 
-	cout << "\n\n query2 returned " << cnt << " records \n";
+	cout << "\n\n query2 returned " << cnt << " records and took "
+		<< diff.tv_usec/1000.00 << " milliseconds!\n";
 
 	dbf_p.Close ();
 }
@@ -158,16 +173,23 @@ void q3 () {
 	get_cnf (str_sum, rel[0]->schema (), func);
 	func.Print ();
 	T.Use_n_Pages (1);
+
+	timer t;
+	t.start_timer();
+
 	SF_s.Run (&dbf_s, &_s, &cnf_s, &lit_s);
 	T.Run (&_s, &_out, &func);
-
 	SF_s.WaitUntilDone ();
 	T.WaitUntilDone ();
+
+	t.stop_timer();
+	struct timeval diff=t.get_tt();
 
 	Schema out_sch ("out_sch", 1, &DA);
 	int cnt = clear_pipe (_out, &out_sch, true);
 
-	cout << "\n\n query3 returned " << cnt << " records \n";
+	cout << "\n\n query3 returned " << cnt << " records and took "
+		<< diff.tv_usec/1000.00 << " milliseconds!\n";
 
 	dbf_s.Close ();
 }
@@ -207,19 +229,26 @@ void q4 () {
 	func.Print ();
 	T.Use_n_Pages (1);
 
+	timer t;
+	t.start_timer();
+
 	SF_s.Run (&dbf_s, &_s, &cnf_s, &lit_s); // 10k recs qualified
 	SF_ps.Run (&dbf_ps, &_ps, &cnf_ps, &lit_ps); // 161 recs qualified
-	J.Run (&_s, &_ps, &_s_ps, &cnf_p_ps, &lit_p_ps, rel[0]->schema(), rel[1]->schema());
+	J.Run (&_s, &_ps, &_s_ps, &cnf_p_ps, &lit_p_ps, rel[0]->schema(),
+		rel[1]->schema());
 	T.Run (&_s_ps, &_out, &func);
-
 	SF_s.WaitUntilDone();
 	SF_ps.WaitUntilDone ();
 	J.WaitUntilDone ();
 	T.WaitUntilDone ();
 
+	t.stop_timer();
+	struct timeval diff=t.get_tt();
+
 	Schema sum_sch ("sum_sch", 1, &DA);
 	int cnt = clear_pipe (_out, &sum_sch, true);
-	cout << " query4 returned " << cnt << " recs \n";
+	cout << " query4 returned " << cnt << " recs and took "
+		<< diff.tv_usec/1000.00 << " milliseconds!\n";
 }
 
 // select distinct ps_suppkey from partsupp where ps_supplycost < 100.11;
@@ -245,17 +274,23 @@ void q5 () {
 	char *fwpath = "tmp/ps.w.tmp";
 	FILE *writefile = fopen (fwpath, "w");
 
+	timer t;
+	t.start_timer();
+
 	SF_ps.Run (&dbf_ps, &_ps, &cnf_ps, &lit_ps);
 	P_ps.Run (&_ps, &__ps, keepMe, numAttsIn, numAttsOut);
 	D.Run (&__ps, &___ps, &__ps_sch);
 	W.Run (&___ps, writefile, &__ps_sch);
-
 	SF_ps.WaitUntilDone ();
 	P_ps.WaitUntilDone ();
 	D.WaitUntilDone ();
 	W.WaitUntilDone ();
 
-	cout << " query5 finished..output written to file " << fwpath << "\n";
+	t.stop_timer();
+	struct timeval diff=t.get_tt();
+
+	cout << " query5 finished..output written to file " << fwpath
+	<< ". Query took " << diff.tv_usec/1000.00 << " milliseconds!\n";
 }
 
 // select sum (ps_supplycost) from supplier, partsupp
