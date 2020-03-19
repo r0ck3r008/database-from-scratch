@@ -2,7 +2,7 @@
 #include<errno.h>
 #include<unistd.h>
 #include<vector>
-#include<sodium.h>
+#include<stdlib.h>
 #include<sys/types.h>
 #include<sys/stat.h>
 
@@ -18,7 +18,7 @@ thread_arg :: thread_arg(Pipe *in_pipe, Pipe *out_pipe,
 	this->out_pipe=out_pipe;
 	this->order=order;
 	this->run_len=run_len;
-	uint32_t rand_num=randombytes_uniform(10000);
+	long int rand_num=random();
 	this->run_file=new char[128];
 	sprintf(this->run_file, "bin/runs_%d.bin", rand_num);
 }

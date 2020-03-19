@@ -1,5 +1,4 @@
 #include<pthread.h>
-#include<sodium.h>
 #include<unistd.h>
 
 #include"test.h"
@@ -407,11 +406,6 @@ int main (int argc, char *argv[]) {
 	if (argc != 2) {
 		cerr << " Usage: ./test.out [1-8] \n";
 		exit (0);
-	}
-
-	if(sodium_init()<0) {
-		std :: cerr << "Error in initiating the libsodium!\n";
-		_exit(-1);
 	}
 
 	void (*query_ptr[]) () = {&q1, &q2, &q3, &q4, &q5, &q6, &q7, &q8};
