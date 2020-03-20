@@ -59,6 +59,7 @@ public:
 	// based upon ALL of their attributes
 	OrderMaker(Schema *schema);
 
+	OrderMaker(Schema *, int);
 	// print to the screen
 	void Print ();
 	int query_generator(OrderMaker *, CNF *);
