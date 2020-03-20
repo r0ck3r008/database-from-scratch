@@ -16,6 +16,7 @@
 #include"rel_ops/project.h"
 #include"rel_ops/sum.h"
 #include"rel_ops/join.h"
+#include"rel_ops/group_by.h"
 #include"rel_ops/rem_dup.h"
 #include"rel_ops/write_out.h"
 
