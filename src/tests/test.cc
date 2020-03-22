@@ -145,7 +145,7 @@ void q2 () {
 	P_p.WaitUntilDone ();
 	Attribute att3[] = {IA, SA, DA};
 	Schema out_sch ("out_sch", numAttsOut, att3);
-	int cnt = clear_pipe (_p, &out_sch, true);
+	int cnt = clear_pipe (_out, &out_sch, true);
 
 	t.stop_timer();
 	struct timeval diff=t.get_tt();
