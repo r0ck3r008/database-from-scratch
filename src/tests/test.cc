@@ -210,7 +210,8 @@ void q4 () {
 	Pipe _s_ps (pipesz);
 	CNF cnf_p_ps;
 	Record lit_p_ps;
-	get_cnf ("(s_suppkey = ps_suppkey)", rel[0]->schema(), rel[1]->schema(), cnf_p_ps, lit_p_ps);
+	get_cnf ("(s_suppkey = ps_suppkey)", rel[0]->schema(), rel[1]->schema(),
+			cnf_p_ps, lit_p_ps);
 
 	int outAtts = sAtts + psAtts;
 	Attribute ps_supplycost = {"ps_supplycost", Double};
@@ -236,8 +237,8 @@ void q4 () {
 	T.Run (&_s_ps, &_out, &func);
 	SF_s.WaitUntilDone();
 	SF_ps.WaitUntilDone ();
-	J.WaitUntilDone ();
-	T.WaitUntilDone ();
+//	J.WaitUntilDone ();
+//	T.WaitUntilDone ();
 	Schema sum_sch ("sum_sch", 1, &DA);
 	int cnt = clear_pipe (_out, &sum_sch, true);
 
