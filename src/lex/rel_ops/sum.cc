@@ -40,7 +40,7 @@ void *sum_thr(void *a)
 	if(ret_type==Int)
 		sprintf(result, "%d|", int_res);
 	else
-		sprintf(result, "%0.7f|", double_res);
+		sprintf(result, "%0.lf|", double_res);
 	tmp.ComposeRecord(&sch, result);
 	arg->out_pipe->Insert(&tmp);
 
