@@ -23,24 +23,20 @@ void sort_merge(struct join_args *arg)
 		comp.rec1=&tmp1;
 		comp.rec2=&tmp2;
 		int stat=Compare(&comp);
-		if(stat<1) {
-			if(!stat) {
-				Record tmp;
-				tmp.MergeRecords(&tmp1, &tmp2, arg->nattsL,
-								arg->nattsR,
-								arg->atts,
-								arg->nattsT,
-								arg->nattsL);
-				//merge records and push to out pipe
-				arg->out_pipe->Insert(&tmp);
-				explicit_bzero(&tmp, sizeof(Record));
-				explicit_bzero(&tmp1, sizeof(Record));
-			}
+		if(stat==-1) {
 			//move left pointer
 			explicit_bzero(&tmp1, sizeof(Record));
 			if(stat1)
 				stat1=out_pipeL.Remove(&tmp1);
 		} else {
+			if(!stat) {
+				Record tmp;
+				tmp.MergeRecords(&tmp1, &tmp2, arg->nattsL,
+					arg->nattsR, arg->atts, arg->nattsT,
+								arg->nattsL);
+				//merge records and push to out pipe
+				arg->out_pipe->Insert(&tmp);
+			}
 			//move right pointer
 			explicit_bzero(&tmp2, sizeof(Record));
 			if(stat2)
@@ -88,7 +84,6 @@ void nested_loop(struct join_args *arg)
 						arg->nattsR, arg->atts,
 						arg->nattsT, arg->nattsS);
 				arg->out_pipe->Insert(&tmp1);
-				explicit_bzero(&tmp, sizeof(Record));
 			}
 		}
 		explicit_bzero(&tmp1, sizeof(Record));
