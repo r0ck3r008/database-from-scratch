@@ -19,12 +19,12 @@ function.o: function.cc function.h
 
 y.tab.o: parser.y
 	yacc -d parser.y
-	#sed $(tag) y.tab.c -e "s/  __attribute__ ((__unused__))$$/# ifndef __cplusplus\n  __attribute__ ((__unused__));\n# endif/"
+	sed $(tag) y.tab.c -e "s/  __attribute__ ((__unused__))$$/# ifndef __cplusplus\n  __attribute__ ((__unused__));\n# endif/"
 	g++ -c y.tab.c
 
 yyfunc.tab.o: parser_func.y
 	yacc -p "yyfunc" -b "yyfunc" -d parser_func.y
-	#sed $(tag) yyfunc.tab.c -e "s/  __attribute__ ((__unused__))$$/# ifndef __cplusplus\n  __attribute__ ((__unused__));\n# endif/"
+	sed $(tag) yyfunc.tab.c -e "s/  __attribute__ ((__unused__))$$/# ifndef __cplusplus\n  __attribute__ ((__unused__));\n# endif/"
 	g++ -c yyfunc.tab.c
 
 lex.yy.o: lexer.l
