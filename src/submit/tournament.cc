@@ -11,8 +11,8 @@ Tournament :: node :: node(Record *in, int init_pos, const Tournament *ref)
 
 bool Tournament :: node :: operator<=(struct node in)
 {
-	this->ref->comp->rec1=&(this->data);
-	this->ref->comp->rec2=&(in.data);
+	this->ref->comp->rec1=this->data;
+	this->ref->comp->rec2=in.data;
 
 	return ((Compare(this->ref->comp)<=0) ? true : false);
 }

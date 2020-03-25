@@ -111,6 +111,13 @@ OrderMaker :: OrderMaker(Schema *schema) {
 	}
 }
 
+OrderMaker :: OrderMaker(Schema *sch, int selector)
+{
+	this->numAtts=1;
+	this->whichAtts[0]=selector;
+	Attribute *atts=sch->GetAtts();
+	this->whichTypes[0]=atts[selector].myType;
+}
 
 void OrderMaker :: Print () {
 	printf("NumAtts = %5d\n", numAtts);

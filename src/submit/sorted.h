@@ -12,7 +12,7 @@
 #include"dbfile.h"
 #include"defs.h"
 
-static const char *tmp_name="bin/sorted_tmp.bin";
+static const char *tmp_name="sorted_tmp.bin";
 
 struct file_info
 {

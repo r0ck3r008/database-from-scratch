@@ -5,25 +5,27 @@
 #include"tournament.h"
 #include"run_merge.h"
 
-thread :: thread(pthread_t *tid, Pipe *pipe, int r_start, int r_size)
+thread :: thread(pthread_t *tid, Pipe *pipe, int r_start, int r_size,
+			char *run_file)
 {
 	this->pipe=pipe;
 	this->tid=tid;
 	this->r_start=r_start;
 	this->r_size=r_size;
+	this->run_file=run_file;
 }
 
 RunMerge :: RunMerge(Pipe *out_pipe,
 			std :: vector <int> *run_sizes,
-			struct OrderMaker *order)
+			struct OrderMaker *order, char *run_file)
 {
 	this->run_sizes=run_sizes;
 	this->out_pipe=out_pipe;
 	this->n_runs=this->run_sizes->size();
-	this->comp=new struct comparator(NULL, NULL, (void *)order,
-						NULL, 0);
+	this->comp=new struct comparator((void *)order, NULL, 0);
 	this->tour=new Tournament(this->n_runs, this->comp);
 	this->threads=NULL;
+	this->run_file=run_file;
 }
 
 RunMerge :: ~RunMerge()
@@ -41,7 +43,8 @@ thread *RunMerge :: init_thread(pthread_t *tid, int r_start,
 						int r_size)
 {
 	Pipe *pipe=new Pipe(100);
-	struct thread *arg=new struct thread(tid, pipe, r_start, r_size);
+	struct thread *arg=new struct thread(tid, pipe, r_start, r_size,
+						this->run_file);
 
 	return arg;
 }
@@ -143,7 +146,7 @@ void *thread_handler(void *a)
 {
 	struct thread *arg=(struct thread *)a;
 	struct DBFile *dbf=new DBFile;
-	if(!dbf->Open("bin/runs.bin")) {
+	if(!dbf->Open(arg->run_file)) {
 		std :: cerr << "Error in opening DBFile: "
 			<< arg->r_start;
 		_exit(-1);

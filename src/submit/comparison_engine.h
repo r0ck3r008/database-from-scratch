@@ -51,14 +51,13 @@ public:
 struct comparator
 {
 	ComparisonEngine *ceng;
-	Record **rec1;
-	Record **rec2;
+	Record *rec1;
+	Record *rec2;
 	void *comp1;
 	void *comp2;
 	int flag;
 public:
-	comparator(Record **, Record **, void *,
-			void *, int);
+	comparator(void *, void *, int);
 	~comparator();
 };
 

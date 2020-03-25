@@ -18,6 +18,7 @@ private:
 	struct comparator *comp;
 	int run_len;
 	int size_curr_run;
+	char *run_file;
 
 private:
 	//functions
@@ -28,7 +29,8 @@ private:
 public:
 	int setup_dbf();
 	std :: vector <int> rec_sizes;
-	RunGen(Pipe *, int, OrderMaker *);
+	RunGen(Pipe *, int, OrderMaker *,
+		char *);
 	~RunGen();
 	std :: vector <int> *generator();
 };

@@ -14,6 +14,7 @@ struct thread_arg
 	Pipe *out_pipe;
 	int run_len;
 	OrderMaker *order;
+	char *run_file;
 public:
 	thread_arg(Pipe *, Pipe *,
 			int, OrderMaker *,
@@ -22,8 +23,12 @@ public:
 
 class BigQ
 {
+private:
+	pthread_t tid;
+
 public:
 	BigQ(Pipe *, Pipe *, OrderMaker *, int);
+	~BigQ();
 };
 
 void *wrkr_run(void *);

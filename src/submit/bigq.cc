@@ -2,11 +2,13 @@
 #include<errno.h>
 #include<unistd.h>
 #include<vector>
+#include<stdlib.h>
+#include<sys/types.h>
+#include<sys/stat.h>
 
 #include"bigq.h"
 #include"run_gen.h"
 #include"run_merge.h"
-#include"timer.h"
 
 thread_arg :: thread_arg(Pipe *in_pipe, Pipe *out_pipe,
 				int run_len, OrderMaker *order,
@@ -16,6 +18,9 @@ thread_arg :: thread_arg(Pipe *in_pipe, Pipe *out_pipe,
 	this->out_pipe=out_pipe;
 	this->order=order;
 	this->run_len=run_len;
+	long int rand_num=random();
+	this->run_file=new char[128];
+	sprintf(this->run_file, "runs_%ld.bin", rand_num);
 }
 
 BigQ :: BigQ(Pipe *in_pipe, Pipe *out_pipe,
@@ -24,10 +29,20 @@ BigQ :: BigQ(Pipe *in_pipe, Pipe *out_pipe,
 	struct thread_arg *arg=new struct thread_arg(in_pipe, out_pipe,
 							run_len, order,
 							NULL, NULL);
-	pthread_t wrkr_tid;
-	int stat=pthread_create(&wrkr_tid, NULL, wrkr_run, (void *)arg);
+
+	int stat=pthread_create(&(this->tid), NULL, wrkr_run, (void *)arg);
 	if(stat) {
 		std :: cerr << "Error in creating wrkr thread of BigQ: "
+			<< strerror(stat) << std :: endl;
+		_exit(-1);
+	}
+}
+
+BigQ :: ~BigQ()
+{
+	int stat=pthread_join(this->tid, NULL);
+	if(stat) {
+		std :: cerr << "Error in joining to wrkr thread of bigq: "
 			<< strerror(stat) << std :: endl;
 		_exit(-1);
 	}
@@ -47,24 +62,21 @@ void *wrkr_run(void *a)
 	//instantiate
 	struct thread_arg *arg=wrkr_init((struct thread_arg *)a);
 
-	timer *t1=new timer;
-	timer *t2=new timer;
-	t1->start_timer();
-	RunGen *run_gen=new RunGen(arg->in_pipe, arg->run_len, arg->order);
-	std :: vector <int> *rec_sizes=run_gen->generator();
-	t1->stop_timer();
-	struct timeval diff=t1->get_tt();
-
-	t2->start_timer();
-	RunMerge *run_merge=new RunMerge(arg->out_pipe, rec_sizes, arg->order);
-	run_merge->merge_init();
-	t2->stop_timer();
-	diff=t2->get_tt();
+	RunGen run_gen(arg->in_pipe, arg->run_len, arg->order, arg->run_file);
+	std :: vector <int> *rec_sizes=run_gen.generator();
+	RunMerge run_merge(arg->out_pipe, rec_sizes, arg->order, arg->run_file);
+	run_merge.merge_init();
 exit:
+	struct stat buf;
+	if(stat(arg->run_file, &buf)==0) {
+		if(unlink(arg->run_file)<0) {
+			std :: cerr << "Error in deleting "
+				<< arg->run_file << " file: "
+				<< strerror(errno);
+			_exit(-1);
+		}
+	}
+	delete[] arg->run_file;
 	delete arg;
-	delete run_merge;
-	delete run_gen;
-	delete t1;
-	delete t2;
 	pthread_exit(NULL);
 }

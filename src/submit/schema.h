@@ -1,12 +1,18 @@
+
 #ifndef SCHEMA_H
 #define SCHEMA_H
 
 #include <stdio.h>
 #include "record.h"
+#include "schema.h"
 #include "file.h"
 #include "comparison.h"
 #include "comparison_engine.h"
 
+struct att_pair {
+	char *name;
+	Type type;
+};
 struct Attribute {
 
 	char *name;
@@ -36,17 +42,20 @@ public:
 
 	// this finds the position of the specified attribute in the schema
 	// returns a -1 if the attribute is not present in the schema
-	int Find (const char *);
+	int Find (char *attName);
 
 	// this finds the type of the given attribute
-	Type FindType (const char *);
+	Type FindType (char *attName);
 
 	// this reads the specification for the schema in from a file
-	Schema (const char *, const char *);
+	Schema (char *fName, char *relName);
+
+	// this composes a schema instance in-memory
+	Schema (char *fName, int num_atts, Attribute *atts);
 
 	// this constructs a sort order structure that can be used to
 	// place a lexicographic ordering on the records using this type of schema
-	int GetSortOrder (OrderMaker);
+	int GetSortOrder (OrderMaker &order);
 
 	~Schema ();
 

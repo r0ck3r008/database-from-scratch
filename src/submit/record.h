@@ -12,6 +12,7 @@
 #include "parse_tree.h"
 #include "comparison.h"
 #include "comparison_engine.h"
+#include "function.h"
 
 
 
@@ -25,10 +26,11 @@ class Record {
 
 	friend class ComparisonEngine;
 	friend class Page;
+	friend class Function;
 
 private:
 	char *bits;
-	char* GetBits ();
+	char *GetBits ();
 	void SetBits (char *bits);
 	void CopyBits(char *bits, int b_len);
 
@@ -49,6 +51,8 @@ public:
 
 	int get_size();
 
+	int ComposeRecord(Schema *, const char *);
+
 	// reads the next record from a pointer to a text file; also requires
 	// that the schema be given; returns a 0 if there is no data left or
 	// if there is an error and returns a 1 otherwise
@@ -66,6 +70,7 @@ public:
 				int numAttsRight, int *attsToKeep,
 				int numAttsToKeep, int startOfRight);
 
+	char *deserialize(Schema *);
 	// prints the contents of the record; this requires
 	// that the schema also be given so that the record can be interpreted
 	void Print (Schema *mySchema);
