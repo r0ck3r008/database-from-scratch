@@ -27,7 +27,7 @@ test_bigq.out: test_bigq.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs
 	make clean_objs
 
 sorted_test_file.out: test_sorted_file.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs rel_op_objs
-	${COMPILER} test_bigq.o ${ALL_OBJS} ${LINKER_FLAGS} test_bigq.out
+	${COMPILER} test_sorted_file.o ${ALL_OBJS} ${LINKER_FLAGS} test_sorted_file.out
 	make clean_objs
 
 test.o:

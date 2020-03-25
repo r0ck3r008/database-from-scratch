@@ -3,8 +3,8 @@
 #include <pthread.h>
 #include<math.h>
 
-#include "mem/bigq.h"
-#include"glbl/defs.h"
+#include"bigq.h"
+#include"defs.h"
 #include"test.h"
 
 void test1 ();
@@ -62,14 +62,6 @@ void test1 () {
 	int proc = 1, res = 1, tot = 0;
 	while (proc && res) {
 		int x = 2;
-		while (x < 1 || x > 3) {
-			cout << "\n select option for : " << rela->path () << endl;
-			cout << " \t 1. add a few (1 to 1k recs)\n";
-			cout << " \t 2. add a lot (1k to 1e+06 recs) \n";
-			cout << " \t 3. run some query \n \t ";
-
-			cin >> x;
-		}
 		if (x < 3) {
 			int rand_num=lrand48()%(int)pow(1e3,x)+(x-1)*1000;
 			if(rand_num==0)
