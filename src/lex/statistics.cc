@@ -5,7 +5,25 @@ Statistics::Statistics()
 }
 Statistics::Statistics(Statistics &copyMe)
 {
+	for (map<string,relInfo>::iterator iter = copyMe.relMap.begin();
+			iter!=copyMe.relMap.end(); ++iter) {
+		string str1 = iter->first;
+		relInfo relinfo;
+		relinfo.numTuples = iter->second.numTuples;
+		relinfo.numRel = iter->second.numRel;
+
+		for (map<string, int>::iterator iter_1 = iter->second.attrs.begin(); 
+				iter_1!=iter->second.attrs.end(); ++iter_1) {
+			string str2 = iter_1->first;
+			int n = iter_1->second;
+			relinfo.attrs.insert(pair<string, int>(str2, n));
+		}
+		
+		relMap.insert(pair<string, relInfo>(str1, relinfo));
+		relinfo.attrs.clear();
+	}
 }
+
 Statistics::~Statistics()
 {
 }
