@@ -10,6 +10,7 @@ GLBLS := glbl/*.o
 FSS := fs/*.o
 
 TEST_OUT_OBJS := tests/test.o ${REL_OPS} ${MEMS} ${DBS} ${LEXS} ${GLBLS} ${FSS}
+REL_OPS_OUT_OBJS := tests/test_rel_ops.o ${REL_OPS} ${MEMS} ${DBS} ${LEXS} ${GLBLS} ${FSS}
 GTEST_OUT_OBJS := tests/gtest.o ${REL_OPS} ${MEMS} ${DBS} ${LEXS} ${GLBLS} ${FSS}
 SORTED_FILE_OUT_OBJS := tests/test_sorted_file.o ${MEMS} ${DBS} ${LEXS} ${FSS} ${GLBLS}
 HEAP_GEN_OUT_OBJS := tests/heap_gen.o ${MEMS} ${DBS} ${LEXS} ${FSS} ${GLBLS}
@@ -19,6 +20,10 @@ all: test.out
 
 test.out: test.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs
 	${COMPILER} ${TEST_OUT_OBJS} ${LINKER_FLAGS} test.out
+	make clean_objs
+
+test_rel_ops.out: test_rel_ops.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs
+	${COMPILER} ${REL_OPS_OUT_OBJS} ${LINKER_FLAGS} test_rel_ops.out
 	make clean_objs
 
 gtest.out: gtest.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs
@@ -39,6 +44,9 @@ sorted_test_file.out: test_sorted_file.o db_objs fs_objs mem_objs lex_objs dbgen
 
 test.o:
 	make -C tests/ test.o
+
+test_rel_ops.o:
+	make -C tests/ test_rel_ops.o
 
 gtest.o:
 	make -C tests/ gtest.o
