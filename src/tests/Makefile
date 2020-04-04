@@ -1,13 +1,16 @@
 COMPILER := g++
 COMPILER_FLAGS := -g -c
 
-all: gtest.o test.o test_bigq.o heap_gen.o
-
-gtest.o: gtest.cc
-	${COMPILER} ${COMPILER_FLAGS} gtest.cc
+all: gtest.o test.o test_bigq.o heap_gen.o test_rel_ops
 
 test.o: test.cc test.h
 	${COMPILER} ${COMPILER_FLAGS} test.cc
+
+test_rel_ops.o: test_rel_ops.cc test.h
+	${COMPILER} ${COMPILER_FLAGS} test_rel_ops.cc
+
+gtest.o: gtest.cc
+	${COMPILER} ${COMPILER_FLAGS} gtest.cc
 
 test_bigq.o: test_bigq.cc test.h
 	${COMPILER} ${COMPILER_FLAGS} test_bigq.cc
