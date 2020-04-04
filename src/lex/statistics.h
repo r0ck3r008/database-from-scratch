@@ -2,21 +2,22 @@
 #define STATISTICS_H
 #include "parse_tree.h"
 #include <map>
+#include <unordered_map>
 #include <string>
 
-using namespace std;
-
-typedef struct relInfo
+struct relInfo
 {
-	map<string, int> attrs;
+	std :: unordered_map<char *, int> attrs;
 	int numTuples;
 	int numRel;
-} relInfo;
+};
 
 class Statistics
 {
-	map<string,relInfo> relMap;
-	double tempRes;
+	std :: unordered_map<char *, relInfo> relMap;
+
+private:
+	FILE *f_handle(char *, const char *);
 
 public:
 	Statistics();
