@@ -1,45 +1,49 @@
 #include "statistics.h"
 
-Statistics::Statistics()
+Statistics :: Statistics()
 {
+
 }
-Statistics::Statistics(Statistics &copyMe)
+
+Statistics :: ~Statistics()
+{
+
+}
+
+Statistics :: Statistics(Statistics &copyMe)
 {
 	for (map<string,relInfo>::iterator iter = copyMe.relMap.begin();
-			iter!=copyMe.relMap.end(); ++iter) {
+		iter!=copyMe.relMap.end(); ++iter) {
 		string str1 = iter->first;
 		relInfo relinfo;
 		relinfo.numTuples = iter->second.numTuples;
 		relinfo.numRel = iter->second.numRel;
 
-		for (map<string, int>::iterator iter_1 = iter->second.attrs.begin(); 
-				iter_1!=iter->second.attrs.end(); ++iter_1) {
+		for (map<string, int>::iterator iter_1=
+			iter->second.attrs.begin();
+			iter_1!=iter->second.attrs.end(); ++iter_1) {
 			string str2 = iter_1->first;
 			int n = iter_1->second;
 			relinfo.attrs.insert(pair<string, int>(str2, n));
 		}
-		
+
 		relMap.insert(pair<string, relInfo>(str1, relinfo));
 		relinfo.attrs.clear();
 	}
 }
 
-Statistics::~Statistics()
+void Statistics :: AddRel(char *relName, int numTuples)
 {
-}
-
-void Statistics::AddRel(char *relName, int numTuples)
-{
-    relInfo newRel;
+	relInfo newRel;
 	newRel.numTuples = numTuples;
-    newRel.numRel = 1;
+	newRel.numRel = 1;
 	string str(relName);
 	relMap.insert(pair<string, relInfo>(str, newRel));
 }
 
-void Statistics::AddAtt(char *relName, char *attName, int numDistincts)
+void Statistics :: AddAtt(char *relName, char *attName, int numDistincts)
 {
-    string rel(relName);
+	string rel(relName);
 	string att(attName);
 	map<string,relInfo>::iterator iter = relMap.find(rel);
 
@@ -49,9 +53,9 @@ void Statistics::AddAtt(char *relName, char *attName, int numDistincts)
 	iter->second.attrs.insert(pair<string, int>(att, numDistincts));
 }
 
-void Statistics::CopyRel(char *oldName, char *newName)
+void Statistics :: CopyRel(char *oldName, char *newName)
 {
-    string oldRelName(oldName);
+	string oldRelName(oldName);
 	string newRelName(newName);
 	map<string,relInfo>::iterator iter = relMap.find(oldRelName);
 	relInfo newRel;
@@ -59,27 +63,35 @@ void Statistics::CopyRel(char *oldName, char *newName)
 	newRel.numTuples = iter->second.numTuples;
 	newRel.numRel = iter->second.numRel;
 
-	for (map<string,int>::iterator iter_1 = iter->second.attrs.begin(); iter_1!=iter->second.attrs.end(); ++iter_1){
+	for (map<string,int>::iterator iter_1 = iter->second.attrs.begin();
+		iter_1!=iter->second.attrs.end(); ++iter_1){
 		char * newAttrs = new char[200];
 		sprintf(newAttrs, "%s.%s", newName, iter_1->first.c_str());//Why?
 		string temp(newAttrs);
-		newRel.attrs.insert(pair<string, int>(newAttrs, iter_1->second));
+		newRel.attrs.insert(pair<string,
+					int>(newAttrs, iter_1->second));
 	}
 
 	relMap.insert(pair<string, relInfo>(newRelName, newRel));
 }
-	
-void Statistics::Read(char *fromWhere)
+
+void Statistics :: Read(char *fromWhere)
 {
-}
-void Statistics::Write(char *fromWhere)
-{
+
 }
 
-void  Statistics::Apply(struct AndList *parseTree, char *relNames[], int numToJoin)
+void Statistics :: Write(char *fromWhere)
 {
-}
-double Statistics::Estimate(struct AndList *parseTree, char **relNames, int numToJoin)
-{
+
 }
 
+void  Statistics :: Apply(struct AndList *parseTree, char *relNames[],
+			int numToJoin)
+{
+
+}
+double Statistics :: Estimate(struct AndList *parseTree, char **relNames,
+				int numToJoin)
+{
+
+}

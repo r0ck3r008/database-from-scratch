@@ -1,12 +1,13 @@
-#ifndef STATISTICS_
-#define STATISTICS_
+#ifndef STATISTICS_H
+#define STATISTICS_H
 #include "parse_tree.h"
 #include <map>
 #include <string>
 
 using namespace std;
 
-typedef struct relInfo{
+typedef struct relInfo
+{
 	map<string, int> attrs;
 	int numTuples;
 	int numRel;
@@ -14,24 +15,26 @@ typedef struct relInfo{
 
 class Statistics
 {
-	map<string,relInfo> relMap;	
+	map<string,relInfo> relMap;
 	double tempRes;
 
 public:
 	Statistics();
-	Statistics(Statistics &copyMe);	 // Performs deep copy
+
+	// Performs deep copy
+	Statistics(Statistics &copyMe);
 	~Statistics();
 
 
-	void AddRel(char *relName, int numTuples);
-	void AddAtt(char *relName, char *attName, int numDistincts);
-	void CopyRel(char *oldName, char *newName);
-	
-	void Read(char *fromWhere);
-	void Write(char *fromWhere);
+	void AddRel(char *, int);
+	void AddAtt(char *, char *,int);
+	void CopyRel(char *, char *);
 
-	void  Apply(struct AndList *parseTree, char *relNames[], int numToJoin);
-	double Estimate(struct AndList *parseTree, char **relNames, int numToJoin);
+	void Read(char *);
+	void Write(char *);
+
+	void  Apply(struct AndList *, char **, int);
+	double Estimate(struct AndList *, char **, int);
 
 };
 
