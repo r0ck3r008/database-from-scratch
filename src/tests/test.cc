@@ -104,6 +104,7 @@ void q0 (){
 	double result = s.Estimate(final, relName, 2);
 	if(result!=800000)
 		cout<<"error in estimating Q1 before apply \n ";
+	/*
 	s.Apply(final, relName, 2);
 
 	// test write and read
@@ -119,10 +120,12 @@ void q0 (){
 	if(fabs(dummy*3.0-result) >0.1)
 	{
 		cout<<"Read or write or last apply is not correct\n";
-	}	
+	}
+	*/
 	
 }
 
+/*
 void q1 (){
 
 	Statistics s;
@@ -562,7 +565,7 @@ void q11 (){
 	
 	
 }
-
+*/
 int main(int argc, char *argv[]) {
 	if (argc < 2) {
 		cerr << "You need to supply me the query number to run as a command-line arg.." << endl;
@@ -570,7 +573,8 @@ int main(int argc, char *argv[]) {
 		exit (1);
 	}
 
-	void (*query_ptr[]) () = {&q0,&q1, &q2, &q3, &q4, &q5, &q6, &q7, &q8,&q9,&q10,&q11};  
+//	void (*query_ptr[]) () = {&q0,&q1, &q2, &q3, &q4, &q5, &q6, &q7, &q8,&q9,&q10,&q11};
+	void (*query_ptr[]) () = {&q0};
 	void (*query) ();
 	int qindx = atoi (argv[1]);
 
