@@ -12,12 +12,16 @@ using namespace std;
 
 struct relInfo
 {
-	unordered_map<string, int> attrs;
+	unordered_map<string, int>& attrs;
 	int numTuples;
 	int numRel;
-
+//NOTE
+//this is reauired to aid in inserting pairs to maps
+//as they are replicated
 public:
-	relInfo& operator=(relInfo& in);
+	relInfo();
+	~relInfo();
+	relInfo& operator=(relInfo&);
 };
 
 class Statistics
