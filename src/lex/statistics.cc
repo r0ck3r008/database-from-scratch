@@ -115,16 +115,30 @@ void Statistics :: Read(char *fname)
 
 	char *line=NULL;
 	size_t n=0;
-	int flag=-1;
-	while(!feof(f)) {
+	struct relInfo curr_rel;
+	char curr_rel_name[64];
+	int begin=1;
+	while(!feof) {
 		getline(&line, &n, f);
-		if(flag==0 || !strcmp(line, "R_BEGIN")) {
-
-
-		} else if(!strcmp(line, "A_BEGIN")) {
-
+		char *l_point=strtok(line, ":");
+		if(!strcmp(l_point, "R_BEGIN")) {
+			if(!begin) {
+				this->relMap.insert(pair<string, relInfo>
+							(string(curr_rel_name),
+							curr_rel));
+				explicit_bzero(curr_rel_name, 64*sizeof(char));
+			} else {
+				begin=0;
+			}
+			sprintf(curr_rel_name, "%s", strtok(NULL, ":"));
+			curr_rel.numTuples=strtol(strtok(NULL, ":"), NULL, 10);
+			curr_rel.numRel=strtol(strtok(NULL, ":"), NULL, 10);
+		} else if(!strcmp(l_point, "A_BEGIN")) {
+			char *a_name=strtok(NULL, ":");
+			int num=strtol(strtok(NULL, ":"), NULL, 10);
+			curr_rel.attrs.insert(pair<string, int>(string(a_name),
+								num));
 		}
-
 		free(line);
 	}
 
