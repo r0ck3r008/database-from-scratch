@@ -6,7 +6,7 @@ ifdef linux
 	TAG := -n
 endif
 
-all: comparison.o comparison_engine.o function.o rel_op_objs y.tab.o yyfunc.tab.o lex.yy.o lex.yyfunc.o
+all: comparison.o comparison_engine.o function.o rel_op_objs y.tab.o yyfunc.tab.o lex.yy.o lex.yyfunc.o statistics.o
 
 comparison.o: comparison.cc comparison.h
 	${COMPILER} ${COMPILER_FLAGS} comparison.cc
@@ -16,6 +16,9 @@ comparison_engine.o: comparison_engine.cc comparison_engine.h
 
 function.o: function.cc function.h
 	${COMPILER} ${COMPILER_FLAGS} function.cc
+
+statistics.o: statistics.cc statistics.h
+	${COMPILER} ${COMPILER_FLAGS} statistics.cc
 
 y.tab.o: parser.y
 	yacc -d parser.y
