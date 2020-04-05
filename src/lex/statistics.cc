@@ -16,6 +16,21 @@ relInfo& relInfo :: operator=(relInfo& in)
 	return curr_ref;
 }
 
+relInfo :: relInfo()
+{
+
+}
+
+relInfo :: ~relInfo()
+{
+
+}
+
+Statistics :: Statistics()
+{
+
+}
+
 Statistics :: Statistics(Statistics &copyMe)
 {
 	for (auto& iter: copyMe.relMap) {
