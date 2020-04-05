@@ -29,7 +29,7 @@ struct ComparisonOp {
 
 	// these are the operands on the left and on the right
 	struct Operand *left;
-	struct Operand *right;	
+	struct Operand *right;
 };
 
 struct OrList {
@@ -70,7 +70,7 @@ struct FuncOperator {
 	// these are the operators on the left and on the right
 	struct FuncOperator *leftOperator;
 	struct FuncOperand *leftOperand;
-	struct FuncOperator *right;	
+	struct FuncOperator *right;
 
 };
 
