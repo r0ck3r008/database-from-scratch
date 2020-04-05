@@ -1,31 +1,37 @@
 #ifndef STATISTICS_H
 #define STATISTICS_H
-#include "parse_tree.h"
+
 #include <map>
 #include <unordered_map>
 #include <string>
 
+#include "parse_tree.h"
+
+//safe as we do not have any other namespace
+using namespace std;
+
 struct relInfo
 {
-	std :: unordered_map<char *, int> attrs;
+	unordered_map<string, int> attrs;
 	int numTuples;
 	int numRel;
+
+public:
+	relInfo& operator=(relInfo& in);
 };
 
 class Statistics
 {
-	std :: unordered_map<char *, relInfo> relMap;
+	unordered_map<string, relInfo> relMap;
 
 private:
 	FILE *f_handle(char *, const char *);
 
 public:
 	Statistics();
-
 	// Performs deep copy
 	Statistics(Statistics &copyMe);
 	~Statistics();
-
 
 	void AddRel(char *, int);
 	void AddAtt(char *, char *,int);
