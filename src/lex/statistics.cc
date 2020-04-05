@@ -7,6 +7,15 @@
 
 #include "statistics.h"
 
+relInfo& relInfo :: operator=(relInfo& in)
+{
+	relInfo& curr_ref=*this;
+	curr_ref.numTuples=in.numTuples;
+	curr_ref.numRel=in.numRel;
+	curr_ref.attrs=in.attrs;
+	return curr_ref;
+}
+
 Statistics :: Statistics(Statistics &copyMe)
 {
 	for (auto& iter: copyMe.relMap) {
