@@ -62,6 +62,9 @@ void Statistics :: cost_calc(struct ComparisonOp *op, int apply, double *res)
 		this->relMap.erase(rel1->first);
 		this->relMap.erase(rel2->first);
 		this->relMap.insert(pair<string, relInfo>(rel_name, relinfo));
+	} else if(!apply){
+		auto att=(att1==this->attrs.end()) ? att2 : att1;
+		*res+=*res/(att->second.num_distinct);
 	}
 }
 
