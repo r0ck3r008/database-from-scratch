@@ -128,24 +128,29 @@ void Statistics :: Write(char *fname)
 
 	for(auto& i: this->relMap)
 		fprintf(f, "R_BEGIN:%s:%d:%d\n",
-			i.first, i.second.numTuples, i.second.numRel);
+			i.first.c_str(), i.second.numTuples, i.second.numRel);
 
 	for(auto& i: this->attrs)
 		fprintf(f, "A_BEGIN:%s:%s:%d\n",
-			i.first, i.second.rel_name, i.second.num_distinct);
+			i.first.c_str(), i.second.rel_name.c_str(),
+			i.second.num_distinct);
 
 	fclose(f);
 }
 
-/*
+
 void  Statistics :: Apply(struct AndList *parseTree, char **relNames,
 			int numToJoin)
 {
-
+	double res=0.0;
+	this->stat_helper(parseTree, NULL, 1, &res);
 }
-*/
+
 double Statistics :: Estimate(struct AndList *parseTree, char **relNames,
 				int numToJoin)
 {
-	return 1;
+	double res=0.0;
+	this->stat_helper(parseTree, NULL, 0, &res);
+
+	return res;
 }
