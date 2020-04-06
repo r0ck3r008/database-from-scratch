@@ -67,6 +67,7 @@ void Statistics :: AddAtt(char *rel_name, char *att_name, int num_distincts)
 
 	attInfo attinfo;
 	attinfo.rel_name=r_name;
+	attinfo.num_distinct=num_distincts;
 	this->attrs.insert(pair<string, attInfo>(string(att_name),
 							attinfo));
 }
