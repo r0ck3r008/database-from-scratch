@@ -23,12 +23,27 @@ public:
 	relInfo& operator=(relInfo&);
 };
 
+struct attInfo
+{
+	string rel_name;
+	int num_distinct;
+
+public:
+	attInfo();
+	~attInfo();
+	attInfo& operator=(attInfo&);
+};
+
 class Statistics
 {
 	unordered_map<string, relInfo> relMap;
+	unordered_map<string, attInfo> attrs;
 
 private:
 	FILE *f_handle(char *, const char *);
+	double stat_helper(struct AndList *,
+			struct OrList *, char **,
+			int, int);
 
 public:
 	Statistics();
