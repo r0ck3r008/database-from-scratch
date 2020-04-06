@@ -7,46 +7,43 @@
 
 #include "statistics.h"
 
+relInfo :: relInfo(){}
+relInfo :: ~relInfo(){}
 relInfo& relInfo :: operator=(relInfo& in)
 {
 	relInfo& curr_ref=*this;
 	curr_ref.numTuples=in.numTuples;
 	curr_ref.numRel=in.numRel;
-	curr_ref.attrs=in.attrs;
 	return curr_ref;
 }
 
-relInfo :: relInfo()
+attInfo :: attInfo(){}
+attInfo :: ~attInfo(){}
+attInfo& attInfo :: operator=(attInfo& in)
 {
+	attInfo& curr_ref=*this;
+	curr_ref.rel_name=in.rel_name;
+	curr_ref.num_distinct=in.num_distinct;
 
+	return curr_ref;
 }
 
-relInfo :: ~relInfo()
-{
-
-}
-
-Statistics :: Statistics()
-{
-
-}
+Statistics :: Statistics(){}
 
 Statistics :: Statistics(Statistics &copyMe)
 {
-	for (auto& iter: copyMe.relMap) {
-		string str1 = iter.first;
+	for(auto& itr: copyMe.relMap) {
+		string str = itr.first;
 		relInfo relinfo;
-		relinfo.numTuples = iter.second.numTuples;
-		relinfo.numRel = iter.second.numRel;
 
-		for (auto& iter_1: iter.second.attrs) {
-			string str2 = iter_1.first;
-			int n = iter_1.second;
-			relinfo.attrs.insert(pair<string, int>(str2, n));
-		}
+		relMap.insert(pair<string, relInfo>(str, relinfo));
+	}
 
-		relMap.insert(pair<string, relInfo>(str1, relinfo));
-		relinfo.attrs.clear();
+	for(auto& itr: copyMe.attrs) {
+		string str = itr.first;
+		attInfo attinfo=itr.second;
+
+		this->attrs.insert(pair<string, attInfo>(str, attinfo));
 	}
 }
 
@@ -64,7 +61,8 @@ void Statistics :: AddRel(char *rel_name, int num_tuples)
 
 void Statistics :: AddAtt(char *rel_name, char *att_name, int num_distincts)
 {
-	auto iter = relMap.find(string(rel_name));
+	string r_name(rel_name);
+	auto iter = relMap.find(r_name);
 	if(!strcmp(iter->first.c_str(), rel_name))
 		//relation DNE
 		return;
@@ -77,30 +75,28 @@ void Statistics :: AddAtt(char *rel_name, char *att_name, int num_distincts)
 	if (num_distincts == -1)
 		num_distincts = iter->second.numTuples;
 
-	iter->second.attrs.insert(pair<string, int>(string(att_name),
-								num_distincts));
+	attInfo attinfo;
+	attinfo.rel_name=r_name;
+	this->attrs.insert(pair<string, attInfo>(string(att_name),
+							attinfo));
 }
 
 void Statistics :: CopyRel(char *oldName, char *newName)
 {
-	auto iter = relMap.find(string(oldName));
-	if(!strcmp(iter->first.c_str(), oldName))
+	auto itr = relMap.find(string(oldName));
+	if(!strcmp(itr->first.c_str(), oldName))
 		//relation DNE
 		return;
 
 	relInfo newRel;
-
-	newRel.numTuples = iter->second.numTuples;
-	newRel.numRel = iter->second.numRel;
-
-	for (auto& iter_1: iter->second.attrs){
-		char *newAttrs = new char[200];
-		sprintf(newAttrs, "%s.%s", newName, iter_1.first);
-		newRel.attrs.insert(pair<string, int>(string(newAttrs),
-							iter_1.second));
-	}
-
+	newRel.numTuples = itr->second.numTuples;
+	newRel.numRel = itr->second.numRel;
 	relMap.insert(pair<string, relInfo>(string(newName), newRel));
+
+	for (auto& itr: this->attrs){
+		if(itr.second.rel_name.compare(string(oldName)))
+			itr.second.rel_name=string(newName);
+	}
 }
 
 FILE *Statistics :: f_handle(char *fname, const char *perm)
@@ -139,29 +135,24 @@ void Statistics :: Read(char *fname)
 
 	char *line=NULL;
 	size_t n=0;
-	struct relInfo curr_rel;
-	char curr_rel_name[64];
-	int begin=1;
 	while(!feof) {
 		getline(&line, &n, f);
 		char *l_point=strtok(line, ":");
 		if(!strcmp(l_point, "R_BEGIN")) {
-			if(!begin) {
-				this->relMap.insert(pair<string, relInfo>
-							(string(curr_rel_name),
-							curr_rel));
-				explicit_bzero(curr_rel_name, 64*sizeof(char));
-			} else {
-				begin=0;
-			}
-			sprintf(curr_rel_name, "%s", strtok(NULL, ":"));
-			curr_rel.numTuples=strtol(strtok(NULL, ":"), NULL, 10);
-			curr_rel.numRel=strtol(strtok(NULL, ":"), NULL, 10);
+			relInfo relinfo;
+			string rel_name=string(strtok(NULL, ":"));
+			relinfo.numTuples=strtol(strtok(NULL, ":"), NULL, 10);
+			relinfo.numRel=strtol(strtok(NULL, ":"), NULL, 10);
+			this->relMap.insert(pair<string, relInfo> (rel_name,
+								relinfo));
 		} else if(!strcmp(l_point, "A_BEGIN")) {
-			char *a_name=strtok(NULL, ":");
-			int num=strtol(strtok(NULL, ":"), NULL, 10);
-			curr_rel.attrs.insert(pair<string, int>(string(a_name),
-								num));
+			attInfo attinfo;
+			string a_name=string(strtok(NULL, ":"));
+			attinfo.rel_name=string(strtok(NULL, ":"));
+			attinfo.num_distinct=strtol(strtok(NULL, ":"), NULL,
+									10);
+			attrs.insert(pair<string, attInfo>(string(a_name),
+								attinfo));
 		}
 		free(line);
 	}
@@ -175,26 +166,26 @@ void Statistics :: Write(char *fname)
 	if((f=this->f_handle(fname, "w"))==NULL)
 		_exit(-1);
 
-	for(auto& i: this->relMap) {
+	for(auto& i: this->relMap)
 		fprintf(f, "R_BEGIN:%s:%d:%d\n",
 			i.first, i.second.numTuples, i.second.numRel);
-		for(auto& j: i.second.attrs) {
-			fprintf(f, "A_BEGIN:%s:%d", j.first, j.second);
-		}
-	}
+
+	for(auto& i: this->attrs)
+		fprintf(f, "A_BEGIN:%s:%s:%d\n",
+			i.first, i.second.rel_name, i.second.num_distinct);
 
 	fclose(f);
 }
 
 /*
-void  Statistics :: Apply(struct AndList *parseTree, char *relNames[],
+void  Statistics :: Apply(struct AndList *parseTree, char **relNames,
 			int numToJoin)
 {
 
 }
+*/
 double Statistics :: Estimate(struct AndList *parseTree, char **relNames,
 				int numToJoin)
 {
-
+	return 1;
 }
-*/
