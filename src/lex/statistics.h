@@ -41,11 +41,11 @@ class Statistics
 
 private:
 	FILE *f_handle(char *, const char *);
-	double stat_helper(struct AndList *,
-			struct OrList *, int);
-	double join_helper(struct ComparisonOp *,
-				int);
-	double non_join_helper();
+	void stat_helper(struct AndList *,
+			struct OrList *, int,
+			double *);
+	void cost_calc(struct ComparisonOp *,
+			int apply, double *);
 
 public:
 	Statistics();
