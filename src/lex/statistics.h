@@ -12,7 +12,6 @@ using namespace std;
 
 struct relInfo
 {
-	unordered_map<string, int> attrs;
 	int numTuples;
 	int numRel;
 //NOTE
