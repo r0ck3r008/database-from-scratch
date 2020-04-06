@@ -53,7 +53,7 @@ void Statistics :: AddAtt(char *rel_name, char *att_name, int num_distincts)
 {
 	string r_name(rel_name);
 	auto iter = relMap.find(r_name);
-	if(!strcmp(iter->first.c_str(), rel_name))
+	if(iter==relMap.end())
 		//relation DNE
 		return;
 
@@ -75,7 +75,7 @@ void Statistics :: AddAtt(char *rel_name, char *att_name, int num_distincts)
 void Statistics :: CopyRel(char *oldName, char *newName)
 {
 	auto itr = relMap.find(string(oldName));
-	if(!strcmp(itr->first.c_str(), oldName))
+	if(itr==relMap.end())
 		//relation DNE
 		return;
 
