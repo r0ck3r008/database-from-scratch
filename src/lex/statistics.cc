@@ -32,19 +32,12 @@ Statistics :: Statistics(){}
 
 Statistics :: Statistics(Statistics &copyMe)
 {
-	for(auto& itr: copyMe.relMap) {
-		string str = itr.first;
-		relInfo relinfo;
+	for(auto& itr: copyMe.relMap)
+		relMap.insert(pair<string, relInfo>(itr.first, itr.second));
 
-		relMap.insert(pair<string, relInfo>(str, relinfo));
-	}
-
-	for(auto& itr: copyMe.attrs) {
-		string str = itr.first;
-		attInfo attinfo=itr.second;
-
-		this->attrs.insert(pair<string, attInfo>(str, attinfo));
-	}
+	for(auto& itr: copyMe.attrs)
+		this->attrs.insert(pair<string, attInfo>(itr.first,
+								itr.second));
 }
 
 Statistics :: ~Statistics()
@@ -88,10 +81,7 @@ void Statistics :: CopyRel(char *oldName, char *newName)
 		//relation DNE
 		return;
 
-	relInfo newRel;
-	newRel.numTuples = itr->second.numTuples;
-	newRel.numRel = itr->second.numRel;
-	relMap.insert(pair<string, relInfo>(string(newName), newRel));
+	relMap.insert(pair<string, relInfo>(string(newName), itr->second));
 
 	for (auto& itr: this->attrs){
 		if(itr.second.rel_name.compare(string(oldName)))
