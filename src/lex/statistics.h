@@ -36,8 +36,6 @@ public:
 
 class Statistics
 {
-	unordered_map<string, relInfo> relMap;
-	unordered_map<string, attInfo> attrs;
 
 private:
 	FILE *f_handle(char *, const char *);
@@ -48,6 +46,9 @@ private:
 			int apply, double *);
 
 public:
+
+	unordered_map<string, relInfo> relMap;
+	unordered_map<string, attInfo> attrs;
 	Statistics();
 	// Performs deep copy
 	Statistics(Statistics &copyMe);
