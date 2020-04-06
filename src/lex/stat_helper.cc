@@ -38,15 +38,17 @@ void Statistics :: cost_calc(struct ComparisonOp *op, int apply, double *res)
 {
 	string val1=string(op->left->value);
 	string val2=string(op->right->value);
-	int join=0;
+	int flag=0;
 	auto att1=this->attrs.find(val1);
 	auto att2=this->attrs.find(val2);
-	auto rel1=this->relMap.find(att1->second.rel_name);
-	auto rel2=this->relMap.find(att2->second.rel_name);
+	if(att1!=this->attrs.end() && att2!=this->attrs.end())
+		flag=1;
 
-	if(apply && join) {
+	if(apply && flag) {
+		auto rel1=this->relMap.find(att1->second.rel_name);
+		auto rel2=this->relMap.find(att2->second.rel_name);
 		relInfo relinfo;
-		string rel_name=rel1->first + rel2->first;
+		string rel_name=rel1->first + "|" + rel2->first;
 		//update attributes
 		att1->second.rel_name=rel_name;
 		att2->second.rel_name=rel_name;
