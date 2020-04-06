@@ -42,8 +42,10 @@ class Statistics
 private:
 	FILE *f_handle(char *, const char *);
 	double stat_helper(struct AndList *,
-			struct OrList *, char **,
-			int, int);
+			struct OrList *, int);
+	double join_helper(struct ComparisonOp *,
+				int);
+	double non_join_helper();
 
 public:
 	Statistics();
@@ -59,7 +61,8 @@ public:
 	void Write(char *);
 
 	void  Apply(struct AndList *, char **, int);
-	double Estimate(struct AndList *, char **, int);
+	double Estimate(struct AndList *,
+				char **, int);
 
 };
 
