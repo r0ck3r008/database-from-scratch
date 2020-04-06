@@ -1,9 +1,6 @@
 #include<iostream>
-#include<stdlib.h>
 #include<string.h>
 #include<unistd.h>
-#include<sys/types.h>
-#include<sys/stat.h>
 
 #include "statistics.h"
 
@@ -87,34 +84,6 @@ void Statistics :: CopyRel(char *oldName, char *newName)
 		if(itr.second.rel_name.compare(string(oldName)))
 			itr.second.rel_name=string(newName);
 	}
-}
-
-FILE *Statistics :: f_handle(char *fname, const char *perm)
-{
-	FILE *f=NULL;
-	struct stat buf;
-	int ret=stat(fname, &buf);
-	int flag=1;
-	if(!ret && !strcmp(perm, "w")) {
-		cerr << "File " << fname << " exists"
-			<< " and is being over written!\n";
-	} else if(ret && !strcmp(perm, "r")) {
-		cerr << "File " << fname << " doesnt exist, "
-			<< "creating a new one!\n";
-		if((f=this->f_handle(fname, "w"))==NULL)
-			_exit(-1);
-		flag=0;
-	}
-
-	if(flag) {
-		if((f=fopen(fname, perm))==NULL) {
-			cerr << "Error in opening file "
-				<< fname << endl;
-			return NULL;
-		}
-	}
-
-	return f;
 }
 
 void Statistics :: Read(char *fname)
