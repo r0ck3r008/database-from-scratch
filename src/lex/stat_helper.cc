@@ -75,6 +75,7 @@ void Statistics :: stat_helper(struct AndList *alist, struct OrList *olist,
 		//this is a AND node moving to another OR node
 		this->stat_helper(alist, alist->left, apply, res);
 	else
+		this->cost_calc(olist->left, apply, res);
 
 
 	if(olist!=NULL && olist->rightOr!=NULL)
