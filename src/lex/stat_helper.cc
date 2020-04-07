@@ -56,7 +56,7 @@ void Statistics :: cost_calc(struct ComparisonOp *op, int apply, double *res)
 				((double)rel2->second.numTuples))/min_tup;
 		*res+=numTuples;
 	} else {
-		//terniary operator doestwork with iterators, why?
+		//terniary operator doest work with iterators, why?
 		auto att=att1;
 		if(att1==this->attrs.end())
 			att=att2;
@@ -71,8 +71,12 @@ void Statistics :: cost_calc(struct ComparisonOp *op, int apply, double *res)
 		auto rel2=this->relMap.find(att2->second.rel_name);
 		string rel_name=rel1->first + "|" + rel2->first;
 		//update attributes
-		att1->second.rel_name=rel_name;
-		att2->second.rel_name=rel_name;
+		for(auto& i: this->attrs) {
+			if(i.second.rel_name.compare(rel1->first)
+				|| i.second.rel_name.compare(rel2->first)) {
+				i.second.rel_name=rel_name;
+			}
+		}
 		//update relation
 		relinfo.numTuples=numTuples;
 		relinfo.numRel=(rel1->second.numRel)+(rel2->second.numRel);
