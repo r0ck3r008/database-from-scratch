@@ -95,8 +95,10 @@ void Statistics :: Read(char *fname)
 
 	char *line=NULL;
 	size_t n=0;
-	while(!feof) {
-		getline(&line, &n, f);
+	while(1) {
+		int stat=getline(&line, &n, f);
+		if(stat==-1)
+			break;
 		char *l_point=strtok(line, ":");
 		if(!strcmp(l_point, "R_BEGIN")) {
 			relInfo relinfo;
@@ -115,7 +117,10 @@ void Statistics :: Read(char *fname)
 								attinfo));
 		}
 		free(line);
+		line=NULL;
 	}
+
+	free(line);
 
 	fclose(f);
 }
