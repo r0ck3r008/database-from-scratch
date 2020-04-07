@@ -16,7 +16,7 @@ FILE *Statistics :: f_handle(char *fname, const char *perm)
 	if(!ret && !strcmp(perm, "w")) {
 		cerr << "File " << fname << " exists"
 			<< " and is being over written!\n";
-	} else if(ret && !strcmp(perm, "r")) {
+	} else if(ret==-1 && !strcmp(perm, "r")) {
 		cerr << "File " << fname << " doesnt exist, "
 			<< "creating a new one!\n";
 		if((f=this->f_handle(fname, "w"))==NULL)
