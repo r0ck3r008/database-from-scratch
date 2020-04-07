@@ -60,7 +60,9 @@ void Statistics :: cost_calc(struct ComparisonOp *op, int apply, double *res)
 		auto att=att1;
 		if(att1==this->attrs.end())
 			att=att2;
-		*res+=*res/(att->second.num_distinct);
+		auto rel=this->relMap.find(att->second.rel_name);
+		*res+=*res+((double)rel->second.numTuples)/
+			((double)(att->second.num_distinct));
 	}
 
 	if(apply && flag) {
