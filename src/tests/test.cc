@@ -90,21 +90,20 @@ void q0 (){
 	Statistics s;
         char *relName[] = {"supplier","partsupp"};
 
-	
 	s.AddRel(relName[0],10000);
 	s.AddAtt(relName[0], "s_suppkey",10000);
 
 	s.AddRel(relName[1],800000);
-	s.AddAtt(relName[1], "ps_suppkey", 10000);	
+	s.AddAtt(relName[1], "ps_suppkey", 10000);
 
-	char *cnf = "(s_suppkey = ps_suppkey)";
+	char *cnf = "(supplier.s_suppkey = partsupp.ps_suppkey)";
 
 	yy_scan_string(cnf);
 	yyparse();
+
 	double result = s.Estimate(final, relName, 2);
 	if(result!=800000)
 		cout<<"error in estimating Q1 before apply \n ";
-	/*
 	s.Apply(final, relName, 2);
 
 	// test write and read
@@ -112,8 +111,8 @@ void q0 (){
 
 	//reload the statistics object from file
 	Statistics s1;
-	s1.Read(fileName);	
-	cnf = "(s_suppkey>1000)";	
+	s1.Read(fileName);
+	cnf = "(supplier.s_suppkey>1000)";
 	yy_scan_string(cnf);
 	yyparse();
 	double dummy = s1.Estimate(final, relName, 2);
@@ -121,11 +120,8 @@ void q0 (){
 	{
 		cout<<"Read or write or last apply is not correct\n";
 	}
-	*/
-	
 }
 
-/*
 void q1 (){
 
 	Statistics s;
@@ -136,8 +132,7 @@ void q1 (){
 	s.AddAtt(relName[0], "l_discount",11);
 	s.AddAtt(relName[0], "l_shipmode",7);
 
-		
-	char *cnf = "(l_returnflag = 'R') AND (l_discount < 0.04 OR l_shipmode = 'MAIL')";
+	char *cnf = "(lineitem.l_returnflag = 'R') AND (lineitem.l_discount < 0.04 OR lineitem.l_shipmode = 'MAIL')";
 
 	yy_scan_string(cnf);
 	yyparse();
@@ -150,39 +145,34 @@ void q1 (){
 
 	// test write and read
 	s.Write(fileName);
-	
-	
 }
-
-
 
 void q2 (){
 
 	Statistics s;
         char *relName[] = {"orders","customer","nation"};
 
-	
 	s.AddRel(relName[0],1500000);
 	s.AddAtt(relName[0], "o_custkey",150000);
 
 	s.AddRel(relName[1],150000);
 	s.AddAtt(relName[1], "c_custkey",150000);
 	s.AddAtt(relName[1], "c_nationkey",25);
-	
+
 	s.AddRel(relName[2],25);
 	s.AddAtt(relName[2], "n_nationkey",25);
 
-	char *cnf = "(c_custkey = o_custkey)";
+	char *cnf = "(customer.c_custkey = orders.o_custkey)";
 	yy_scan_string(cnf);
 	yyparse();
 
 	// Join the first two relations in relName
 	s.Apply(final, relName, 2);
-	
-	cnf = " (c_nationkey = n_nationkey)";
+
+	cnf = " (customer.c_nationkey = nation.n_nationkey)";
 	yy_scan_string(cnf);
 	yyparse();
-	
+
 	double result = s.Estimate(final, relName, 3);
 	if(fabs(result-1500000)>0.1)
 		cout<<"error in estimating Q2\n";
@@ -190,8 +180,6 @@ void q2 (){
 
 	s.Write(fileName);
 
-	
-	
 }
 
 // Note there is a self join
@@ -200,15 +188,13 @@ void q3 (){
 	Statistics s;
 	char *relName[] = {"supplier","customer","nation"};
 
-	s.Read(fileName);
-	
 	s.AddRel(relName[0],10000);
 	s.AddAtt(relName[0], "s_nationey",25);
 
 	s.AddRel(relName[1],150000);
 	s.AddAtt(relName[1], "c_custkey",150000);
 	s.AddAtt(relName[1], "c_nationkey",25);
-	
+
 	s.AddRel(relName[2],25);
 	s.AddAtt(relName[2], "n_nationkey",25);
 
@@ -220,9 +206,9 @@ void q3 (){
 	char *set1[] ={"s","n1"};
 	char *cnf = "(s.s_nationkey = n1.n_nationkey)";
 	yy_scan_string(cnf);
-	yyparse();	
+	yyparse();
 	s.Apply(final, set1, 2);
-	
+
 	char *set2[] ={"c","n2"};
 	cnf = "(c.c_nationkey = n2.n_nationkey)";
 	yy_scan_string(cnf);
@@ -241,9 +227,7 @@ void q3 (){
 	s.Apply(final, set3, 4);
 
 	s.Write(fileName);
-
 }
-
 
 void q4 (){
 
@@ -257,11 +241,11 @@ void q4 (){
 	s.AddRel(relName[1], 800000);
 	s.AddAtt(relName[1], "ps_suppkey",10000);
 	s.AddAtt(relName[1], "ps_partkey", 200000);
-	
+
 	s.AddRel(relName[2],10000);
 	s.AddAtt(relName[2], "s_suppkey",10000);
 	s.AddAtt(relName[2], "s_nationkey",25);
-	
+
 	s.AddRel(relName[3],25);
 	s.AddAtt(relName[3], "n_nationkey",25);
 	s.AddAtt(relName[3], "n_regionkey",5);
@@ -325,13 +309,13 @@ void q5 (){
 	s.AddAtt(relName[2], "l_orderkey",1500000);
 	
 
-	char *cnf = "(c_mktsegment = 'BUILDING')  AND (c_custkey = o_custkey)  AND (o_orderdate < '1995-03-1')";
+	char *cnf = "(customer.c_mktsegment = 'BUILDING')  AND (customer.c_custkey = orders.o_custkey)  AND (orders.o_orderdate < '1995-03-1')";
 	yy_scan_string(cnf);
 	yyparse();
 	s.Apply(final, relName, 2);
 	
 	
-	cnf = " (l_orderkey = o_orderkey) ";
+	cnf = " (lineitem.l_orderkey = orders.o_orderkey) ";
 	yy_scan_string(cnf);
 	yyparse();
 
@@ -353,8 +337,6 @@ void q6 (){
 	Statistics s;
         char *relName[] = { "partsupp", "supplier", "nation"};
 
-	s.Read(fileName);
-	
 	s.AddRel(relName[0],800000);
 	s.AddAtt(relName[0], "ps_suppkey",10000);
 
@@ -367,12 +349,12 @@ void q6 (){
 	s.AddAtt(relName[2], "n_name",25);
 
 
-	char *cnf = " (s_suppkey = ps_suppkey) ";
+	char *cnf = " (supplier.s_suppkey = partsupp.ps_suppkey) ";
 	yy_scan_string(cnf);
 	yyparse();
 	s.Apply(final, relName, 2);
 	
-	cnf = " (s_nationkey = n_nationkey)  AND (n_name = 'AMERICA')   ";
+	cnf = " (supplier.s_nationkey = nation.n_nationkey)  AND (nation.n_name = 'AMERICA')";
 	yy_scan_string(cnf);
 	yyparse();
 
@@ -393,9 +375,6 @@ void q7(){
 	Statistics s;
         char *relName[] = { "orders", "lineitem"};
 
-	s.Read(fileName);
-	
-
 	s.AddRel(relName[0],1500000);
 	s.AddAtt(relName[0], "o_orderkey",1500000);
 	
@@ -404,7 +383,7 @@ void q7(){
 	s.AddAtt(relName[1], "l_orderkey",1500000);
 	
 
-	char *cnf = "(l_receiptdate >'1995-02-01' ) AND (l_orderkey = o_orderkey)";
+	char *cnf = "(lineitem.l_receiptdate >'1995-02-01' ) AND (lineitem.l_orderkey = orders.o_orderkey)";
 
 	yy_scan_string(cnf);
 	yyparse();
@@ -425,8 +404,6 @@ void q8 (){
 	Statistics s;
         char *relName[] = { "part",  "partsupp"};
 
-	s.Read(fileName);
-	
 	s.AddRel(relName[0],200000);
 	s.AddAtt(relName[0], "p_partkey",200000);
 	s.AddAtt(relName[0], "p_size",50);
@@ -435,7 +412,7 @@ void q8 (){
 	s.AddAtt(relName[1], "ps_partkey",200000);
 	
 
-	char *cnf = "(p_partkey=ps_partkey) AND (p_size =3 OR p_size=6 OR p_size =19)";
+	char *cnf = "(part.p_partkey=partsupp.ps_partkey) AND (part.p_size =3 OR part.p_size=6 OR part.p_size =19)";
 
 	yy_scan_string(cnf);
 	yyparse();
@@ -468,12 +445,12 @@ void q9(){
 	s.AddRel(relName[2],10000);
 	s.AddAtt(relName[2], "s_suppkey",10000);
 	
-	char *cnf = "(p_partkey=ps_partkey) AND (p_name = 'dark green antique puff wheat') ";
+	char *cnf = "(part.p_partkey=partsupp.ps_partkey) AND (part.p_name = 'dark green antique puff wheat') ";
 	yy_scan_string(cnf);
 	yyparse();
 	s.Apply(final, relName,2);
 	
-	cnf = " (s_suppkey = ps_suppkey) ";
+	cnf = " (supplier.s_suppkey = partsupp.ps_suppkey) ";
 	yy_scan_string(cnf);
 	yyparse();
 
@@ -494,8 +471,6 @@ void q10 (){
 	Statistics s;
         char *relName[] = { "customer", "orders", "lineitem","nation"};
 
-	s.Read(fileName);
-	
 	s.AddRel(relName[0],150000);
 	s.AddAtt(relName[0], "c_custkey",150000);
 	s.AddAtt(relName[0], "c_nationkey",25);
@@ -510,17 +485,17 @@ void q10 (){
 	s.AddRel(relName[3],25);
 	s.AddAtt(relName[3], "n_nationkey",25);
 	
-	char *cnf = "(c_custkey = o_custkey)  AND (o_orderdate > '1994-01-23') ";
+	char *cnf = "(customer.c_custkey = orders.o_custkey)  AND (orders.o_orderdate > '1994-01-23') ";
 	yy_scan_string(cnf);
 	yyparse();
 	s.Apply(final, relName, 2);
 
-	cnf = " (l_orderkey = o_orderkey) ";
+	cnf = " (lineitem.l_orderkey = orders.o_orderkey) ";
 	yy_scan_string(cnf);                                                                               	yyparse();
 
 	s.Apply(final, relName, 3);  
 	
-	cnf = "(c_nationkey = n_nationkey) ";
+	cnf = "(customer.c_nationkey = nation.n_nationkey) ";
 	yy_scan_string(cnf);                                                                               	yyparse();	
 	
 	double result = s.Estimate(final, relName, 4);
@@ -539,8 +514,6 @@ void q11 (){
 	Statistics s;
         char *relName[] = { "part",  "lineitem"};
 
-	s.Read(fileName);
-	
 	s.AddRel(relName[0],200000);
 	s.AddAtt(relName[0], "p_partkey",200000);
 	s.AddAtt(relName[0], "p_conatiner",40);
@@ -550,7 +523,7 @@ void q11 (){
 	s.AddAtt(relName[1], "l_shipinstruct",4);
 	s.AddAtt(relName[1], "l_shipmode",7);
 
-	char *cnf = "(l_partkey = p_partkey) AND (l_shipmode = 'AIR' OR l_shipmode = 'AIR REG') AND (p_container ='SM BOX' OR p_container = 'SM PACK')  AND (l_shipinstruct = 'DELIVER IN PERSON')";
+	char *cnf = "(lineitem.l_partkey = part.p_partkey) AND (lineitem.l_shipmode = 'AIR' OR lineitem.l_shipmode = 'AIR REG') AND (part.p_container ='SM BOX' OR part.p_container = 'SM PACK')  AND (lineitem.l_shipinstruct = 'DELIVER IN PERSON')";
 
 	yy_scan_string(cnf);
 	yyparse();
@@ -565,7 +538,7 @@ void q11 (){
 	
 	
 }
-*/
+
 int main(int argc, char *argv[]) {
 	if (argc < 2) {
 		cerr << "You need to supply me the query number to run as a command-line arg.." << endl;
@@ -573,8 +546,7 @@ int main(int argc, char *argv[]) {
 		exit (1);
 	}
 
-//	void (*query_ptr[]) () = {&q0,&q1, &q2, &q3, &q4, &q5, &q6, &q7, &q8,&q9,&q10,&q11};
-	void (*query_ptr[]) () = {&q0};
+	void (*query_ptr[]) () = {&q0,&q1, &q2, &q3, &q4, &q5, &q6, &q7, &q8, &q9, &q10, &q11};
 	void (*query) ();
 	int qindx = atoi (argv[1]);
 

@@ -1,7 +1,7 @@
 COMPILER = g++
 COMPILER_FLAGS :=-g -c
 LINKER_FLAGS := -lfl -lgtest -lpthread -o
-ALL_OBJS := schema.o file.o record.o dbfile.o heap.o sorted.o sort_helper.o two_way_list.o pipe.o tournament.o bigq.o run_gen.o run_merge.o comparison.o comparison_engine.o function.o lex.yy.o lex.yyfunc.o y.tab.o yyfunc.tab.o sel_pipe.o sel_file.o project.o sum.o join.o group_by.o write_out.o rem_dup.o timer.o
+ALL_OBJS := schema.o file.o record.o dbfile.o heap.o sorted.o sort_helper.o two_way_list.o pipe.o tournament.o bigq.o run_gen.o run_merge.o comparison.o comparison_engine.o function.o lex.yy.o lex.yyfunc.o y.tab.o yyfunc.tab.o sel_pipe.o sel_file.o project.o sum.o join.o group_by.o write_out.o rem_dup.o timer.o stat_helper.o statistics.o
 
 TAG := -i
 ifdef linux
@@ -58,7 +58,7 @@ glbl_objs:
 	${COMPILER} ${COMPILER_FLAGS} timer.cc
 
 lex_objs:
-	${COMPILER} ${COMPILER_FLAGS} comparison_engine.cc comparison.cc function.cc
+	${COMPILER} ${COMPILER_FLAGS} comparison_engine.cc comparison.cc function.cc stat_helper.cc statistics.cc
 	# parser.y
 	yacc -d parser.y
 	sed ${TAG} y.tab.c -e "s/  __attribute__ ((__unused__))$$/# ifndef __cplusplus\n  __attribute__ ((__unused__));\n# endif/"
