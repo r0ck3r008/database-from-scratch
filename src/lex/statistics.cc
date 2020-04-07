@@ -1,40 +1,53 @@
 #include<iostream>
+#include<stdlib.h>
 #include<string.h>
 #include<unistd.h>
+#include<sys/types.h>
+#include<sys/stat.h>
 
 #include "statistics.h"
 
-relInfo :: relInfo(){}
-relInfo :: ~relInfo(){}
 relInfo& relInfo :: operator=(relInfo& in)
 {
 	relInfo& curr_ref=*this;
 	curr_ref.numTuples=in.numTuples;
 	curr_ref.numRel=in.numRel;
+	curr_ref.attrs=in.attrs;
 	return curr_ref;
 }
 
-attInfo :: attInfo(){}
-attInfo :: ~attInfo(){}
-attInfo& attInfo :: operator=(attInfo& in)
+relInfo :: relInfo()
 {
-	attInfo& curr_ref=*this;
-	curr_ref.rel_name=in.rel_name;
-	curr_ref.num_distinct=in.num_distinct;
 
-	return curr_ref;
 }
 
-Statistics :: Statistics(){}
+relInfo :: ~relInfo()
+{
+
+}
+
+Statistics :: Statistics()
+{
+
+}
 
 Statistics :: Statistics(Statistics &copyMe)
 {
-	for(auto& itr: copyMe.relMap)
-		relMap.insert(pair<string, relInfo>(itr.first, itr.second));
+	for (auto& iter: copyMe.relMap) {
+		string str1 = iter.first;
+		relInfo relinfo;
+		relinfo.numTuples = iter.second.numTuples;
+		relinfo.numRel = iter.second.numRel;
 
-	for(auto& itr: copyMe.attrs)
-		this->attrs.insert(pair<string, attInfo>(itr.first,
-								itr.second));
+		for (auto& iter_1: iter.second.attrs) {
+			string str2 = iter_1.first;
+			int n = iter_1.second;
+			relinfo.attrs.insert(pair<string, int>(str2, n));
+		}
+
+		relMap.insert(pair<string, relInfo>(str1, relinfo));
+		relinfo.attrs.clear();
+	}
 }
 
 Statistics :: ~Statistics()
@@ -51,9 +64,8 @@ void Statistics :: AddRel(char *rel_name, int num_tuples)
 
 void Statistics :: AddAtt(char *rel_name, char *att_name, int num_distincts)
 {
-	string r_name(rel_name);
-	auto iter = relMap.find(r_name);
-	if(iter==relMap.end())
+	auto iter = relMap.find(string(rel_name));
+	if(!strcmp(iter->first.c_str(), rel_name))
 		//relation DNE
 		return;
 
@@ -65,26 +77,58 @@ void Statistics :: AddAtt(char *rel_name, char *att_name, int num_distincts)
 	if (num_distincts == -1)
 		num_distincts = iter->second.numTuples;
 
-	attInfo attinfo;
-	attinfo.rel_name=r_name;
-	attinfo.num_distinct=num_distincts;
-	this->attrs.insert(pair<string, attInfo>(string(att_name),
-							attinfo));
+	iter->second.attrs.insert(pair<string, int>(string(att_name),
+								num_distincts));
 }
 
 void Statistics :: CopyRel(char *oldName, char *newName)
 {
-	auto itr = relMap.find(string(oldName));
-	if(itr==relMap.end())
+	auto iter = relMap.find(string(oldName));
+	if(!strcmp(iter->first.c_str(), oldName))
 		//relation DNE
 		return;
 
-	relMap.insert(pair<string, relInfo>(string(newName), itr->second));
+	relInfo newRel;
 
-	for (auto& itr: this->attrs){
-		if(itr.second.rel_name.compare(string(oldName)))
-			itr.second.rel_name=string(newName);
+	newRel.numTuples = iter->second.numTuples;
+	newRel.numRel = iter->second.numRel;
+
+	for (auto& iter_1: iter->second.attrs){
+		char *newAttrs = new char[200];
+		sprintf(newAttrs, "%s.%s", newName, iter_1.first);
+		newRel.attrs.insert(pair<string, int>(string(newAttrs),
+							iter_1.second));
 	}
+
+	relMap.insert(pair<string, relInfo>(string(newName), newRel));
+}
+
+FILE *Statistics :: f_handle(char *fname, const char *perm)
+{
+	FILE *f=NULL;
+	struct stat buf;
+	int ret=stat(fname, &buf);
+	int flag=1;
+	if(!ret && !strcmp(perm, "w")) {
+		cerr << "File " << fname << " exists"
+			<< " and is being over written!\n";
+	} else if(ret && !strcmp(perm, "r")) {
+		cerr << "File " << fname << " doesnt exist, "
+			<< "creating a new one!\n";
+		if((f=this->f_handle(fname, "w"))==NULL)
+			_exit(-1);
+		flag=0;
+	}
+
+	if(flag) {
+		if((f=fopen(fname, perm))==NULL) {
+			cerr << "Error in opening file "
+				<< fname << endl;
+			return NULL;
+		}
+	}
+
+	return f;
 }
 
 void Statistics :: Read(char *fname)
@@ -95,32 +139,32 @@ void Statistics :: Read(char *fname)
 
 	char *line=NULL;
 	size_t n=0;
-	while(1) {
-		int stat=getline(&line, &n, f);
-		if(stat==-1)
-			break;
+	struct relInfo curr_rel;
+	char curr_rel_name[64];
+	int begin=1;
+	while(!feof) {
+		getline(&line, &n, f);
 		char *l_point=strtok(line, ":");
 		if(!strcmp(l_point, "R_BEGIN")) {
-			relInfo relinfo;
-			string rel_name=string(strtok(NULL, ":"));
-			relinfo.numTuples=strtol(strtok(NULL, ":"), NULL, 10);
-			relinfo.numRel=strtol(strtok(NULL, ":"), NULL, 10);
-			this->relMap.insert(pair<string, relInfo> (rel_name,
-								relinfo));
+			if(!begin) {
+				this->relMap.insert(pair<string, relInfo>
+							(string(curr_rel_name),
+							curr_rel));
+				explicit_bzero(curr_rel_name, 64*sizeof(char));
+			} else {
+				begin=0;
+			}
+			sprintf(curr_rel_name, "%s", strtok(NULL, ":"));
+			curr_rel.numTuples=strtol(strtok(NULL, ":"), NULL, 10);
+			curr_rel.numRel=strtol(strtok(NULL, ":"), NULL, 10);
 		} else if(!strcmp(l_point, "A_BEGIN")) {
-			attInfo attinfo;
-			string a_name=string(strtok(NULL, ":"));
-			attinfo.rel_name=string(strtok(NULL, ":"));
-			attinfo.num_distinct=strtol(strtok(NULL, ":"), NULL,
-									10);
-			attrs.insert(pair<string, attInfo>(string(a_name),
-								attinfo));
+			char *a_name=strtok(NULL, ":");
+			int num=strtol(strtok(NULL, ":"), NULL, 10);
+			curr_rel.attrs.insert(pair<string, int>(string(a_name),
+								num));
 		}
 		free(line);
-		line=NULL;
 	}
-
-	free(line);
 
 	fclose(f);
 }
@@ -131,31 +175,26 @@ void Statistics :: Write(char *fname)
 	if((f=this->f_handle(fname, "w"))==NULL)
 		_exit(-1);
 
-	for(auto& i: this->relMap)
+	for(auto& i: this->relMap) {
 		fprintf(f, "R_BEGIN:%s:%d:%d\n",
-			i.first.c_str(), i.second.numTuples, i.second.numRel);
-
-	for(auto& i: this->attrs)
-		fprintf(f, "A_BEGIN:%s:%s:%d\n",
-			i.first.c_str(), i.second.rel_name.c_str(),
-			i.second.num_distinct);
+			i.first, i.second.numTuples, i.second.numRel);
+		for(auto& j: i.second.attrs) {
+			fprintf(f, "A_BEGIN:%s:%d", j.first, j.second);
+		}
+	}
 
 	fclose(f);
 }
 
-
-void  Statistics :: Apply(struct AndList *parseTree, char **relNames,
+/*
+void  Statistics :: Apply(struct AndList *parseTree, char *relNames[],
 			int numToJoin)
 {
-	double res=0.0;
-	this->stat_helper(parseTree, NULL, 1, &res);
-}
 
+}
 double Statistics :: Estimate(struct AndList *parseTree, char **relNames,
 				int numToJoin)
 {
-	double res=0.0;
-	this->stat_helper(parseTree, NULL, 0, &res);
 
-	return res;
 }
+*/
