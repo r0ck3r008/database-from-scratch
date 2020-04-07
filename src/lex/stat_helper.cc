@@ -1,4 +1,5 @@
 #include<iostream>
+#include<algorithm>
 #include<unistd.h>
 #include<sys/stat.h>
 #include<sys/types.h>
@@ -39,32 +40,43 @@ void Statistics :: cost_calc(struct ComparisonOp *op, int apply, double *res)
 	string val1=string(op->left->value);
 	string val2=string(op->right->value);
 	int flag=0;
+	double numTuples;
+
 	auto att1=this->attrs.find(val1);
 	auto att2=this->attrs.find(val2);
-	if(att1!=this->attrs.end() && att2!=this->attrs.end())
+	if((att1!=this->attrs.end()) && (att2!=this->attrs.end()))
 		flag=1;
 
-	if(apply && flag) {
+	if(flag) {
 		auto rel1=this->relMap.find(att1->second.rel_name);
 		auto rel2=this->relMap.find(att2->second.rel_name);
+		double min_tup=min(rel1->second.numTuples,
+						rel2->second.numTuples);
+		numTuples=(((double)rel1->second.numTuples)*
+				((double)rel2->second.numTuples))/min_tup;
+		*res+=numTuples;
+	} else {
+		//terniary operator doestwork with iterators, why?
+		auto att=att1;
+		if(att1==this->attrs.end())
+			att=att2;
+		*res+=*res/(att->second.num_distinct);
+	}
+
+	if(apply && flag) {
 		relInfo relinfo;
+		auto rel1=this->relMap.find(att1->second.rel_name);
+		auto rel2=this->relMap.find(att2->second.rel_name);
 		string rel_name=rel1->first + "|" + rel2->first;
 		//update attributes
 		att1->second.rel_name=rel_name;
 		att2->second.rel_name=rel_name;
 		//update relation
-		int max=(rel1->second.numTuples >= rel2->second.numTuples) ?
-			(rel1->second.numTuples) : (rel2->second.numTuples);
-		int numTuples=((rel1->second.numTuples)*
-					(rel2->second.numTuples))/max;
 		relinfo.numTuples=numTuples;
 		relinfo.numRel=(rel1->second.numRel)+(rel2->second.numRel);
 		this->relMap.erase(rel1->first);
 		this->relMap.erase(rel2->first);
 		this->relMap.insert(pair<string, relInfo>(rel_name, relinfo));
-	} else if(!apply){
-		auto att=(att1==this->attrs.end()) ? att2 : att1;
-		*res+=*res/(att->second.num_distinct);
 	}
 }
 
