@@ -35,6 +35,9 @@ class Statistics
 	std :: unordered_map<std :: string, attInfo>
 					attMap;
 
+private:
+	FILE *f_handle(char *, const char *);
+
 public:
 	Statistics();
 	Statistics(Statistics &);
