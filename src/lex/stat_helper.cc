@@ -32,3 +32,24 @@ FILE *Statistics :: f_handle(char *fname, const char *perm)
 
 	return f;
 }
+
+double Statistics :: traverse(AndList *a_list, OrList *o_list, int apply)
+{
+	double curr_res=0.0;
+	if(o_list==NULL && a_list->left!=NULL)
+		//Move down from AND to OR
+		curr_res+=this->traverse(a_list, a_list->left, apply);
+	else if(o_list!=NULL)
+		//Execute OR
+		curr_res+=this->operate(o_list->left, apply);
+
+	if(o_list->rightOr!=NULL)
+		//Move right from OR to OR
+		curr_res+=this->traverse(a_list, o_list->rightOr, apply);
+
+	if(a_list->rightAnd!=NULL)
+		//Move right from AND to AND
+		curr_res+=this->traverse(a_list->rightAnd, NULL, apply);
+
+	return curr_res;
+}
