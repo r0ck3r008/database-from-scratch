@@ -146,3 +146,13 @@ void Statistics :: Write(char *fname)
 
 	fclose(f);
 }
+
+void Statistics :: Apply(AndList *parse_tree, char **rel_names, int n)
+{
+	this->traverse(parse_tree, NULL, 1);
+}
+
+double Statistics :: Estimate(AndList *parse_tree, char **rel_names, int n)
+{
+	return (this->traverse(parse_tree, NULL, 0));
+}
