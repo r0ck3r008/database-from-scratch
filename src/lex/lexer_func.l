@@ -13,7 +13,7 @@
 #include "parse_tree.h"
 #include "yyfunc.tab.h"
 
-int yyfunclineno = 1;
+//int yyfunclineno = 1;
 void yyfuncerror(char*s);
 
 static YY_BUFFER_STATE yyfunc_buf_state;
