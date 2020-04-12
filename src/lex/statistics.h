@@ -38,7 +38,8 @@ class Statistics
 private:
 	FILE *f_handle(char *, const char *);
 	double traverse(AndList *, OrList *, int);
-	double operate(ComparisonOp *, int);
+	double join_op(ComparisonOp *, int);
+	double sel_op(ComparisonOp *);
 
 public:
 	Statistics();
