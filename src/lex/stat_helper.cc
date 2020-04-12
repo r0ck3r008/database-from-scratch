@@ -1,4 +1,5 @@
 #include<iostream>
+#include<algorithm>
 #include<stdio.h>
 #include<string.h>
 #include<sys/stat.h>
@@ -6,6 +7,8 @@
 #include<unistd.h>
 
 #include"statistics.h"
+
+using namespace std;
 
 FILE *Statistics :: f_handle(char *fname, const char *perm)
 {
