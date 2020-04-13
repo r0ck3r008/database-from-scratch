@@ -11,7 +11,6 @@ relInfo :: ~relInfo() {}
 relInfo &relInfo :: operator=(relInfo &in)
 {
 	this->numTuples=in.numTuples;
-	this->relCount=in.relCount;
 	this->attrs=in.attrs;
 	this->joins=in.joins;
 
@@ -41,7 +40,6 @@ void Statistics :: AddRel(char *_r_name, int numTuples)
 
 	relInfo r_info;
 	r_info.numTuples=numTuples;
-	r_info.relCount=1;
 	this->relMap.insert(pair<string, relInfo>(r_name, r_info));
 }
 
@@ -102,7 +100,6 @@ void Statistics :: Read(char *fname)
 			relInfo r_info;
 			char *r_name=strtok(NULL, ":");
 			r_info.numTuples=strtol(strtok(NULL, ":"), NULL, 10);
-			r_info.relCount=strtol(strtok(NULL, ":"), NULL, 10);
 			char *att_name=strtok(NULL, ":");
 			while(att_name!=NULL) {
 				r_info.attrs.push_back(string(att_name));
@@ -136,8 +133,8 @@ void Statistics :: Write(char *fname)
 	FILE *f=this->f_handle(fname, string("w").c_str());
 
 	for(auto &itr: this->relMap) {
-		fprintf(f, "R_BEGIN:%s:%d:%d", itr.first.c_str(),
-			itr.second.numTuples, itr.second.relCount);
+		fprintf(f, "R_BEGIN:%s:%d", itr.first.c_str(),
+			itr.second.numTuples);
 		for(auto &i: itr.second.attrs)
 			fprintf(f, ":%s", i);
 		for(auto &i: itr.second.joins)

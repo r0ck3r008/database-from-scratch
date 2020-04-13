@@ -10,7 +10,6 @@
 struct relInfo
 {
 	int numTuples;
-	int relCount;
 	std :: vector<std :: string> attrs;
 	std :: vector<std :: string> joins;
 
