@@ -1,5 +1,6 @@
 #include<iostream>
 #include<algorithm>
+#include<vector>
 #include<stdio.h>
 #include<string.h>
 #include<sys/stat.h>
@@ -36,47 +37,53 @@ FILE *Statistics :: f_handle(char *fname, const char *perm)
 	return f;
 }
 
-double Statistics :: join_op(ComparisonOp *op, char **rel_names, int n,
-								int apply)
+int Statistics :: join_op(ComparisonOp *op, double *res,
+				char **rel_names, int n, int apply)
 {
-	double curr_res=0.0;
+	unordered_map<string, int>::iterator attrs[2];
 
-	return curr_res;
+	return 1;
 }
 
-double Statistics :: sel_op(ComparisonOp *op, char **rel_names, int n)
+int Statistics :: sel_op(ComparisonOp *op, double *res,
+					char **rel_names, int n)
 {
-	double curr_res=0.0;
-
-	return curr_res;
+	return 1;
 }
 
-double Statistics :: traverse(AndList *a_list, OrList *o_list, char **rel_names,
-								int n, int apply)
+int Statistics :: traverse(AndList *a_list, OrList *o_list, double *res,
+					char **rel_names, int n, int apply)
 {
-	double curr_res=0.0;
 	if(o_list==NULL && a_list->left!=NULL) {
 		//Move down from AND to OR
-		curr_res+=this->traverse(a_list, a_list->left, rel_names, n,
-									apply);
+		if(!this->traverse(a_list, a_list->left, res, rel_names, n,
+						apply))
+			return 0;
 	} else if(o_list!=NULL) {
-		struct ComparisonOp *op=o_list->left;
 		//Execute OR
-		if(op->code==3 && op->left->code==4 && op->right->code==4)
-			curr_res+=this->join_op(op, rel_names, n, apply);
-		else
-			curr_res+=this->sel_op(op, rel_names, n);
+		struct ComparisonOp *op=o_list->left;
+		if(op->code==3 && op->left->code==4 && op->right->code==4) {
+			if(!this->join_op(op, res, rel_names, n, apply))
+				return 0;
+		} else {
+			if(!this->sel_op(op, res, rel_names, n))
+				return 0;
+		}
 	}
 
-	if(o_list->rightOr!=NULL)
+	if(o_list->rightOr!=NULL) {
 		//Move right from OR to OR
-		curr_res+=this->traverse(a_list, o_list->rightOr, rel_names, n,
-									apply);
+		if(!this->traverse(a_list, o_list->rightOr, res, rel_names,
+								n, apply))
+			return 0;
+	}
 
-	if(a_list->rightAnd!=NULL)
+	if(a_list->rightAnd!=NULL) {
 		//Move right from AND to AND
-		curr_res+=this->traverse(a_list->rightAnd, NULL, rel_names, n,
-									apply);
+		if(!this->traverse(a_list->rightAnd, NULL, res, rel_names, n,
+									apply))
+			return 0;
+	}
 
-	return curr_res;
+	return 1;
 }

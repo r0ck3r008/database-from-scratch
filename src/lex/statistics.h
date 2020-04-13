@@ -24,14 +24,17 @@ class Statistics
 {
 	std :: unordered_map<std :: string, relInfo>
 					relMap;
+	std :: unordered_map<std :: string, int>
+					attMap;
 
 private:
 	FILE *f_handle(char *, const char *);
-	double traverse(AndList *, OrList *,
+	int traverse(AndList *, OrList *, double *,
 			char **, int, int);
-	double join_op(ComparisonOp *, char **,
+	int join_op(ComparisonOp *, double *, char **,
 					int, int);
-	double sel_op(ComparisonOp *, char **, int);
+	int sel_op(ComparisonOp *, double *,
+					char **, int);
 
 public:
 	Statistics();

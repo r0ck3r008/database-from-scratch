@@ -135,23 +135,33 @@ void Statistics :: Write(char *fname)
 {
 	FILE *f=this->f_handle(fname, string("w").c_str());
 
-	for(auto &itr: this->relMap)
-		fprintf(f, "R_BEGIN:%s:%d:%d\n", itr.first.c_str(),
+	for(auto &itr: this->relMap) {
+		fprintf(f, "R_BEGIN:%s:%d:%d", itr.first.c_str(),
 			itr.second.numTuples, itr.second.relCount);
+		for(auto &i: itr.second.attrs)
+			fprintf(f, ":%s", i);
+		for(auto &i: itr.second.joins)
+			fprintf(f, ":%s", i);
+		fprintf(f, "\n");
+	}
 
 	for(auto &itr: this->attMap)
-		fprintf(f, "A_BEGIN:%s:%s:%d\n", itr.first.c_str(),
-			itr.second.relName.c_str(), itr.second.n_distinct);
+		fprintf(f, "A_BEGIN:%s:%d\n", itr.first.c_str(), itr.second);
 
 	fclose(f);
 }
 
 void Statistics :: Apply(AndList *parse_tree, char **rel_names, int n)
 {
-	this->traverse(parse_tree, NULL, 1);
+	double res=0.0;
+	this->traverse(parse_tree, NULL, &res, rel_names, n, 1);
 }
 
 double Statistics :: Estimate(AndList *parse_tree, char **rel_names, int n)
 {
-	return (this->traverse(parse_tree, NULL, 0));
+	double res=0.0;
+	if(!this->traverse(parse_tree, NULL, &res, rel_names, n, 0))
+		cerr << "Estimation failed!\n";
+
+	return res;
 }
