@@ -8,6 +8,8 @@
 
 struct relInfo
 {
+	std :: unordered_map<std :: string, int>
+					attMap;
 	int numTuples;
 	int relCount;
 
@@ -17,23 +19,10 @@ public:
 	relInfo &operator=(relInfo &);
 };
 
-struct attInfo
-{
-	std :: string relName;
-	int n_distinct;
-
-public:
-	attInfo();
-	~attInfo();
-	attInfo &operator=(attInfo &);
-};
-
 class Statistics
 {
 	std :: unordered_map<std :: string, relInfo>
 					relMap;
-	std :: unordered_map<std :: string, attInfo>
-					attMap;
 
 private:
 	FILE *f_handle(char *, const char *);
