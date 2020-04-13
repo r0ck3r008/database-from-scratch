@@ -125,10 +125,10 @@ void Statistics :: Write(char *fname)
 
 void Statistics :: Apply(AndList *parse_tree, char **rel_names, int n)
 {
-	this->traverse(parse_tree, NULL, 1);
+	this->traverse(parse_tree, NULL, rel_names, n, 1);
 }
 
 double Statistics :: Estimate(AndList *parse_tree, char **rel_names, int n)
 {
-	return (this->traverse(parse_tree, NULL, 0));
+	return (this->traverse(parse_tree, NULL, rel_names, n, 0));
 }
