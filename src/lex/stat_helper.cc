@@ -50,12 +50,14 @@ double Statistics :: sel_op(ComparisonOp *op)
 	return curr_res;
 }
 
-double Statistics :: traverse(AndList *a_list, OrList *o_list, int apply)
+double Statistics :: traverse(AndList *a_list, OrList *o_list, char **rel_names,
+								int n, int apply)
 {
 	double curr_res=0.0;
 	if(o_list==NULL && a_list->left!=NULL) {
 		//Move down from AND to OR
-		curr_res+=this->traverse(a_list, a_list->left, apply);
+		curr_res+=this->traverse(a_list, a_list->left, rel_names, n,
+									apply);
 	} else if(o_list!=NULL) {
 		struct ComparisonOp *op=o_list->left;
 		//Execute OR
@@ -67,11 +69,13 @@ double Statistics :: traverse(AndList *a_list, OrList *o_list, int apply)
 
 	if(o_list->rightOr!=NULL)
 		//Move right from OR to OR
-		curr_res+=this->traverse(a_list, o_list->rightOr, apply);
+		curr_res+=this->traverse(a_list, o_list->rightOr, rel_names, n,
+									apply);
 
 	if(a_list->rightAnd!=NULL)
 		//Move right from AND to AND
-		curr_res+=this->traverse(a_list->rightAnd, NULL, apply);
+		curr_res+=this->traverse(a_list->rightAnd, NULL, rel_names, n,
+									apply);
 
 	return curr_res;
 }
