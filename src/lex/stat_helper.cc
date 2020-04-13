@@ -39,26 +39,6 @@ FILE *Statistics :: f_handle(char *fname, const char *perm)
 double Statistics :: join_op(ComparisonOp *op, int apply)
 {
 	double curr_res=0.0;
-	string n_att1(op->left->value);
-	string n_att2(op->right->value);
-	auto att1=this->attMap.find(n_att1);
-	auto att2=this->attMap.find(n_att2);
-	auto rel1=this->relMap.find(att1->second.relName);
-	auto rel2=this->relMap.find(att2->second.relName);
-
-	curr_res=((rel1->second.numTuples)*(rel2->second.numTuples))/
-			max(att1->second.n_distinct, att2->second.n_distinct);
-
-	if(apply) {
-		//update relation
-		relInfo r_info;
-		r_info.numTuples=(int)curr_res;
-		r_info.relCount=(rel1->second.relCount)+(rel2->second.relCount);
-		string rel_name=rel1->first + "+" + rel2->first;
-		this->relMap.erase(rel1->first);
-		this->relMap.erase(rel2->first);
-		this->relMap.insert(pair<string, relInfo>(rel_name, r_info));
-	}
 
 	return curr_res;
 }
