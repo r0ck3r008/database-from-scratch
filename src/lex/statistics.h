@@ -28,8 +28,9 @@ private:
 	FILE *f_handle(char *, const char *);
 	double traverse(AndList *, OrList *,
 			char **, int, int);
-	double join_op(ComparisonOp *, int);
-	double sel_op(ComparisonOp *);
+	double join_op(ComparisonOp *, char **,
+					int, int);
+	double sel_op(ComparisonOp *, char **, int);
 
 public:
 	Statistics();

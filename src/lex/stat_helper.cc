@@ -36,14 +36,15 @@ FILE *Statistics :: f_handle(char *fname, const char *perm)
 	return f;
 }
 
-double Statistics :: join_op(ComparisonOp *op, int apply)
+double Statistics :: join_op(ComparisonOp *op, char **rel_names, int n,
+								int apply)
 {
 	double curr_res=0.0;
 
 	return curr_res;
 }
 
-double Statistics :: sel_op(ComparisonOp *op)
+double Statistics :: sel_op(ComparisonOp *op, char **rel_names, int n)
 {
 	double curr_res=0.0;
 
@@ -62,9 +63,9 @@ double Statistics :: traverse(AndList *a_list, OrList *o_list, char **rel_names,
 		struct ComparisonOp *op=o_list->left;
 		//Execute OR
 		if(op->code==3 && op->left->code==4 && op->right->code==4)
-			curr_res+=this->join_op(op, apply);
+			curr_res+=this->join_op(op, rel_names, n, apply);
 		else
-			curr_res+=this->sel_op(op);
+			curr_res+=this->sel_op(op, rel_names, n);
 	}
 
 	if(o_list->rightOr!=NULL)
