@@ -3,15 +3,16 @@
 
 #include<map>
 #include<unordered_map>
+#include<vector>
 
 #include"parse_tree.h"
 
 struct relInfo
 {
-	std :: unordered_map<std :: string, int>
-					attMap;
 	int numTuples;
 	int relCount;
+	std :: vector<std :: string> attrs;
+	std :: vector<std :: string> joins;
 
 public:
 	relInfo();

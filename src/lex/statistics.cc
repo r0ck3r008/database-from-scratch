@@ -12,16 +12,8 @@ relInfo &relInfo :: operator=(relInfo &in)
 {
 	this->numTuples=in.numTuples;
 	this->relCount=in.relCount;
-
-	return *(this);
-}
-
-attInfo :: attInfo() {}
-attInfo :: ~attInfo() {}
-attInfo &attInfo :: operator=(attInfo &in)
-{
-	this->relName=in.relName;
-	this->n_distinct=in.n_distinct;
+	this->attrs=in.attrs;
+	this->joins=in.joins;
 
 	return *(this);
 }
@@ -33,7 +25,7 @@ Statistics :: Statistics(Statistics &in)
 		this->relMap.insert(pair<string, relInfo>(itr.first,
 								itr.second));
 	for(auto &itr: in.attMap)
-		this->attMap.insert(pair<string, attInfo>(itr.first,
+		this->attMap.insert(pair<string, int>(itr.first,
 								itr.second));
 }
 Statistics :: ~Statistics() {}
@@ -56,9 +48,9 @@ void Statistics :: AddRel(char *_r_name, int numTuples)
 void Statistics :: AddAtt(char *_r_name, char *_a_name, int n_distinct)
 {
 	string r_name(_r_name);
-	string a_name(_a_name);
+	string a_name=r_name + "." + string(_a_name);
 	auto itr=this->attMap.find(a_name);
-	if(itr!=this->attMap.end() && !itr->second.relName.compare(r_name)) {
+	if(itr!=this->attMap.end() && !itr->first.compare(a_name)) {
 		cerr << "Attribute under same relation already exists!\n";
 		return;
 	}
@@ -68,11 +60,10 @@ void Statistics :: AddAtt(char *_r_name, char *_a_name, int n_distinct)
 		return;
 	}
 
-	attInfo a_info;
-	a_info.n_distinct=(n_distinct==-1) ? (itr1->second.numTuples) :
+	n_distinct=(n_distinct==-1) ? (itr1->second.numTuples) :
 								(n_distinct);
-	a_info.relName=r_name;
-	this->attMap.insert(pair<string, attInfo>(a_name, a_info));
+	this->attMap.insert(pair<string, int>(a_name, n_distinct));
+	itr1->second.attrs.push_back(string(_a_name));
 }
 
 void Statistics :: CopyRel(char *_o_name, char *_n_name)
@@ -86,14 +77,12 @@ void Statistics :: CopyRel(char *_o_name, char *_n_name)
 	}
 
 	this->relMap.insert(pair<string, relInfo>(n_name, itr->second));
-	vector<attInfo> pending;
-	for(auto &itr: this->attMap) {
-		if(itr.second.relName.compare(o_name)==0) {
-			attInfo a_info=itr.second;
-			a_info.relName=n_name;
-			this->attMap.insert(pair<string, attInfo>(n_name,
-								a_info));
-		}
+	for(auto &i: itr->second.attrs) {
+		string o_a_name=o_name+"."+i;
+		string n_a_name=n_name+"."+i;
+		auto att_itr=this->attMap.find(o_a_name);
+		this->attMap.insert(pair<string, int>(n_a_name,
+							att_itr->second));
 	}
 }
 
@@ -114,14 +103,24 @@ void Statistics :: Read(char *fname)
 			char *r_name=strtok(NULL, ":");
 			r_info.numTuples=strtol(strtok(NULL, ":"), NULL, 10);
 			r_info.relCount=strtol(strtok(NULL, ":"), NULL, 10);
+			char *att_name=strtok(NULL, ":");
+			while(att_name!=NULL) {
+				r_info.attrs.push_back(string(att_name));
+				att_name=strtok(NULL, ":");
+			}
+			char *join_name=strtok(NULL, ":");
+			while(join_name!=NULL) {
+				r_info.joins.push_back(string(join_name));
+				join_name=strtok(NULL, ":");
+			}
 			this->relMap.insert(pair<string, relInfo>
 						(string(r_name), r_info));
 
 		} else if(!strcmp(type, "A_BEGIN")) {
 			char *a_name=strtok(NULL, ":");
-			char *r_name=strtok(NULL, ":");
-			int num_distinct=strtol(strtok(NULL, ":"), NULL, 10);
-			this->AddAtt(r_name, a_name, num_distinct);
+			int n_distinct=strtol(strtok(NULL, ":"), NULL, 10);
+			this->attMap.insert(pair<string, int>(string(a_name),
+								n_distinct));
 		}
 
 		free(line);
