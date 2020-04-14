@@ -36,7 +36,7 @@ FILE *Statistics :: f_handle(char *fname, const char *perm)
 	return f;
 }
 
-int Statistics :: get_relations(vector<unordered_map<string, relInfo> ::
+int Statistics :: get_rels(vector<unordered_map<string, relInfo> ::
 				iterator> &vec, char **rel_names, int n)
 {
 	set<string> pres, chkr;
@@ -58,23 +58,55 @@ int Statistics :: get_relations(vector<unordered_map<string, relInfo> ::
 		return 0;
 }
 
-int Statistics :: join_op(ComparisonOp *op, double *res,
-				char **rel_names, int n, int apply)
+void Statistics :: get_attrs(vector<unordered_map<string, int> ::
+			iterator> &vec_att,
+			vector<unordered_map<string, relInfo> ::
+			iterator> &vec_rel,
+			vector<unordered_map<string, relInfo> ::
+			iterator> &vec_rel2,
+			char *value)
 {
-	vector<unordered_map<string, relInfo> :: iterator> vec;
-	if(!this->get_relations(vec, rel_names, n))
-		return 0;
+	//this function makes sure that the nth attribute in vec_att corresponds
+	//to nth relation in vec_rel2
+	char *a_ptr=strtok(value, ".");
+	unordered_map<string, int> :: iterator att;
+	if(a_ptr!=NULL) {
+		att=this->attMap.find(string(value));
+		if(att==this->attMap.end())
+			return;
+		else
+			vec_att.push_back(att);
+	} else {
+		int init_size=vec_att.size();
+		for(auto i: vec_rel) {
+			string a_name=i->first+"."+string(value);
+			att=this->attMap.find(a_name);
+			if(att!=this->attMap.end()) {
+				vec_att.push_back(att);
+				vec_rel2.push_back(i);
+				break;
+			}
+		}
+	}
+}
+
+int Statistics :: join_op(ComparisonOp *op, double *res,
+			vector<unordered_map<string, relInfo> ::
+			iterator> &vec_rel,
+			vector<unordered_map<string, int> ::
+			iterator> &vec_att, int apply)
+{
 
 	return 1;
 }
 
 int Statistics :: sel_op(ComparisonOp *op, double *res,
-					char **rel_names, int n)
-{
-	vector<unordered_map<string, relInfo> :: iterator> vec;
-	if(!this->get_relations(vec, rel_names, n))
-		return 0;
+			vector<unordered_map<string, relInfo> ::
+			iterator> &vec_rel,
+			vector<unordered_map<string, int> ::
+			iterator> &vec_att)
 
+{
 	return 1;
 }
 
@@ -89,22 +121,28 @@ int Statistics :: traverse(AndList *a_list, OrList *o_list, double *res,
 	} else if(o_list!=NULL) {
 		//Execute OR
 		struct ComparisonOp *op=o_list->left;
-		if(op->code==3 && op->left->code==4 && op->right->code==4) {
-			if(!this->join_op(op, res, rel_names, n, apply))
+		vector<unordered_map<string, relInfo> :: iterator> vec1, vec2;
+		if(!this->get_rels(vec1, rel_names, n))
+			return 0;
+		vector<unordered_map<string, int> :: iterator> vec_att;
+		if(op->left->code==3)
+			this->get_attrs(vec_att, vec1, vec2, op->left->value);
+		if(op->right->code==3)
+			this->get_attrs(vec_att, vec1, vec2, op->right->value);
+		if(vec_att.size()==2){
+			if(!this->join_op(op, res, vec2, vec_att, apply))
 				return 0;
 		} else {
-			if(!this->sel_op(op, res, rel_names, n))
+			if(!this->sel_op(op, res, vec2, vec_att))
 				return 0;
 		}
 	}
-
 	if(o_list->rightOr!=NULL) {
 		//Move right from OR to OR
 		if(!this->traverse(a_list, o_list->rightOr, res, rel_names,
 								n, apply))
 			return 0;
 	}
-
 	if(a_list->rightAnd!=NULL) {
 		//Move right from AND to AND
 		if(!this->traverse(a_list->rightAnd, NULL, res, rel_names, n,

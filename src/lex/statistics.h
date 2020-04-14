@@ -29,15 +29,29 @@ class Statistics
 
 private:
 	FILE *f_handle(char *, const char *);
-	int get_relations(std :: vector<std :: unordered_map
+	int get_rels(std :: vector<std :: unordered_map
 			<std :: string, relInfo> ::
 			iterator> &, char **, int);
+	void get_attrs(std :: vector<std :: unordered_map
+			<std ::string, int> :: iterator> &,
+			std :: vector<std :: unordered_map<
+			std :: string, relInfo> :: iterator> &,
+			std :: vector<std :: unordered_map<
+			std :: string, relInfo> :: iterator> &,
+			char *);
 	int traverse(AndList *, OrList *, double *,
 			char **, int, int);
-	int join_op(ComparisonOp *, double *, char **,
-					int, int);
+	int join_op(ComparisonOp *, double *,
+		std :: vector<std :: unordered_map<std ::
+		string, relInfo> :: iterator> &,
+		std :: vector<std :: unordered_map<std ::
+		string, int> :: iterator> &,
+		int);
 	int sel_op(ComparisonOp *, double *,
-					char **, int);
+		std :: vector<std :: unordered_map<std ::
+		string, relInfo> :: iterator> &,
+		std :: vector<std :: unordered_map<std ::
+		string, int> :: iterator> &);
 
 public:
 	Statistics();
