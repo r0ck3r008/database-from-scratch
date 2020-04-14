@@ -90,7 +90,7 @@ void Statistics :: get_attrs(vector<unordered_map<string, int> ::
 	}
 }
 
-int Statistics :: join_op(ComparisonOp *op, double *res,
+void Statistics :: join_op(ComparisonOp *op, double *res,
 			vector<unordered_map<string, relInfo> ::
 			iterator> &vec_rel,
 			vector<unordered_map<string, int> ::
@@ -107,7 +107,6 @@ int Statistics :: join_op(ComparisonOp *op, double *res,
 	}
 
 	*res+=tuples;
-	return 1;
 }
 
 int Statistics :: sel_op(ComparisonOp *op, double *res,
@@ -117,6 +116,7 @@ int Statistics :: sel_op(ComparisonOp *op, double *res,
 			iterator> &vec_att)
 
 {
+
 	return 1;
 }
 
@@ -140,8 +140,7 @@ int Statistics :: traverse(AndList *a_list, OrList *o_list, double *res,
 		if(op->right->code==3)
 			this->get_attrs(vec_att, vec1, vec2, op->right->value);
 		if(vec_att.size()==2){
-			if(!this->join_op(op, res, vec2, vec_att, apply))
-				return 0;
+			this->join_op(op, res, vec2, vec_att, apply);
 		} else {
 			if(!this->sel_op(op, res, vec2, vec_att))
 				return 0;
