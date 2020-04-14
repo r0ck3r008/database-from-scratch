@@ -41,7 +41,7 @@ private:
 			char *);
 	int traverse(AndList *, OrList *, double *,
 			char **, int, int);
-	void join_op(ComparisonOp *, double *,
+	void join_op(double *,
 		std :: vector<std :: unordered_map<std ::
 		string, relInfo> :: iterator> &,
 		std :: vector<std :: unordered_map<std ::
