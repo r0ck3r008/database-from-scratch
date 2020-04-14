@@ -47,7 +47,7 @@ private:
 		std :: vector<std :: unordered_map<std ::
 		string, int> :: iterator> &,
 		int);
-	int sel_op(ComparisonOp *, double *,
+	void sel_op(ComparisonOp *, double *,
 		std :: vector<std :: unordered_map<std ::
 		string, relInfo> :: iterator> &,
 		std :: vector<std :: unordered_map<std ::

@@ -109,15 +109,13 @@ void Statistics :: join_op(ComparisonOp *op, double *res,
 	*res+=tuples;
 }
 
-int Statistics :: sel_op(ComparisonOp *op, double *res,
+void Statistics :: sel_op(ComparisonOp *op, double *res,
 			vector<unordered_map<string, relInfo> ::
 			iterator> &vec_rel,
 			vector<unordered_map<string, int> ::
 			iterator> &vec_att)
 
 {
-
-	return 1;
 }
 
 int Statistics :: traverse(AndList *a_list, OrList *o_list, double *res,
@@ -139,12 +137,10 @@ int Statistics :: traverse(AndList *a_list, OrList *o_list, double *res,
 			this->get_attrs(vec_att, vec1, vec2, op->left->value);
 		if(op->right->code==3)
 			this->get_attrs(vec_att, vec1, vec2, op->right->value);
-		if(vec_att.size()==2){
+		if(vec_att.size()==2)
 			this->join_op(op, res, vec2, vec_att, apply);
-		} else {
-			if(!this->sel_op(op, res, vec2, vec_att))
-				return 0;
-		}
+		else
+			this->sel_op(op, res, vec2, vec_att);
 	}
 	if(o_list->rightOr!=NULL) {
 		//Move right from OR to OR
