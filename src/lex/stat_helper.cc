@@ -1,6 +1,5 @@
 #include<iostream>
 #include<algorithm>
-#include<vector>
 #include<stdio.h>
 #include<string.h>
 #include<sys/stat.h>
@@ -37,10 +36,34 @@ FILE *Statistics :: f_handle(char *fname, const char *perm)
 	return f;
 }
 
+int Statistics :: get_relations(vector<unordered_map<string, relInfo> ::
+				iterator> &vec, char **rel_names, int n)
+{
+	set<string> pres, chkr;
+	for(int i=0; i<n; i++) {
+		string r_name(rel_names[i]);
+		pres.insert(r_name);
+		auto itr=this->relMap.find(r_name);
+		if(itr==this->relMap.end())
+			return 0;
+
+		chkr.insert(itr->second.joins.begin(),
+				itr->second.joins.end());
+		vec.push_back(itr);
+	}
+
+	if(pres==chkr)
+		return 1;
+	else
+		return 0;
+}
+
 int Statistics :: join_op(ComparisonOp *op, double *res,
 				char **rel_names, int n, int apply)
 {
-	unordered_map<string, int>::iterator attrs[2];
+	vector<unordered_map<string, relInfo> :: iterator> vec;
+	if(!this->get_relations(vec, rel_names, n))
+		return 0;
 
 	return 1;
 }
@@ -48,6 +71,10 @@ int Statistics :: join_op(ComparisonOp *op, double *res,
 int Statistics :: sel_op(ComparisonOp *op, double *res,
 					char **rel_names, int n)
 {
+	vector<unordered_map<string, relInfo> :: iterator> vec;
+	if(!this->get_relations(vec, rel_names, n))
+		return 0;
+
 	return 1;
 }
 

@@ -30,6 +30,9 @@ class Statistics
 
 private:
 	FILE *f_handle(char *, const char *);
+	int get_relations(std :: vector<std :: unordered_map
+			<std :: string, relInfo> ::
+			iterator> &, char **, int);
 	int traverse(AndList *, OrList *, double *,
 			char **, int, int);
 	int join_op(ComparisonOp *, double *, char **,
