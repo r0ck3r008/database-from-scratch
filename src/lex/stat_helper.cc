@@ -96,7 +96,17 @@ int Statistics :: join_op(ComparisonOp *op, double *res,
 			vector<unordered_map<string, int> ::
 			iterator> &vec_att, int apply)
 {
+	double tuples=(((double)vec_rel[0]->second.numTuples)*
+			((double)vec_rel[1]->second.numTuples))/
+			(double)max(vec_att[0]->second, vec_att[1]->second);
+	if(apply) {
+		vec_rel[0]->second.joins.insert(vec_rel[1]->first);
+		vec_rel[1]->second.joins.insert(vec_rel[0]->first);
+		vec_rel[0]->second.numTuples=(int)tuples;
+		vec_rel[1]->second.numTuples=(int)tuples;
+	}
 
+	*res+=tuples;
 	return 1;
 }
 
