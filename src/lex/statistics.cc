@@ -1,6 +1,7 @@
 #include<iostream>
 #include<string.h>
 #include<vector>
+#include<unistd.h>
 
 #include"statistics.h"
 
@@ -152,14 +153,19 @@ void Statistics :: Write(char *fname)
 void Statistics :: Apply(AndList *parse_tree, char **rel_names, int n)
 {
 	double res=0.0;
-	this->traverse(parse_tree, NULL, &res, rel_names, n, 1);
+	if(!this->traverse(parse_tree, NULL, &res, rel_names, n, 1)) {
+		cerr << "Apply failed!\n";
+		_exit(-1);
+	}
 }
 
 double Statistics :: Estimate(AndList *parse_tree, char **rel_names, int n)
 {
 	double res=0.0;
-	if(!this->traverse(parse_tree, NULL, &res, rel_names, n, 0))
+	if(!this->traverse(parse_tree, NULL, &res, rel_names, n, 0)) {
 		cerr << "Estimation failed!\n";
+		_exit(-1);
+	}
 
 	return res;
 }
