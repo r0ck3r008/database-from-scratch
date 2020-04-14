@@ -12,7 +12,6 @@
 struct relInfo
 {
 	int numTuples;
-	std :: vector<std :: string> attrs;
 	std :: unordered_set<std :: string> joins;
 
 public:

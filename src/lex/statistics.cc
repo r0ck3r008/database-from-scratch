@@ -12,7 +12,6 @@ relInfo :: ~relInfo() {}
 relInfo &relInfo :: operator=(relInfo &in)
 {
 	this->numTuples=in.numTuples;
-	this->attrs=in.attrs;
 	this->joins=in.joins;
 
 	return *(this);
@@ -26,7 +25,7 @@ Statistics :: Statistics(Statistics &in)
 								itr.second));
 	for(auto &itr: in.attMap)
 		this->attMap.insert(pair<string, int>(itr.first,
-								itr.second));
+							itr.second));
 }
 Statistics :: ~Statistics() {}
 
@@ -63,7 +62,6 @@ void Statistics :: AddAtt(char *_r_name, char *_a_name, int n_distinct)
 	n_distinct=(n_distinct==-1) ? (itr1->second.numTuples) :
 								(n_distinct);
 	this->attMap.insert(pair<string, int>(a_name, n_distinct));
-	itr1->second.attrs.push_back(string(_a_name));
 }
 
 void Statistics :: CopyRel(char *_o_name, char *_n_name)
@@ -77,12 +75,17 @@ void Statistics :: CopyRel(char *_o_name, char *_n_name)
 	}
 
 	this->relMap.insert(pair<string, relInfo>(n_name, itr->second));
-	for(auto &i: itr->second.attrs) {
-		string o_a_name=o_name+"."+i;
-		string n_a_name=n_name+"."+i;
-		auto att_itr=this->attMap.find(o_a_name);
-		this->attMap.insert(pair<string, int>(n_a_name,
-							att_itr->second));
+	//ugly still
+	for(auto &i: this->attMap) {
+		char a_name[64];
+		sprintf(a_name, "%s", i.first.c_str());
+		char *rel_name=strtok(a_name, ".");
+		if(!strcmp(_o_name, rel_name)) {
+			char *a_new_name=strtok(NULL, ".");
+			string name=n_name + "." + string(a_new_name);
+			this->attMap.insert(pair<string, int>
+					(name, i.second));
+		}
 	}
 }
 
@@ -102,11 +105,6 @@ void Statistics :: Read(char *fname)
 			relInfo r_info;
 			char *r_name=strtok(NULL, ":");
 			r_info.numTuples=strtol(strtok(NULL, ":"), NULL, 10);
-			char *att_name=strtok(NULL, ":");
-			while(att_name!=NULL) {
-				r_info.attrs.push_back(string(att_name));
-				att_name=strtok(NULL, ":");
-			}
 			char *join_name=strtok(NULL, ":");
 			while(join_name!=NULL) {
 				r_info.joins.insert(string(join_name));
@@ -117,9 +115,9 @@ void Statistics :: Read(char *fname)
 
 		} else if(!strcmp(type, "A_BEGIN")) {
 			char *a_name=strtok(NULL, ":");
-			int n_distinct=strtol(strtok(NULL, ":"), NULL, 10);
-			this->attMap.insert(pair<string, int>(string(a_name),
-								n_distinct));
+			int n_dis=strtol(strtok(NULL, ":"), NULL, 10);
+			this->attMap.insert(pair<string, int>
+					(string(a_name), n_dis));
 		}
 
 		free(line);
@@ -137,15 +135,14 @@ void Statistics :: Write(char *fname)
 	for(auto &itr: this->relMap) {
 		fprintf(f, "R_BEGIN:%s:%d", itr.first.c_str(),
 			itr.second.numTuples);
-		for(auto &i: itr.second.attrs)
-			fprintf(f, ":%s", i);
 		for(auto &i: itr.second.joins)
 			fprintf(f, ":%s", i);
 		fprintf(f, "\n");
 	}
 
 	for(auto &itr: this->attMap)
-		fprintf(f, "A_BEGIN:%s:%d\n", itr.first.c_str(), itr.second);
+		fprintf(f, "A_BEGIN:%s:%d\n", itr.first.c_str(),
+							itr.second);
 
 	fclose(f);
 }
