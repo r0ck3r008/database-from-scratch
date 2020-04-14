@@ -4,6 +4,8 @@
 #include<map>
 #include<unordered_map>
 #include<vector>
+#include<set>
+#include<unordered_set>
 
 #include"parse_tree.h"
 
@@ -11,7 +13,7 @@ struct relInfo
 {
 	int numTuples;
 	std :: vector<std :: string> attrs;
-	std :: vector<std :: string> joins;
+	std :: unordered_set<std :: string> joins;
 
 public:
 	relInfo();

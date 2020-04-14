@@ -40,6 +40,7 @@ void Statistics :: AddRel(char *_r_name, int numTuples)
 
 	relInfo r_info;
 	r_info.numTuples=numTuples;
+	r_info.joins.insert(r_name);
 	this->relMap.insert(pair<string, relInfo>(r_name, r_info));
 }
 
@@ -107,7 +108,7 @@ void Statistics :: Read(char *fname)
 			}
 			char *join_name=strtok(NULL, ":");
 			while(join_name!=NULL) {
-				r_info.joins.push_back(string(join_name));
+				r_info.joins.insert(string(join_name));
 				join_name=strtok(NULL, ":");
 			}
 			this->relMap.insert(pair<string, relInfo>
