@@ -216,7 +216,7 @@ void q3 (){
 	s.Apply(final, set2, 2);
 
 	char *set3[] = {"c","s","n1","n2"};
-	cnf = " (n1.n_nationkey = n2.n_nationkey )";
+	cnf = " (n1.n_nationkey = n2.n_nationkey)";
 	yy_scan_string(cnf);
 	yyparse();
 
