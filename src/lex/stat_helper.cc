@@ -68,7 +68,8 @@ void Statistics :: get_attrs(vector<unordered_map<string, int> ::
 {
 	//this function makes sure that the nth attribute in vec_att corresponds
 	//to nth relation in vec_rel2
-	char *a_ptr=strtok(value, ".");
+	char *r_ptr=strtok(value, ".");
+	char *a_ptr=strtok(NULL, ".");
 	unordered_map<string, int> :: iterator att;
 	if(a_ptr!=NULL) {
 		att=this->attMap.find(string(value));
