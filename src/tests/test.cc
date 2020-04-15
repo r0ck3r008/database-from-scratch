@@ -189,7 +189,7 @@ void q3 (){
 	char *relName[] = {"supplier","customer","nation"};
 
 	s.AddRel(relName[0],10000);
-	s.AddAtt(relName[0], "s_nationey",25);
+	s.AddAtt(relName[0], "s_nationkey",25);
 
 	s.AddRel(relName[1],150000);
 	s.AddAtt(relName[1], "c_custkey",150000);
