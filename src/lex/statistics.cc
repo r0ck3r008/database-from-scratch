@@ -95,7 +95,7 @@ void Statistics :: Read(char *fname)
 	FILE *f=this->f_handle(fname, string("r").c_str());
 	char *line=NULL;
 	size_t n=0;
-	while(!feof) {
+	while(!feof(f)) {
 		ssize_t stat=getline(&line, &n, f);
 		if(stat==-1)
 			break;
