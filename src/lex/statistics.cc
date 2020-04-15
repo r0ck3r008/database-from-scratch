@@ -138,7 +138,7 @@ void Statistics :: Write(char *fname)
 		fprintf(f, "R_BEGIN:%s:%d", itr.first.c_str(),
 			itr.second.numTuples);
 		for(auto &i: itr.second.joins)
-			fprintf(f, ":%s", i);
+			fprintf(f, ":%s", i.c_str());
 		fprintf(f, "\n");
 	}
 
