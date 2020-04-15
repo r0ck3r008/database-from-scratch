@@ -71,24 +71,26 @@ void Statistics :: get_attrs(vector<unordered_map<string, int> ::
 	char *r_ptr=strtok(value, ".");
 	char *a_ptr=strtok(NULL, ".");
 	unordered_map<string, int> :: iterator att;
+	unordered_map<string, relInfo> :: iterator rel;
 	if(a_ptr!=NULL) {
-		att=this->attMap.find(string(value));
+		string a_name=string(r_ptr)+"."+string(a_ptr);
+		att=this->attMap.find(string(a_name));
 		if(att==this->attMap.end())
 			return;
-		else
-			vec_att.push_back(att);
+		rel=this->relMap.find(string(r_ptr));
 	} else {
 		int init_size=vec_att.size();
 		for(auto i: vec_rel) {
 			string a_name=i->first+"."+string(value);
 			att=this->attMap.find(a_name);
 			if(att!=this->attMap.end()) {
-				vec_att.push_back(att);
-				vec_rel2.push_back(i);
+				rel=i;
 				break;
 			}
 		}
 	}
+	vec_att.push_back(att);
+	vec_rel2.push_back(rel);
 }
 
 void Statistics :: join_op(double *res,
