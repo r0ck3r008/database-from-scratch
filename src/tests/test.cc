@@ -498,7 +498,7 @@ void q11 (){
 
 	s.AddRel(relName[0],200000);
 	s.AddAtt(relName[0], "p_partkey",200000);
-	s.AddAtt(relName[0], "p_conatiner",40);
+	s.AddAtt(relName[0], "p_container",40);
 
 	s.AddRel(relName[1],6001215);
 	s.AddAtt(relName[1], "l_partkey",200000);
