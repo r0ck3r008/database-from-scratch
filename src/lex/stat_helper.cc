@@ -121,6 +121,8 @@ void Statistics :: sel_op(ComparisonOp *op, double *res,
 			iterator> &vec_att)
 
 {
+	//TODO
+	//Fix estimation function
 	*res+=(double)vec_rel[0]->second.numTuples/3;
 }
 
