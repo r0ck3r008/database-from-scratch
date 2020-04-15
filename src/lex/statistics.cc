@@ -107,6 +107,8 @@ void Statistics :: Read(char *fname)
 			r_info.numTuples=strtol(strtok(NULL, ":"), NULL, 10);
 			char *join_name=strtok(NULL, ":");
 			while(join_name!=NULL) {
+				if(join_name[strlen(join_name)-1]=='\n')
+					join_name[strlen(join_name)-1]='\0';
 				r_info.joins.insert(string(join_name));
 				join_name=strtok(NULL, ":");
 			}
