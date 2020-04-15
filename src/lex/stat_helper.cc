@@ -64,10 +64,12 @@ void Statistics :: get_attrs(vector<unordered_map<string, int> ::
 			iterator> &vec_rel,
 			vector<unordered_map<string, relInfo> ::
 			iterator> &vec_rel2,
-			char *value)
+			char *value_real)
 {
 	//this function makes sure that the nth attribute in vec_att corresponds
 	//to nth relation in vec_rel2
+	char value[64];
+	sprintf(value, "%s", value_real);
 	char *r_ptr=strtok(value, ".");
 	char *a_ptr=strtok(NULL, ".");
 	unordered_map<string, int> :: iterator att;
