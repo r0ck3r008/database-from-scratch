@@ -117,6 +117,7 @@ void Statistics :: sel_op(ComparisonOp *op, double *res,
 			iterator> &vec_att)
 
 {
+	*res+=(double)vec_rel[0]->second.numTuples/3;
 }
 
 int Statistics :: traverse(AndList *a_list, OrList *o_list, double *res,
