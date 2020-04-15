@@ -135,16 +135,16 @@ int Statistics :: traverse(AndList *a_list, OrList *o_list, double *res,
 		if(!this->get_rels(vec1, rel_names, n))
 			return 0;
 		vector<unordered_map<string, int> :: iterator> vec_att;
-		if(op->left->code==3)
+		if(op->left->code==4)
 			this->get_attrs(vec_att, vec1, vec2, op->left->value);
-		if(op->right->code==3)
+		if(op->right->code==4)
 			this->get_attrs(vec_att, vec1, vec2, op->right->value);
 		if(vec_att.size()==2)
 			this->join_op(res, vec2, vec_att, apply);
 		else
 			this->sel_op(op, res, vec2, vec_att);
 	}
-	if(o_list->rightOr!=NULL) {
+	if(o_list!=NULL && o_list->rightOr!=NULL) {
 		//Move right from OR to OR
 		if(!this->traverse(a_list, o_list->rightOr, res, rel_names,
 								n, apply))
