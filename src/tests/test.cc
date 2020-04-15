@@ -307,7 +307,7 @@ void q5 (){
 	s.AddAtt(relName[2], "l_orderkey",1500000);
 
 
-	char *cnf = "(c_mktsegment = 'BUILDING')  AND (c_custkey = o_custkey)  AND (o_orderdate < '1995-03-1')";
+	char *cnf = "(c_mktsegment = 'BUILDING')  AND (c_custkey = o_custkey)";
 	yy_scan_string(cnf);
 	yyparse();
 	s.Apply(final, relName, 2);
@@ -467,7 +467,7 @@ void q10 (){
 	s.AddRel(relName[3],25);
 	s.AddAtt(relName[3], "n_nationkey",25);
 
-	char *cnf = "(c_custkey = o_custkey)  AND (o_orderdate > '1994-01-23') ";
+	char *cnf = "(c_custkey = o_custkey) ";
 	yy_scan_string(cnf);
 	yyparse();
 	s.Apply(final, relName, 2);
