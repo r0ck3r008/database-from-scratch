@@ -73,8 +73,14 @@ void Statistics :: CopyRel(char *_o_name, char *_n_name)
 		cerr << "Relation with " << o_name << " doesnt exist!\n";
 		return;
 	}
+	relInfo r_info;
+	r_info.numTuples=itr->second.numTuples;
+	r_info.joins=set<string>(itr->second.joins.begin(),
+					itr->second.joins.end());
+	r_info.joins.erase(o_name);
+	r_info.joins.insert(n_name);
 
-	this->relMap.insert(pair<string, relInfo>(n_name, itr->second));
+	this->relMap.insert(pair<string, relInfo>(n_name, r_info));
 	//ugly still
 	for(auto &i: this->attMap) {
 		char a_name[64];
