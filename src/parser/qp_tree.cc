@@ -19,9 +19,8 @@ query :: query(struct FuncOperator *finalFunction, struct TableList *tables,
 query :: ~query(){}
 
 QPTree :: QPTree(){}
-QPTree :: QPTree(struct query *q, char *stat_fname)
+QPTree :: QPTree(char *stat_fname)
 {
-	this->q=q;
 	this->s=new Statistics(stat_fname);
 	this->pipe_cnt=0;
 }

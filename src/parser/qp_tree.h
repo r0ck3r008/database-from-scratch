@@ -30,12 +30,11 @@ class QPTree
 {
 	Node *tree;
 	Statistics *s;
-	struct query *q;
 	int pipe_cnt;
 
 public:
 	QPTree();
-	QPTree(struct query *, char *);
+	QPTree(char *);
 	~QPTree();
 	void process(struct query *);
 	void print();
