@@ -3,7 +3,7 @@
 
 #include"cheader.h"
 #include"mem/bigq.h"
-#include"rel_ops/rel_op.h"
+#include"rel_ops/rel_ops.h"
 #include"glbl/timer.h"
 
 Attribute IA = {"int", Int};
