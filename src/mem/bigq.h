@@ -4,7 +4,7 @@
 #include<pthread.h>
 
 #include"fs/file.h"
-#include"lex/comparison.h"
+#include"comparator/comparison.h"
 #include"fs/record.h"
 #include"pipe.h"
 

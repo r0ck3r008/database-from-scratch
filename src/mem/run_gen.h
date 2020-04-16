@@ -1,7 +1,7 @@
 #ifndef RUN_GEN_H
 #define RUN_GEN_H
 
-#include"lex/comparison_engine.h"
+#include"comparator/comparison_engine.h"
 #include"tournament.h"
 #include"fs/record.h"
 #include"fs/dbfile.h"
