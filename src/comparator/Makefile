@@ -11,3 +11,6 @@ comparison_engine.o: comparison_engine.cc comparison_engine.h
 
 function.o: function.cc function.h
 	${COMPILER} ${COMPILER_FLAGS} function.cc
+
+clean:
+	rm -f *.o
