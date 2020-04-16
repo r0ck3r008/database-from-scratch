@@ -7,16 +7,7 @@
 
 struct Node
 {
-	union
-	{
-		SelectPipe *sp;
-		SelectFile *sf;
-		Sum *s;
-		Join *j;
-		GroupBy *gb;
-		DuplicateRemoval *rd;
-		WriteOut *wo;
-	};
+	char *table_name;
 	struct Node *rt, *lft, *up, *dwn;
 	int lft_id, rt_id, up_id, dwn_id;
 public:
