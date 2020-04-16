@@ -1,8 +1,8 @@
 COMPILER := g++
 COMPILER_FLAGS := -g -c
 
-test.o: test.cc mk_stats.cc
-	${COMPILER} ${COMPILER_FLAGS} test.cc mk_stats.cc
+test.o: test.cc
+	${COMPILER} ${COMPILER_FLAGS} test.cc
 
 test_stat.o: test_stat.cc
 	${COMPILER} ${COMPILER_FLAGS} test_stat.cc
