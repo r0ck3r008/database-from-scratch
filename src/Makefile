@@ -25,27 +25,27 @@ test.out: test.o parser_objs optimizer_objs
 	${COMPILER} ${TEST_OUT_OBJS} ${LINKER_FLAGS} test.out
 	make clean_objs
 
-test_stat.out: test_stat.o db_objs fs_objs mem_objs dbgen_bin glbl_objs comparator_objs parser_objs optimizer_objs comparator_objs rel_ops_objs
+test_stat.out: test_stat.o db_objs fs_objs mem_objs dbgen_bin glbl_objs parser_objs optimizer_objs comparator_objs rel_ops_objs
 	${COMPILER} ${TEST_STAT_OUT_OBJS} ${LINKER_FLAGS} test_stat.out
 	make clean_objs
 
-test_rel_ops.out: test_rel_ops.o db_objs fs_objs mem_objs dbgen_bin glbl_objs comparator_objs parser_objs comparator_objs rel_ops_objs
+test_rel_ops.out: test_rel_ops.o db_objs fs_objs mem_objs dbgen_bin glbl_objs parser_objs comparator_objs rel_ops_objs
 	${COMPILER} ${REL_OPS_OUT_OBJS} ${LINKER_FLAGS} test_rel_ops.out
 	make clean_objs
 
-gtest.out: gtest.o db_objs fs_objs mem_objs dbgen_bin glbl_objs comparator_objs parser_objs comparator_objs rel_ops_objs
+gtest.out: gtest.o db_objs fs_objs mem_objs dbgen_bin glbl_objs parser_objs comparator_objs rel_ops_objs
 	$(COMPILER) ${GTEST_OUT_OBJS} ${LINKER_FLAGS} gtest.out
 	make clean_objs
 
-heap_gen.out: heap_gen.o db_objs fs_objs mem_objs dbgen_bin glbl_objs comparator_objs parser_objs comparator_objs rel_ops_objs
+heap_gen.out: heap_gen.o db_objs fs_objs mem_objs dbgen_bin glbl_objs parser_objs comparator_objs rel_ops_objs
 	${COMPILER} ${HEAP_GEN_OUT_OBJS} ${LINKER_FLAGS} heap_gen.out
 	make clean_objs
 
-test_bigq.out: test_bigq.o db_objs fs_objs mem_objs dbgen_bin glbl_objs comparator_objs parser_objs comparator_objs rel_ops_objs
+test_bigq.out: test_bigq.o db_objs fs_objs mem_objs dbgen_bin glbl_objs parser_objs comparator_objs rel_ops_objs
 	${COMPILER} ${TEST_BIGQ_OUT_OBJS} ${LINKER_FLAGS} test_bigq.out
 	make clean_objs
 
-sorted_test_file.out: sorted_test_file.o db_objs fs_objs mem_objs dbgen_bin glbl_objs comparator_objs parser_objs comparator_objs rel_ops_objs
+sorted_test_file.out: sorted_test_file.o db_objs fs_objs mem_objs dbgen_bin glbl_objs parser_objs comparator_objs rel_ops_objs
 	${COMPILER} ${SORTED_FILE_OUT_OBJS} ${LINKER_FLAGS} test_sorted_file.out
 	make clean_objs
 
