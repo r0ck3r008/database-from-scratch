@@ -16,7 +16,7 @@ unsigned int Random_Generate();
 
 #ifdef NEED_STRUCTS
 
-#include"lex/comparison.h"
+#include"comparator/comparison.h"
 
 struct SortInfo
 {
