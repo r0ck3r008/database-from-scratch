@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include"parser/qp_tree.h"
 #include"test.h"
 
 char *stat_file="statistics.txt";
@@ -82,6 +83,10 @@ int main ()
 
 	cout << "Enter the query: \n";
 	yyparse();
+
+	struct query q(finalFunction, tables, boolean, groupingAtts,
+			attsToSelect, distinctAtts, distinctFunc);
+	QPTree qpt(&q, stat_file);
+	qpt.process();
+	qpt.print();
 }
-
-
