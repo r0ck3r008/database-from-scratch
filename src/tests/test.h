@@ -6,7 +6,7 @@
 #include <iostream>
 #include <math.h>
 
-#include "lex/function.h"
+#include "comparator/function.h"
 #include "mem/pipe.h"
 #include "fs/dbfile.h"
 #include "fs/record.h"

@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "lex/statistics.h"
-#include "lex/parse_tree.h"
+#include "optimizer/statistics.h"
+#include "parser/parse_tree.h"
 //#include "lex/y.tab.h"
 
 extern "C" struct YY_BUFFER_STATE *yy_scan_string(const char*);

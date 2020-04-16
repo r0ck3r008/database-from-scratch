@@ -4,8 +4,8 @@
 #include<unistd.h>
 
 #include"test.h"
-#include"lex/statistics.h"
-#include"lex/parse_tree.h"
+#include"optimizer/statistics.h"
+#include"parser/parse_tree.h"
 
 int* q() {
 	
@@ -21,7 +21,7 @@ int* q() {
 	s.AddAtt(relName[1], "ps_suppkey", 10000);
 
 	a[0] = s.relMap.size();
-	a[1] = s.attrs.size();
+	a[1] = s.attMap.size();
 
 	return a;
 }

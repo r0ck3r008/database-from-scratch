@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "lex/parse_tree.h"
+#include "parser/parse_tree.h"
 
 extern struct FuncOperator *finalFunction; // the aggregate function (NULL if no agg)
 extern struct TableList *tables; // the list of tables and aliases in the query
