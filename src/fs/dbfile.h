@@ -6,7 +6,7 @@
 #include"record.h"
 #include"heap.h"
 #include"sorted.h"
-#include"lex/comparison_engine.h"
+#include"comparator/comparison_engine.h"
 #include"db/schema.h"
 #include"glbl/defs.h"
 

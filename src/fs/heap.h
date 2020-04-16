@@ -3,7 +3,7 @@
 
 #include"file.h"
 #include"db/schema.h"
-#include"lex/comparison.h"
+#include"comparator/comparison.h"
 
 class HeapFile
 {

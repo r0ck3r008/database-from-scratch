@@ -9,10 +9,10 @@
 #include "glbl/defs.h"
 #include "db/schema.h"
 #include "file.h"
-#include "lex/parse_tree.h"
-#include "lex/comparison.h"
-#include "lex/comparison_engine.h"
-#include "lex/function.h"
+#include "parser/parse_tree.h"
+#include "comparator/comparison.h"
+#include "comparator/comparison_engine.h"
+#include "comparator/function.h"
 
 
 

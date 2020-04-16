@@ -7,7 +7,7 @@
 #include"file.h"
 #include"mem/bigq.h"
 #include"mem/pipe.h"
-#include"lex/comparison.h"
+#include"comparator/comparison.h"
 #include"db/schema.h"
 #include"dbfile.h"
 #include"glbl/defs.h"

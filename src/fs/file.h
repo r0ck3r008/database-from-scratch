@@ -5,8 +5,8 @@
 #include"record.h"
 #include"mem/two_way_list.cc"
 #include"db/schema.h"
-#include"lex/comparison.h"
-#include"lex/comparison_engine.h"
+#include"comparator/comparison.h"
+#include"comparator/comparison_engine.h"
 #include"glbl/defs.h"
 
 class Record;
