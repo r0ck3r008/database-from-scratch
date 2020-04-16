@@ -2,7 +2,7 @@
 #include<string.h>
 #include<unistd.h>
 
-#include"../rel_op.h"
+#include"rel_op.h"
 
 void get_sum_rec(struct sum_args *arg, int *int_res, double *double_res)
 {
