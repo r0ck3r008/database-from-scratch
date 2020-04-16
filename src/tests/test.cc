@@ -86,7 +86,7 @@ int main ()
 
 	struct query q(finalFunction, tables, boolean, groupingAtts,
 			attsToSelect, distinctAtts, distinctFunc);
-	QPTree qpt(&q, stat_file);
-	qpt.process();
+	QPTree qpt(stat_file);
+	qpt.process(&q);
 	qpt.print();
 }

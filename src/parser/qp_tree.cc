@@ -27,9 +27,10 @@ QPTree :: QPTree(struct query *q, char *stat_fname)
 }
 QPTree :: ~QPTree(){}
 
-void QPTree :: process()
+void QPTree :: process(struct query *q)
 {
-
+	this->process(q->tables);
+	this->process(q->boolean);
 }
 
 void QPTree :: print()

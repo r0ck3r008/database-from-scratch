@@ -37,7 +37,7 @@ public:
 	QPTree();
 	QPTree(struct query *, char *);
 	~QPTree();
-	void process();
+	void process(struct query *);
 	void print();
 };
 
