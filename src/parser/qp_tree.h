@@ -34,7 +34,8 @@ class QPTree
 
 private:
 	void process(struct TableList *);
-	void process(struct AndList *);
+	void process(struct AndList *,
+			struct OrList *);
 
 public:
 	QPTree();

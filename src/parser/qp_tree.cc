@@ -29,7 +29,7 @@ QPTree :: ~QPTree(){}
 void QPTree :: process(struct query *q)
 {
 	this->process(q->tables);
-	this->process(q->boolean);
+	this->process(q->boolean, NULL);
 }
 
 void QPTree :: print()
