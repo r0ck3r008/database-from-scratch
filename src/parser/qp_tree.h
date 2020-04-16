@@ -32,6 +32,10 @@ class QPTree
 	Statistics *s;
 	int pipe_cnt;
 
+private:
+	void process(struct TableList *);
+	void process(struct AndList *);
+
 public:
 	QPTree();
 	QPTree(char *);
