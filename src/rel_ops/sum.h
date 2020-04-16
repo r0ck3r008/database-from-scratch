@@ -1,7 +1,7 @@
 #ifndef SUM_H
 #define SUM_H
 
-#include"rel_op.h"
+#include"rel_ops.h"
 
 struct sum_args
 {

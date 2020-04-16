@@ -1,7 +1,7 @@
 #ifndef REM_DUP_H
 #define REM_DUP_H
 
-#include"rel_op.h"
+#include"rel_ops.h"
 
 struct dup_args
 {
