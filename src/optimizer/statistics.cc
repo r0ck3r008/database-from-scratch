@@ -18,6 +18,10 @@ relInfo &relInfo :: operator=(relInfo &in)
 }
 
 Statistics :: Statistics() {}
+Statistics :: Statistics(char *fname)
+{
+	this->Read(fname);
+}
 Statistics :: Statistics(Statistics &in)
 {
 	for(auto &itr: in.relMap)

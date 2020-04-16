@@ -55,6 +55,7 @@ private:
 public:
 	Statistics();
 	Statistics(Statistics &);
+	Statistics(char *);
 	~Statistics();
 
 	void AddRel(char *, int);
