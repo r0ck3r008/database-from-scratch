@@ -31,6 +31,9 @@ private:
 		int);
 	int traverse(struct AndList *, struct OrList *,
 			double *, char **, int, int);
+	void join_op(struct ComparisonOp *, double *,
+		std :: vector<std :: unordered_map
+		<std :: string, relInfo> :: iterator> &, int);
 
 public:
 	Statistics();

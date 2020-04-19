@@ -67,6 +67,26 @@ int Statistics :: get_rels(vector<unordered_map<string, relInfo> :: iterator>
 	else
 		return 0;
 }
+
+void Statistics :: join_op(struct ComparisonOp *cop, double *res,
+			vector<unordered_map<string, relInfo> ::
+			iterator> &vec_rel, int apply)
+{
+	auto att1=vec_rel[0]->second.attMap.find(string(cop->left->value));
+	auto att2=vec_rel[1]->second.attMap.find(string(cop->right->value));
+	double tuples=(((double)vec_rel[0]->second.numTuples)*
+			((double)vec_rel[1]->second.numTuples))/
+			(double)max(att1->second, att2->second);
+	if(apply) {
+		vec_rel[0]->second.joins.insert(vec_rel[1]->first);
+		vec_rel[1]->second.joins.insert(vec_rel[0]->first);
+		vec_rel[0]->second.numTuples=(int)tuples;
+		vec_rel[1]->second.numTuples=(int)tuples;
+	}
+
+	*res+=tuples;
+}
+
 int Statistics :: traverse(AndList *a_list, OrList *o_list, double *res,
 				char **rel_names, int n, int apply)
 {
@@ -80,6 +100,10 @@ int Statistics :: traverse(AndList *a_list, OrList *o_list, double *res,
 		vector<unordered_map<string, relInfo> :: iterator> vec_rels;
 		if(!this->get_rels(vec_rels, o_list->left, rel_names, n))
 			return 0;
+		if(vec_rels.size()==2)
+			this->join_op(o_list->left, res, vec_rels, apply);
+		else
+			this->sel_op(o_list->left, res, vec_rels);
 	}
 	if(o_list!=NULL && o_list->rightOr!=NULL) {
 		//Move right from OR to OR
