@@ -71,6 +71,8 @@ void Statistics :: CopyRel(char *_o_name, char *_n_name)
 	}
 
 	relInfo r_info=itr1->second;
+	r_info.joins.erase(o_name);
+	r_info.joins.insert(n_name);
 	this->relMap.insert(pair<string, relInfo>(n_name, r_info));
 }
 
@@ -111,6 +113,7 @@ void Statistics :: Read(char *fname)
 							(a_name, n_dis));
 		}
 	}
+	this->relMap.insert(pair<string, relInfo>(curr_rname, curr_rinfo));
 
 	free(line);
 	fclose(f);
