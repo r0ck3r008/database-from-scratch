@@ -104,6 +104,8 @@ void Statistics :: Read(char *fname)
 								NULL, 10);
 			char *join=strtok(NULL, ":");
 			while(join!=NULL) {
+				if(join[strlen(join)-1]=='\n')
+					join[strlen(join)-1]='\0';
 				curr_rinfo.joins.insert(string(join));
 				join=strtok(NULL, ":");
 			}
