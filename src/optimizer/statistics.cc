@@ -96,6 +96,7 @@ void Statistics :: Read(char *fname)
 			if(!begin) {
 				this->relMap.insert(pair<string, relInfo>
 						(curr_rname, curr_rinfo));
+			} else {
 				begin=0;
 			}
 			curr_rname=string(strtok(NULL, ":"));
