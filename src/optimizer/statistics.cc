@@ -34,6 +34,7 @@ void Statistics :: AddRel(char *_r_name, int numTuples)
 
 	relInfo r_info;
 	r_info.numTuples=numTuples;
+	r_info.joins.insert(r_name);
 	this->relMap.insert(pair<string, relInfo>(r_name, r_info));
 }
 
