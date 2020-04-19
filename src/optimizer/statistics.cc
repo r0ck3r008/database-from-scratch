@@ -3,9 +3,7 @@
 
 #include"statistics.h"
 
-using std :: string;
-using std :: pair;
-using std :: cerr;
+using namespace std;
 
 relInfo :: relInfo(){}
 relInfo &relInfo :: operator=(const relInfo &in)
