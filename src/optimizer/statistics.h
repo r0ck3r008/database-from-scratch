@@ -2,6 +2,7 @@
 #define STATISTICS_H
 
 #include<unordered_map>
+#include<vector>
 #include<set>
 
 #include"parser/parse_tree.h"
@@ -24,6 +25,10 @@ class Statistics
 
 private:
 	FILE *f_handle(char *, const char *);
+	int get_rels(std :: vector<std ::
+		unordered_map<std :: string, relInfo> ::
+		iterator> &, struct ComparisonOp *, char **,
+		int);
 	int traverse(struct AndList *, struct OrList *,
 			double *, char **, int, int);
 
