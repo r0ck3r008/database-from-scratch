@@ -3,6 +3,7 @@
 
 #include<unordered_map>
 #include<vector>
+#include<utility>
 #include<set>
 
 #include"parser/parse_tree.h"
@@ -31,6 +32,7 @@ private:
 		int);
 	int traverse(struct AndList *, struct OrList *,
 			double *, char **, int, int);
+	void fetch_att_name(char *, std :: string *, std :: string *);
 	void join_op(struct ComparisonOp *, double *,
 		std :: vector<std :: unordered_map
 		<std :: string, relInfo> :: iterator> &, int);

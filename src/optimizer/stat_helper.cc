@@ -37,6 +37,20 @@ FILE *Statistics :: f_handle(char *fname, const char *perm)
 }
 
 int Statistics :: get_rels(vector<unordered_map<string, relInfo> :: iterator>
+void Statistics :: fetch_att_name(char *name, string *r_name, string *a_name)
+{
+	char _a_name[64];
+	sprintf(_a_name, "%s", name);
+	char *part=strtok(_a_name, ".");
+	if(!strcmp(part, name)) {
+		*a_name=string(_a_name);
+		*r_name="";
+	} else {
+		*r_name=string(part);
+		*a_name=string(strtok(NULL, "."));
+	}
+}
+
 			&vec_rels, struct ComparisonOp *cop, char **rel_names,
 			int n)
 {
