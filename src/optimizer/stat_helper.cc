@@ -87,6 +87,14 @@ void Statistics :: join_op(struct ComparisonOp *cop, double *res,
 	*res+=tuples;
 }
 
+void Statistics :: sel_op(struct ComparisonOp *cop, double *res,
+			vector<unordered_map<string, relInfo> :: iterator> &vec)
+{
+	//TODO
+	////Fix estimation function
+	*res+=(double)vec[0]->second.numTuples/3;
+}
+
 int Statistics :: traverse(AndList *a_list, OrList *o_list, double *res,
 				char **rel_names, int n, int apply)
 {

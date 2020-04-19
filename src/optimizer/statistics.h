@@ -34,6 +34,9 @@ private:
 	void join_op(struct ComparisonOp *, double *,
 		std :: vector<std :: unordered_map
 		<std :: string, relInfo> :: iterator> &, int);
+	void sel_op(struct ComparisonOp *, double *,
+		std :: vector<std :: unordered_map
+		<std :: string, relInfo> :: iterator> &);
 
 public:
 	Statistics();
