@@ -26,19 +26,23 @@ class Statistics
 
 private:
 	FILE *f_handle(char *, const char *);
-	int get_rels(std :: vector<std ::
-		unordered_map<std :: string, relInfo> ::
-		iterator> &, struct ComparisonOp *, char **,
-		int);
+	void fetch_att_name(char *, std :: string *, std :: string *);
+	int get_rels(std :: vector<std :: pair<std ::
+		unordered_map<std :: string, relInfo> :: iterator,
+		std ::unordered_map<std :: string, int> ::
+		iterator>> &, struct ComparisonOp *, char **, int);
+	void join_op(struct ComparisonOp *, double *,
+		std :: vector<std :: pair<std ::
+		unordered_map<std :: string, relInfo> :: iterator,
+		std :: unordered_map<std :: string, int> ::
+		iterator>> &, int);
+	void sel_op(struct ComparisonOp *, double *,
+		std :: vector<std :: pair<std ::
+		unordered_map<std :: string, relInfo> :: iterator,
+		std :: unordered_map<std :: string, int> ::
+		iterator>> &);
 	int traverse(struct AndList *, struct OrList *,
 			double *, char **, int, int);
-	void fetch_att_name(char *, std :: string *, std :: string *);
-	void join_op(struct ComparisonOp *, double *,
-		std :: vector<std :: unordered_map
-		<std :: string, relInfo> :: iterator> &, int);
-	void sel_op(struct ComparisonOp *, double *,
-		std :: vector<std :: unordered_map
-		<std :: string, relInfo> :: iterator> &);
 
 public:
 	Statistics();

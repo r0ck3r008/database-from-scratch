@@ -36,7 +36,6 @@ FILE *Statistics :: f_handle(char *fname, const char *perm)
 	return f;
 }
 
-int Statistics :: get_rels(vector<unordered_map<string, relInfo> :: iterator>
 void Statistics :: fetch_att_name(char *name, string *r_name, string *a_name)
 {
 	char _a_name[64];
@@ -51,6 +50,8 @@ void Statistics :: fetch_att_name(char *name, string *r_name, string *a_name)
 	}
 }
 
+int Statistics :: get_rels(vector<pair<unordered_map<string, relInfo> ::
+			iterator, unordered_map<string, int> :: iterator>>
 			&vec_rels, struct ComparisonOp *cop, char **rel_names,
 			int n)
 {
@@ -59,54 +60,63 @@ void Statistics :: fetch_att_name(char *name, string *r_name, string *a_name)
 	//the matching relations as well
 	struct Operand *op=cop->left;
 	set<string> left, right;
-	while(op->code==3) {
-		string a_name=string(op->value);
+	int runs=0;
+	while(runs<2 && op->code==NAME) {
 		for(int i=0; i<n; i++) {
-			string r_name=string(rel_names[i]);
+			string a_name="", r_name="";
+			this->fetch_att_name(op->value, &r_name, &a_name);
+			if(r_name.compare("")==0)
+				r_name=string(rel_names[i]);
 			auto itr1=this->relMap.find(r_name);
 			auto itr2=itr1->second.attMap.find(a_name);
-			if(itr2==itr1->second.attMap.end()) {
-				right.insert(itr1->first);
-			} else {
-				vec_rels.push_back(itr1);
+			if(itr2!=itr1->second.attMap.end()){
+				pair<unordered_map<string, relInfo> :: iterator,
+				unordered_map<string, int> :: iterator> p(itr1,
+									itr2);
+				vec_rels.push_back(p);
 				left.insert(itr1->second.joins.begin(),
 						itr1->second.joins.end());
+				break;
 			}
 		}
 		op=cop->right;
+		runs++;
 	}
+	for(int i=0; i<n; i++)
+		right.insert(string(rel_names[i]));
 
-	if(left==right)
-		return 1;
-	else
+	if(runs==2 && left!=right)
 		return 0;
+	else
+		return 1;
 }
 
-void Statistics :: join_op(struct ComparisonOp *cop, double *res,
-			vector<unordered_map<string, relInfo> ::
-			iterator> &vec_rel, int apply)
+void Statistics :: join_op(struct ComparisonOp *, double *res,
+		vector<pair<unordered_map<string, relInfo> :: iterator,
+		unordered_map<string, int> :: iterator>> &vec, int apply)
 {
-	auto att1=vec_rel[0]->second.attMap.find(string(cop->left->value));
-	auto att2=vec_rel[1]->second.attMap.find(string(cop->right->value));
-	double tuples=(((double)vec_rel[0]->second.numTuples)*
-			((double)vec_rel[1]->second.numTuples))/
-			(double)max(att1->second, att2->second);
+	double tuples=(((double)vec[0].first->second.numTuples)*
+			((double)vec[1].first->second.numTuples))/
+			(double)max(vec[0].second->second,
+					vec[1].second->second);
 	if(apply) {
-		vec_rel[0]->second.joins.insert(vec_rel[1]->first);
-		vec_rel[1]->second.joins.insert(vec_rel[0]->first);
-		vec_rel[0]->second.numTuples=(int)tuples;
-		vec_rel[1]->second.numTuples=(int)tuples;
+		vec[0].first->second.joins.insert(vec[1].first->first);
+		vec[1].first->second.joins.insert(vec[0].first->first);
+		vec[0].first->second.numTuples=(int)tuples;
+		vec[1].first->second.numTuples=(int)tuples;
 	}
 
 	*res+=tuples;
 }
 
 void Statistics :: sel_op(struct ComparisonOp *cop, double *res,
-			vector<unordered_map<string, relInfo> :: iterator> &vec)
+			vector<pair<unordered_map<string, relInfo> :: iterator,
+			unordered_map<string, int> :: iterator>> &vec)
+
 {
 	//TODO
 	////Fix estimation function
-	*res+=(double)vec[0]->second.numTuples/3;
+	*res+=(double)vec[0].first->second.numTuples/3;
 }
 
 int Statistics :: traverse(AndList *a_list, OrList *o_list, double *res,
@@ -119,7 +129,8 @@ int Statistics :: traverse(AndList *a_list, OrList *o_list, double *res,
 			return 0;
 	} else if(o_list!=NULL) {
 		//Execute OR
-		vector<unordered_map<string, relInfo> :: iterator> vec_rels;
+		vector<pair<unordered_map<string, relInfo> :: iterator,
+			unordered_map<string, int> :: iterator>> vec_rels;
 		if(!this->get_rels(vec_rels, o_list->left, rel_names, n))
 			return 0;
 		if(vec_rels.size()==2)
