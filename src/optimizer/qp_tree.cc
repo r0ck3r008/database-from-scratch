@@ -17,8 +17,6 @@ Qptree :: ~Qptree()
 	delete this->s;
 	for(auto &i: this->relations)
 		delete i.second.sch;
-	for(auto &i: this->op_list)
-		delete i;
 }
 
 void Qptree :: process(struct query *q)
