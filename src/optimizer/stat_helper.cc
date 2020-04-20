@@ -114,9 +114,12 @@ void Statistics :: sel_op(struct ComparisonOp *cop, double *res,
 			unordered_map<string, int> :: iterator>> &vec)
 
 {
-	//TODO
-	////Fix estimation function
-	*res+=(double)vec[0].first->second.numTuples/3;
+	if(cop->code==EQUALS) {
+		*res+=((double)vec[0].first->second.numTuples)/
+			((double)vec[0].second->second);
+	} else {
+		*res+=((double)vec[0].first->second.numTuples)/3;
+	}
 }
 
 int Statistics :: traverse(AndList *a_list, OrList *o_list, double *res,
