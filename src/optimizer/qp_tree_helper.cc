@@ -8,6 +8,7 @@
 // 4. Append all the attributes that a relation needs during the whole query to
 // the tableInfo structure
 #include<string.h>
+#include<unistd.h>
 
 #include"qp_tree.h"
 
@@ -103,4 +104,22 @@ void Qptree :: process(struct AndList *a_list)
 	struct operation *op=new operation;
 	op->a_list=a_list;
 	this->process(op, NULL);
+}
+
+void Qptree :: get_attr(char *att_name, pair<string, unordered_map<string,
+			tableInfo> :: iterator> &p)
+{
+	char name[64];
+	sprintf(name, "%s", att_name);
+	string tbl=string(strtok(att_name, "."));
+	string att=string(strtok(NULL, "."));
+
+	auto itr=this->relations.find(tbl);
+	if(itr==this->relations.end()) {
+		cerr << "Attribute " << att_name << "not found!\n";
+		_exit(-1);
+	}
+
+	p.first=att;
+	p.second=itr;
 }
