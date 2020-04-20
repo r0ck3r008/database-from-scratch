@@ -48,10 +48,10 @@ void Qptree :: process(struct operation *op, struct AndList *a_list,
 		struct Operand *operand=cop->left;
 		int n=0;
 		while(n<2 && operand->code==NAME) {
-			char name[64];
-			sprintf(name, "%s", operand->value);
-			rels[*curr_indx]=new char[32];
-			sprintf(rels[*curr_indx], "%s", strtok(name, "."));
+			pair<string, unordered_map<string, tableInfo> ::
+							iterator> p;
+			this->get_attr(operand->value, p);
+			sprintf(rels[*curr_indx], "%s", p.first.c_str());
 			*curr_indx++;
 			n++;
 			operand=cop->right;
