@@ -7,8 +7,6 @@
 // those relations have more than 1 select operations
 // 4. Append all the attributes that a relation needs during the whole query to
 // the tableInfo structure
-// 5. in process(tableList), if a table has alias, add only that alias and not
-// the real table to relations map
 #include<string.h>
 
 #include"qp_tree.h"
@@ -19,6 +17,21 @@ void Qptree :: process(struct TableList *tables)
 {
 	struct TableList *curr=tables;
 	while(curr!=NULL) {
+		string r_name;
+		Schema *sch;
+		if(curr->aliasAs!=NULL) {
+			this->s->CopyRel(curr->tableName, curr->aliasAs);
+			r_name=string(curr->aliasAs);
+			sch=new Schema(this->catalog_file, curr->aliasAs);
+		} else {
+			r_name=string(curr->tableName);
+			sch=new Schema(this->catalog_file, curr->tableName);
+		}
+		struct tableInfo t_info;
+		t_info.sch=sch;
+		t_info.join_order=0;
+		t_info.sel_order=0;
+		this->relations.insert(pair<string, tableInfo>(r_name, t_info));
 
 		curr=curr->next;
 	}
