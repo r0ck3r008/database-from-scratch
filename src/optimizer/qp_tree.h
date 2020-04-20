@@ -3,6 +3,7 @@
 
 #include<unordered_map>
 #include<vector>
+#include<queue>
 
 #include"statistics.h"
 #include"parser/parse_tree.h"
@@ -33,6 +34,12 @@ struct operation
 	double cost;
 };
 
+struct operation_comp
+{
+	bool operator()(const operation &,
+				const operation &);
+};
+
 struct tableInfo
 {
 	Schema *sch;
@@ -46,7 +53,9 @@ class Qptree
 	char *catalog_file;
 	std :: unordered_map<std :: string, tableInfo>
 			relations;
-	std :: vector<struct operation *> op_list;
+	std :: priority_queue<operation,
+		std :: vector<operation>,
+		operation_comp> op_queue;
 
 private:
 	void process(struct TableList *);

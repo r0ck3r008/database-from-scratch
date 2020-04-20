@@ -1,5 +1,10 @@
 #include"qp_tree.h"
 
+bool operation_comp :: operator()(const operation &l, const operation &r)
+{
+	return (l.cost > r.cost);
+}
+
 Qptree :: Qptree(char *stat_fname, char *catalog_file)
 {
 	this->s=new Statistics;
