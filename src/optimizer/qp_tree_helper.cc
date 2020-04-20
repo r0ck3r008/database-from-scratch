@@ -1,8 +1,6 @@
 // TODO
 // 1. instead of combining andlists in process(operation1, operation2), combine
 // operation structures instead
-// 2. Join order or select order of any relation must be incremented only while
-// first creating operations, manage this in process(operation1, operation2)
 // 3. Join operation should be added below select operation only if both of
 // those relations have more than 1 select operations
 // 4. Append all the attributes that a relation needs during the whole query to
