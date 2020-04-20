@@ -33,11 +33,18 @@ struct operation
 	double cost;
 };
 
+struct tableInfo
+{
+	Schema *sch;
+	int join_order;
+	int sel_order;
+};
+
 class Qptree
 {
 	Statistics *s;
 	char *catalog_file;
-	std :: unordered_map<std :: string, Schema *>
+	std :: unordered_map<std :: string, tableInfo>
 			relations;
 	std :: vector<struct operation *> op_list;
 
