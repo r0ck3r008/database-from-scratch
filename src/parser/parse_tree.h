@@ -79,7 +79,6 @@ struct OrList {
 
 	// this is the comparison to the left of the OR
 	struct ComparisonOp *left;
-	int is_join;
 
 	// this is the OrList to the right of the OR; again,
 	// this might be NULL if the right is a simple comparison
