@@ -78,41 +78,23 @@ void Qptree :: process(struct operation *op, struct AndList *a_list,
 		this->process(op, a_list->rightAnd, NULL, rels, curr_indx);
 }
 
-void Qptree :: process(struct operation *op1, struct operation *op2)
-{
-	struct AndList *a_list=NULL;
-	if(op2!=NULL) {
-		if(op1->cost >= op2->cost) {
-			op1->a_list->rightAnd=op2->a_list;
-			a_list=op1->a_list;
-		} else {
-			op2->a_list->rightAnd=op1->a_list;
-			a_list=op2->a_list;
-		}
-	} else {
-		a_list=op1->a_list;
-	}
-
-	//max allowed 16 relations per query
-	struct operation *op=new operation;
-	op->a_list=a_list;
-	op->n_join=0;
-	char **rels=new char *[16];
-	int indx=0;
-	this->process(op, a_list, NULL, rels, &indx);
-	op->cost=this->s->Estimate(a_list, rels, indx);
-	delete op1;
-	delete op2;
-
-	//push to priority queue
-}
-
 void Qptree :: process(struct AndList *a_list)
 {
 	if(a_list->rightAnd!=NULL)
 		this->process(a_list->rightAnd);
 
-	struct operation *op=new operation;
-	op->a_list=a_list;
-	this->process(op, NULL);
+	struct operation op;
+	op.a_list=a_list;
+	if(a_list->rightAnd!=NULL)
+		//assuming all the right Ands have already been dealt with
+		a_list->rightAnd=NULL;
+
+	//max 16 relations
+	char **rels=new char *[16];
+	int indx=0;
+	this->process(&op, a_list, NULL, rels, &indx);
+
+	op.cost=this->s->Estimate(a_list, rels, indx);
+
+	this->op_queue.push(op);
 }
