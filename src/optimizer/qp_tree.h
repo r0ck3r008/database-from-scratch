@@ -29,7 +29,7 @@ public:
 struct operation
 {
 	struct AndList *a_list;
-	int is_join;
+	int n_join;
 	double cost;
 };
 
@@ -51,7 +51,10 @@ class Qptree
 private:
 	void process(struct TableList *);
 	void process(struct AndList *);
-	void process(struct OrList *);
+	void process(struct operation *,
+			struct operation *);
+	void process(struct operation *, struct AndList *,
+			struct OrList *, char **, int *);
 	void mk_op_list(struct AndList *);
 
 public:
