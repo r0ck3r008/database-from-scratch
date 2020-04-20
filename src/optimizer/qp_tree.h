@@ -30,7 +30,7 @@ public:
 struct operation
 {
 	struct AndList *a_list;
-	int n_join;
+	int is_join;
 	double cost;
 };
 
