@@ -66,6 +66,10 @@ void Qptree :: process(struct AndList *a_list, struct OrList *o_list,
 			n++;
 			operand=cop->right;
 		}
+		if(n==2)
+			a_list->is_join=1;
+		else
+			a_list->is_join=0;
 	}
 
 	if(o_list!=NULL && o_list->rightOr!=NULL)
