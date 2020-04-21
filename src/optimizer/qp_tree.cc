@@ -62,6 +62,7 @@ void Qptree :: process(struct AndList *a_list, struct OrList *o_list,
 			pair<string, unordered_map<string, tableInfo> ::
 							iterator> p;
 			this->get_attr(operand->value, p);
+			rels[*curr_indx]=new char[64];
 			sprintf(rels[*curr_indx], "%s", p.first.c_str());
 			*curr_indx++;
 			n++;
