@@ -154,9 +154,8 @@ double Statistics :: traverse(AndList *a_list, OrList *o_list, char **rel_names,
 	} else if(o_list==NULL && a_list->rightAnd!=NULL) {
 		//Move right from AND to AND and multiply the AND results
 		//together
-		double ans=this->traverse(a_list->rightAnd, NULL, rel_names, n,
+		res*=this->traverse(a_list->rightAnd, NULL, rel_names, n,
 									apply);
-		res*=ans;
 	}
 
 	return res;
