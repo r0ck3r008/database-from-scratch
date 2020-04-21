@@ -26,6 +26,7 @@ public:
 	~query();
 };
 
+class Qptree;
 struct operation
 {
 	struct AndList *a_list;
@@ -35,6 +36,7 @@ struct operation
 
 public:
 	operation();
+	operation(struct AndList *, Qptree *);
 	~operation();
 };
 

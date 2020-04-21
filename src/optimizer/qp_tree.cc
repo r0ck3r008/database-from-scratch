@@ -8,6 +8,35 @@ operation :: operation()
 	this->l_child=NULL;
 	this->r_child=NULL;
 	this->parent=NULL;
+operation :: operation(struct AndList *a_list, Qptree *ref)
+{
+	this->a_list=a_list;
+	if(a_list->rightAnd!=NULL)
+		//assuming all the right Ands have already been dealt with
+		a_list->rightAnd=NULL;
+
+	//max 16 relations
+	char **rels=new char *[16];
+	int indx=0;
+	ref->process(a_list, NULL, rels, &indx);
+	this->cost=ref->s->Estimate(a_list, rels, indx);
+	//assuming atomic operations per AndList
+	for(int i=0; i<indx; i++) {
+		string r_name=string(rels[i]);
+		auto itr=ref->relations.find(r_name);
+		if(indx==2) {
+			itr->second.join_order++;
+			this->type=join_op;
+			ref->join_queue.push(this);
+		} else {
+			itr->second.sel_order++;
+			this->type=sel_any;
+			itr->second.sel_queue.push(this);
+		}
+	}
+	for(int i=0; i<indx; i++)
+		delete[] rels[i];
+	delete[] rels;
 }
 operation :: ~operation(){}
 
