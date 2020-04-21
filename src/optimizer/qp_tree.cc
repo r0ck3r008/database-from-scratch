@@ -10,6 +10,14 @@ operation :: operation()
 	this->parent=NULL;
 }
 operation :: ~operation(){}
+
+tableInfo :: tableInfo()
+{
+	this->join_order=0;
+	this->sel_order=0;
+}
+tableInfo :: ~tableInfo(){}
+
 bool operation_comp :: operator()(const operation &l, const operation &r)
 {
 	return (l.cost > r.cost);
