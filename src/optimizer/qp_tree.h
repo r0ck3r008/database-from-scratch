@@ -32,6 +32,7 @@ struct operation
 	struct AndList *a_list;
 	int is_join;
 	double cost;
+	operation *l_child, *r_child, *parent;
 };
 
 struct operation_comp
