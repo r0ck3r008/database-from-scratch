@@ -1,3 +1,6 @@
+// TODO
+// Start making the tree by first adding the sel operations in the list.
+// The start adding join operations, in incremental join order
 #include"qp_tree.h"
 
 bool operation_comp :: operator()(const operation &l, const operation &r)
