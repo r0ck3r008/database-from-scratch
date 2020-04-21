@@ -56,40 +56,33 @@ int Statistics :: get_rels(vector<pair<unordered_map<string, relInfo> ::
 			&vec_rels, struct ComparisonOp *cop, char **rel_names,
 			int n)
 {
-	//This function enforces the set rules within rel_names are returns a
-	//error code=0 if they are not being followed. This simultaniosly finds
-	//the matching relations as well
-	struct Operand *op=cop->left;
-	set<string> left, right;
-	int runs=0;
-	while(runs<2 && op->code==NAME) {
-		for(int i=0; i<n; i++) {
-			string a_name="", r_name="";
-			this->fetch_att_name(op->value, &r_name, &a_name);
-			if(r_name.compare("")==0)
-				r_name=string(rel_names[i]);
-			auto itr1=this->relMap.find(r_name);
-			auto itr2=itr1->second.attMap.find(a_name);
-			if(itr2!=itr1->second.attMap.end()){
-				pair<unordered_map<string, relInfo> :: iterator,
-				unordered_map<string, int> :: iterator> p(itr1,
-									itr2);
-				vec_rels.push_back(p);
-				left.insert(itr1->second.joins.begin(),
-						itr1->second.joins.end());
-				break;
-			}
-		}
-		op=cop->right;
-		runs++;
-	}
-	for(int i=0; i<n; i++)
-		right.insert(string(rel_names[i]));
+	// Since the rels array has the names of relations exactly like the
+	// operation would need to access and we are assuming atomic operations
+	// in per each AndList->left, we can just assume the relations are right
+	// here and skip the set checking altogether. This will speed up lookup
+	// by alot overall
+	struct Operand *operand=cop->left;
+	int num=0;
+	while(num<=n && operand->code==NAME) {
+		pair<unordered_map<string, relInfo> :: iterator,
+			unordered_map<string, int> :: iterator> p;
+		char name[64];
+		sprintf(name, "%s", operand->value);
+		char *_r_name=strtok(name, "."), *_a_name=strtok(NULL, ".");
+		string r_name(_r_name), a_name(_a_name);
+		auto itr1=this->relMap.find(r_name);
+		if(itr1==this->relMap.end())
+			return 0;
+		auto itr2=itr1->second.attMap.find(a_name);
+		if(itr2==itr1->second.attMap.end())
+			return 0;
 
-	if(runs==2 && left!=right)
-		return 0;
-	else
-		return 1;
+		p.first=itr1; p.second=itr2;
+		vec_rels.push_back(p);
+		num++;
+		operand=cop->right;
+	}
+	return 1;
 }
 
 double Statistics :: join_op(struct ComparisonOp *,
