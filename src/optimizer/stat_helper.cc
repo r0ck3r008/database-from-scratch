@@ -140,22 +140,25 @@ double Statistics :: traverse(AndList *a_list, OrList *o_list, char **rel_names,
 		if(!this->get_rels(vec_rels, o_list->left, rel_names, n))
 			return 0;
 		if(vec_rels.size()==2)
-			this->join_op(o_list->left, res, vec_rels, apply);
+			res=this->join_op(o_list->left, vec_rels, apply);
 		else
-			this->sel_op(o_list->left, res, vec_rels);
+			res=this->sel_op(o_list->left, vec_rels);
 	}
-	if(o_list!=NULL && o_list->rightOr!=NULL) {
-		//Move right from OR to OR
-		if(!this->traverse(a_list, o_list->rightOr, res, rel_names,
-									n, apply))
-			return 0;
-	}
-	if(a_list->rightAnd!=NULL) {
-		//Move right from AND to AND
-		if(!this->traverse(a_list->rightAnd, NULL, res, rel_names, n,
-									apply))
-			return 0;
+	if(o_list!=NULL && o_list->rightOr!=NULL)  {
+		//Move right from OR to OR and do a+b-a*b
+		double ans=this->traverse(a_list, o_list->rightOr, rel_names,
+								n, apply);
+		res=fabs(res + ans - (res * ans));
+	} else if(o_list==NULL && a_list->rightAnd!=NULL) {
+		//Move right from AND to AND and multiply the AND results
+		//together
+		double ans=this->traverse(a_list->rightAnd, NULL, rel_names, n,
+									apply);
+		res*=ans;
 	}
 
-	return 1;
+	return res;
 }
+
+// Either its an Or node or an And node
+// If its an And node, it must receive its total Or answer from its subordinate
