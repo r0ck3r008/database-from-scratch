@@ -5,6 +5,7 @@
 #include<sys/stat.h>
 #include<sys/types.h>
 #include<unistd.h>
+#include<math.h>
 
 #include"statistics.h"
 
@@ -91,7 +92,7 @@ int Statistics :: get_rels(vector<pair<unordered_map<string, relInfo> ::
 		return 1;
 }
 
-void Statistics :: join_op(struct ComparisonOp *, double *res,
+double Statistics :: join_op(struct ComparisonOp *,
 		vector<pair<unordered_map<string, relInfo> :: iterator,
 		unordered_map<string, int> :: iterator>> &vec, int apply)
 {
@@ -106,50 +107,60 @@ void Statistics :: join_op(struct ComparisonOp *, double *res,
 		vec[1].first->second.numTuples=(int)tuples;
 	}
 
-	*res+=tuples;
+	return tuples;
 }
 
-void Statistics :: sel_op(struct ComparisonOp *cop, double *res,
+double Statistics :: sel_op(struct ComparisonOp *cop,
 			vector<pair<unordered_map<string, relInfo> :: iterator,
 			unordered_map<string, int> :: iterator>> &vec)
 
 {
-	//TODO
-	////Fix estimation function
-	*res+=(double)vec[0].first->second.numTuples/3;
+	double res;
+	if(cop->code==EQUALS) {
+		res=((double)vec[0].first->second.numTuples)/
+			((double)vec[0].second->second);
+	} else {
+		res=((double)vec[0].first->second.numTuples)/3;
+	}
+
+	return res;
 }
 
-int Statistics :: traverse(AndList *a_list, OrList *o_list, double *res,
-				char **rel_names, int n, int apply)
+double Statistics :: traverse(AndList *a_list, OrList *o_list, char **rel_names,
+								int n, int apply)
 {
+	double res=0.0;
 	if(o_list==NULL && a_list->left!=NULL) {
 		//Move down from AND to OR
-		if(!this->traverse(a_list, a_list->left, res, rel_names, n,
-									apply))
-			return 0;
+		res=this->traverse(a_list, a_list->left, rel_names, n, apply);
 	} else if(o_list!=NULL) {
 		//Execute OR
 		vector<pair<unordered_map<string, relInfo> :: iterator,
 			unordered_map<string, int> :: iterator>> vec_rels;
-		if(!this->get_rels(vec_rels, o_list->left, rel_names, n))
-			return 0;
+		if(!this->get_rels(vec_rels, o_list->left, rel_names, n)) {
+			cerr << "Error in fetching the attributes!\n";
+			return 0.0;
+		}
 		if(vec_rels.size()==2)
-			this->join_op(o_list->left, res, vec_rels, apply);
+			res=this->join_op(o_list->left, vec_rels, apply);
 		else
-			this->sel_op(o_list->left, res, vec_rels);
+			res=this->sel_op(o_list->left, vec_rels);
 	}
-	if(o_list!=NULL && o_list->rightOr!=NULL) {
-		//Move right from OR to OR
-		if(!this->traverse(a_list, o_list->rightOr, res, rel_names,
-									n, apply))
-			return 0;
-	}
-	if(a_list->rightAnd!=NULL) {
-		//Move right from AND to AND
-		if(!this->traverse(a_list->rightAnd, NULL, res, rel_names, n,
-									apply))
-			return 0;
+	if(o_list!=NULL && o_list->rightOr!=NULL)  {
+		//Move right from OR to OR and do a+b-a*b
+		double ans=this->traverse(a_list, o_list->rightOr, rel_names,
+								n, apply);
+		res=fabs(res + ans - (res * ans));
+	} else if(o_list==NULL && a_list->rightAnd!=NULL) {
+		//Move right from AND to AND and multiply the AND results
+		//together
+		double ans=this->traverse(a_list->rightAnd, NULL, rel_names, n,
+									apply);
+		res*=ans;
 	}
 
-	return 1;
+	return res;
 }
+
+// Either its an Or node or an And node
+// If its an And node, it must receive its total Or answer from its subordinate
