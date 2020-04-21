@@ -141,7 +141,7 @@ double Statistics :: traverse(AndList *a_list, OrList *o_list, char **rel_names,
 			cerr << "Error in fetching the attributes!\n";
 			return 0.0;
 		}
-		if(vec_rels.size()==2)
+		if(a_list->is_join)
 			res=this->join_op(o_list->left, vec_rels, apply);
 		else
 			res=this->sel_op(o_list->left, vec_rels);
