@@ -9,6 +9,28 @@
 #include"parser/parse_tree.h"
 #include"db/schema.h"
 
+struct operation;
+class Qptree;
+
+struct operation_comp
+{
+	bool operator()(operation *, operation *);
+};
+
+struct tableInfo
+{
+	Schema *sch;
+	int join_order;
+	int sel_order;
+	std :: priority_queue<operation *,
+		std :: vector<operation *>,
+		operation_comp> sel_queue;
+
+public:
+	tableInfo();
+	~tableInfo();
+};
+
 enum typeFlags : uint8_t
 {
 	join_op=1<<1,
@@ -36,7 +58,6 @@ public:
 	~query();
 };
 
-class Qptree;
 struct operation
 {
 	struct AndList *a_list;
@@ -48,25 +69,6 @@ public:
 	operation();
 	operation(struct AndList *, Qptree *);
 	~operation();
-};
-
-struct operation_comp
-{
-	bool operator()(operation *, operation *);
-};
-
-struct tableInfo
-{
-	Schema *sch;
-	int join_order;
-	int sel_order;
-	std :: priority_queue<operation *,
-		std :: vector<operation *>,
-		operation_comp> sel_queue;
-
-public:
-	tableInfo();
-	~tableInfo();
 };
 
 class Qptree
