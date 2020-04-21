@@ -1,11 +1,3 @@
-// TODO
-// 1. Remove the priority queue and insert a vector instead, one for each select
-// and join
-// 2. Make a field in operation structure which basically includes all the
-// required attributes for that operation
-// 3. Start by examining each join, see what it requires and find the operation
-// that can provide it, first priortiy is a select, then a join
-// 4. Add those to make a tree
 #include<string.h>
 #include<unistd.h>
 
