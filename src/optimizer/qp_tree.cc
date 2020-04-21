@@ -11,6 +11,11 @@ operation :: operation()
 }
 operation :: ~operation(){}
 
+bool operation_comp :: operator()(operation *l, operation *r)
+{
+	return (l->cost > r->cost);
+}
+
 tableInfo :: tableInfo()
 {
 	this->join_order=0;

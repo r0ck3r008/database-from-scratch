@@ -38,11 +38,19 @@ public:
 	~operation();
 };
 
+struct operation_comp
+{
+	bool operator()(operation *, operation *);
+};
+
 struct tableInfo
 {
 	Schema *sch;
 	int join_order;
 	int sel_order;
+	std :: priority_queue<operation *,
+		std :: vector<operation *>,
+		operation_comp> sel_queue;
 
 public:
 	tableInfo();
@@ -51,12 +59,14 @@ public:
 
 class Qptree
 {
+	friend struct operation;
 	Statistics *s;
 	char *catalog_file;
 	std :: unordered_map<std :: string, tableInfo>
 			relations;
-	std :: vector<operation> joins;
-	std :: vector<operation> selects;
+	std :: priority_queue<operation *,
+		std :: vector<operation *>,
+		operation_comp> join_queue;
 
 private:
 	void process(struct TableList *);
