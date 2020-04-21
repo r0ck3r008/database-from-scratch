@@ -103,4 +103,8 @@ void Qptree :: process(struct AndList *a_list)
 		else
 			itr->second.sel_order++;
 	}
+
+	for(int i=0; i<indx; i++)
+		delete[] rels[i];
+	delete[] rels;
 }
