@@ -138,7 +138,7 @@ void q1 (){
 
 	double result = s.Estimate(final, relName, 1);
 	cout<<"Your estimation Result  " <<result;
-	cout<<"\n Correct Answer: 8.5732e+5";
+	cout<<"\n Correct Answer: 8.5732e+5\n";
 
 	s.Apply(final, relName, 1);
 
