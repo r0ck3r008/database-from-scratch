@@ -62,8 +62,8 @@ private:
 	void process(struct AndList *);
 	void process(struct operation *,
 			struct operation *);
-	void process(struct operation *, struct AndList *,
-			struct OrList *, char **, int *);
+	void process(struct AndList *, struct OrList *,
+				char **, int *);
 	void get_attr(char *, std :: pair<std :: string,
 		std :: unordered_map<std :: string,
 		tableInfo> :: iterator> &);
