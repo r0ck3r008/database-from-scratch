@@ -5,6 +5,7 @@
 #include<sys/stat.h>
 #include<sys/types.h>
 #include<unistd.h>
+#include<math.h>
 
 #include"statistics.h"
 
@@ -91,7 +92,7 @@ int Statistics :: get_rels(vector<pair<unordered_map<string, relInfo> ::
 		return 1;
 }
 
-void Statistics :: join_op(struct ComparisonOp *, double *res,
+double Statistics :: join_op(struct ComparisonOp *,
 		vector<pair<unordered_map<string, relInfo> :: iterator,
 		unordered_map<string, int> :: iterator>> &vec, int apply)
 {
@@ -106,30 +107,32 @@ void Statistics :: join_op(struct ComparisonOp *, double *res,
 		vec[1].first->second.numTuples=(int)tuples;
 	}
 
-	*res+=tuples;
+	return tuples;
 }
 
-void Statistics :: sel_op(struct ComparisonOp *cop, double *res,
+double Statistics :: sel_op(struct ComparisonOp *cop,
 			vector<pair<unordered_map<string, relInfo> :: iterator,
 			unordered_map<string, int> :: iterator>> &vec)
 
 {
+	double res;
 	if(cop->code==EQUALS) {
-		*res+=((double)vec[0].first->second.numTuples)/
+		res=((double)vec[0].first->second.numTuples)/
 			((double)vec[0].second->second);
 	} else {
-		*res+=((double)vec[0].first->second.numTuples)/3;
+		res=((double)vec[0].first->second.numTuples)/3;
 	}
+
+	return res;
 }
 
-int Statistics :: traverse(AndList *a_list, OrList *o_list, double *res,
-				char **rel_names, int n, int apply)
+double Statistics :: traverse(AndList *a_list, OrList *o_list, char **rel_names,
+								int n, int apply)
 {
+	double res=0.0;
 	if(o_list==NULL && a_list->left!=NULL) {
 		//Move down from AND to OR
-		if(!this->traverse(a_list, a_list->left, res, rel_names, n,
-									apply))
-			return 0;
+		res=this->traverse(a_list, a_list->left, rel_names, n, apply);
 	} else if(o_list!=NULL) {
 		//Execute OR
 		vector<pair<unordered_map<string, relInfo> :: iterator,

@@ -145,20 +145,10 @@ void Statistics :: Write(char *fname)
 
 void Statistics :: Apply(struct AndList *a_list, char **rel_names, int n)
 {
-	double ans=0.0;
-	if(!this->traverse(a_list, NULL, &ans, rel_names, n, 1)) {
-		cerr << "Error in applying!\n";
-		return;
-	}
+	this->traverse(a_list, NULL, rel_names, n, 1);
 }
 
 double Statistics :: Estimate(struct AndList *a_list, char **rel_names, int n)
 {
-	double ans=0.0;
-	if(!this->traverse(a_list, NULL, &ans, rel_names, n, 0)) {
-		cerr << "Error in estimation\n";
-		return -1;
-	}
-
-	return ans;
+	return (this->traverse(a_list, NULL, rel_names, n, 0));
 }

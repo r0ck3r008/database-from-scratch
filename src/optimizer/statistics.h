@@ -31,18 +31,18 @@ private:
 		unordered_map<std :: string, relInfo> :: iterator,
 		std ::unordered_map<std :: string, int> ::
 		iterator>> &, struct ComparisonOp *, char **, int);
-	void join_op(struct ComparisonOp *, double *,
+	double join_op(struct ComparisonOp *,
 		std :: vector<std :: pair<std ::
 		unordered_map<std :: string, relInfo> :: iterator,
 		std :: unordered_map<std :: string, int> ::
 		iterator>> &, int);
-	void sel_op(struct ComparisonOp *, double *,
+	double sel_op(struct ComparisonOp *,
 		std :: vector<std :: pair<std ::
 		unordered_map<std :: string, relInfo> :: iterator,
 		std :: unordered_map<std :: string, int> ::
 		iterator>> &);
-	int traverse(struct AndList *, struct OrList *,
-			double *, char **, int, int);
+	double traverse(struct AndList *, struct OrList *,
+					char **, int, int);
 
 public:
 	Statistics();
