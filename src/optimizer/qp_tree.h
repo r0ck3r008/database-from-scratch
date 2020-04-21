@@ -64,6 +64,8 @@ struct operation
 	int type;
 	double cost;
 	operation *l_child, *r_child, *parent;
+	std :: vector<std :: unordered_map<std ::
+		string, tableInfo> :: iterator> tables;
 
 public:
 	operation();
