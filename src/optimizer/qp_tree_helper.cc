@@ -68,10 +68,13 @@ void Qptree :: process(struct operation *op, struct AndList *a_list,
 			n++;
 			operand=cop->right;
 		}
-		if(n==2)
+		if(n==2) {
+			op->type=join_op;
 			a_list->is_join=1;
-		else
+		} else {
+			op->type=sel_any;
 			a_list->is_join=0;
+		}
 	}
 
 	if(o_list!=NULL && o_list->rightOr!=NULL)
