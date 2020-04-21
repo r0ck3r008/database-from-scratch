@@ -8,6 +8,8 @@ operation :: operation()
 	this->l_child=NULL;
 	this->r_child=NULL;
 	this->parent=NULL;
+	this->type=no_op;
+}
 operation :: operation(struct AndList *a_list, Qptree *ref)
 {
 	this->a_list=a_list;

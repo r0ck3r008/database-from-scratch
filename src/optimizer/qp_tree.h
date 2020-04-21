@@ -2,11 +2,21 @@
 #define QP_TREE_H
 
 #include<unordered_map>
+#include<queue>
 #include<vector>
 
 #include"statistics.h"
 #include"parser/parse_tree.h"
 #include"db/schema.h"
+
+enum typeFlags : uint8_t
+{
+	join_op=1<<1,
+	sel_pipe=1<<2,
+	sel_file=1<<3,
+	sel_any=1<<4,
+	no_op=0
+};
 
 struct query
 {
@@ -30,7 +40,7 @@ class Qptree;
 struct operation
 {
 	struct AndList *a_list;
-	int is_join;
+	int type;
 	double cost;
 	operation *l_child, *r_child, *parent;
 
