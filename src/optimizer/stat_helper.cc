@@ -137,8 +137,10 @@ double Statistics :: traverse(AndList *a_list, OrList *o_list, char **rel_names,
 		//Execute OR
 		vector<pair<unordered_map<string, relInfo> :: iterator,
 			unordered_map<string, int> :: iterator>> vec_rels;
-		if(!this->get_rels(vec_rels, o_list->left, rel_names, n))
-			return 0;
+		if(!this->get_rels(vec_rels, o_list->left, rel_names, n)) {
+			cerr << "Error in fetching the attributes!\n";
+			return 0.0;
+		}
 		if(vec_rels.size()==2)
 			res=this->join_op(o_list->left, vec_rels, apply);
 		else
