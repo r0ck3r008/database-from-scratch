@@ -17,7 +17,7 @@ operation :: operation(struct AndList *a_list, Qptree *ref)
 	//max 16 relations
 	char **rels=new char *[16];
 	int indx=0;
-	ref->process(a_list, NULL, rels, &indx);
+	ref->process(this, a_list, NULL, rels, &indx);
 	this->cost=ref->s->Estimate(a_list, rels, indx);
 	//assuming atomic operations per AndList
 	for(int i=0; i<indx; i++) {
