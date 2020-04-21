@@ -1,3 +1,11 @@
+// TODO
+// 1. Remove the priority queue and insert a vector instead, one for each select
+// and join
+// 2. Make a field in operation structure which basically includes all the
+// required attributes for that operation
+// 3. Start by examining each join, see what it requires and find the operation
+// that can provide it, first priortiy is a select, then a join
+// 4. Add those to make a tree
 #include<string.h>
 #include<unistd.h>
 
@@ -94,16 +102,18 @@ void Qptree :: process(struct AndList *a_list)
 	int indx=0;
 	this->process(a_list, NULL, rels, &indx);
 	op.cost=this->s->Estimate(a_list, rels, indx);
-	this->op_queue.push(op);
 
 	//assuming atomic operations per AndList
 	for(int i=0; i<indx; i++) {
 		string r_name=string(rels[i]);
 		auto itr=this->relations.find(r_name);
-		if(indx==2)
+		if(indx==2) {
 			itr->second.join_order++;
-		else
+			this->joins.push_back(op);
+		} else {
 			itr->second.sel_order++;
+			this->selects.push_back(op);
+		}
 	}
 
 	for(int i=0; i<indx; i++)
