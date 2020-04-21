@@ -33,6 +33,10 @@ struct operation
 	int is_join;
 	double cost;
 	operation *l_child, *r_child, *parent;
+
+public:
+	operation();
+	~operation();
 };
 
 struct operation_comp

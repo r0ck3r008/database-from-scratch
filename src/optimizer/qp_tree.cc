@@ -3,6 +3,13 @@
 // The start adding join operations, in incremental join order
 #include"qp_tree.h"
 
+operation :: operation()
+{
+	this->l_child=NULL;
+	this->r_child=NULL;
+	this->parent=NULL;
+}
+operation :: ~operation(){}
 bool operation_comp :: operator()(const operation &l, const operation &r)
 {
 	return (l.cost > r.cost);
