@@ -86,13 +86,13 @@ int Statistics :: get_rels(vector<pair<unordered_map<string, relInfo> ::
 }
 
 double Statistics :: join_op(struct ComparisonOp *,
-		vector<pair<unordered_map<string, relInfo> :: iterator,
-		unordered_map<string, int> :: iterator>> &vec, int apply)
+			vector<pair<unordered_map<string, relInfo> :: iterator,
+			unordered_map<string, int> :: iterator>> &vec, int apply)
 {
 	double tuples=(((double)vec[0].first->second.numTuples)*
 			((double)vec[1].first->second.numTuples))/
-			(double)max(vec[0].second->second,
-					vec[1].second->second);
+		(double)max(vec[0].second->second,
+				vec[1].second->second);
 	if(apply) {
 		vec[0].first->second.joins.insert(vec[1].first->first);
 		vec[1].first->second.joins.insert(vec[0].first->first);
@@ -120,7 +120,7 @@ double Statistics :: sel_op(struct ComparisonOp *cop,
 }
 
 double Statistics :: traverse(AndList *a_list, OrList *o_list, char **rel_names,
-								int n, int apply)
+				int n, int apply)
 {
 	double res=0.0;
 	if(o_list==NULL && a_list->left!=NULL) {
