@@ -24,12 +24,8 @@ operation :: operation(struct AndList *a_list, Qptree *ref)
 		string r_name=string(rels[i]);
 		auto itr=ref->relations.find(r_name);
 		if(indx==2) {
-			itr->second.join_order++;
-			this->type=join_op;
 			ref->join_queue.push(this);
 		} else {
-			itr->second.sel_order++;
-			this->type=sel_any;
 			itr->second.sel_queue.push(this);
 		}
 	}

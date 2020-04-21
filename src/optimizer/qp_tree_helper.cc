@@ -47,11 +47,11 @@ void Qptree :: process(struct TableList *tables)
 	}
 }
 
-void Qptree :: process(struct AndList *a_list, struct OrList *o_list,
-						char **rels, int *curr_indx)
+void Qptree :: process(struct operation *op, struct AndList *a_list,
+			struct OrList *o_list, char **rels, int *curr_indx)
 {
 	if(o_list==NULL && a_list->left!=NULL) {
-		this->process(a_list, a_list->left, rels, curr_indx);
+		this->process(op, a_list, a_list->left, rels, curr_indx);
 	} else {
 		struct ComparisonOp *cop=o_list->left;
 		struct Operand *operand=cop->left;
@@ -73,9 +73,9 @@ void Qptree :: process(struct AndList *a_list, struct OrList *o_list,
 	}
 
 	if(o_list!=NULL && o_list->rightOr!=NULL)
-		this->process(a_list, o_list->rightOr, rels, curr_indx);
+		this->process(op, a_list, o_list->rightOr, rels, curr_indx);
 	else if(o_list==NULL && a_list->rightAnd!=NULL)
-		this->process(a_list->rightAnd, NULL, rels, curr_indx);
+		this->process(op, a_list->rightAnd, NULL, rels, curr_indx);
 }
 
 void Qptree :: process(struct AndList *a_list)
