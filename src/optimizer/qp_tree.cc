@@ -92,4 +92,14 @@ void Qptree :: process(struct AndList *a_list)
 	this->process(a_list, NULL, rels, &indx);
 	op.cost=this->s->Estimate(a_list, rels, indx);
 	this->op_queue.push(op);
+
+	//assuming atomic operations per AndList
+	for(int i=0; i<indx; i++) {
+		string r_name=string(rels[i]);
+		auto itr=this->relations.find(r_name);
+		if(indx==2)
+			itr->second.join_order++;
+		else
+			itr->second.sel_order++;
+	}
 }

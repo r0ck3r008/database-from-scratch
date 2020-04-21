@@ -45,6 +45,8 @@ struct tableInfo
 	Schema *sch;
 	int join_order;
 	int sel_order;
+
+	tableInfo():join_order(0),sel_order(0){};
 };
 
 class Qptree
