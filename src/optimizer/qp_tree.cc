@@ -38,11 +38,10 @@ operation :: operation(struct AndList *a_list, Qptree *ref)
 	for(int i=0; i<indx; i++) {
 		string r_name=string(rels[i]);
 		auto itr=ref->relations.find(r_name);
-		if(indx==2) {
+		if(indx==2)
 			ref->join_queue.push(this);
-		} else {
+		else
 			itr->second.sel_queue.push(this);
-		}
 	}
 	for(int i=0; i<indx; i++)
 		delete[] rels[i];
