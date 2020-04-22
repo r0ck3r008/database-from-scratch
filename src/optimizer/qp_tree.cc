@@ -45,14 +45,15 @@ operation :: operation(struct AndList *a_list, Qptree *ref)
 	ref->process(this, a_list, NULL, rels, &indx);
 	this->cost=ref->s->Estimate(a_list, rels, indx);
 	//assuming atomic operations per AndList
-	for(int i=0; i<indx; i++) {
-		string r_name=string(rels[i]);
+	if(indx==2) {
+		ref->join_queue.push(this);
+	} else {
+		string r_name=string(rels[0]);
 		auto itr=ref->relations.find(r_name);
-		if(indx==2)
-			ref->join_queue.push(this);
-		else
-			itr->second.sel_queue.push(this);
+		itr->second.sel_queue.push(this);
+		itr->second.sel_flag=1;
 	}
+
 	for(int i=0; i<indx; i++)
 		delete[] rels[i];
 	delete[] rels;
