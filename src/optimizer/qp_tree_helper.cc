@@ -28,14 +28,13 @@ void Qptree :: process(struct TableList *tables)
 	struct TableList *curr=tables;
 	while(curr!=NULL) {
 		string r_name;
-		Schema *sch;
+		Schema *sch=new Schema(this->catalog_file, curr->tableName);
 		if(curr->aliasAs!=NULL) {
 			this->s->CopyRel(curr->tableName, curr->aliasAs);
 			r_name=string(curr->aliasAs);
 			sch=new Schema(this->catalog_file, curr->aliasAs);
 		} else {
 			r_name=string(curr->tableName);
-			sch=new Schema(this->catalog_file, curr->tableName);
 		}
 		struct tableInfo t_info;
 		t_info.sch=sch;
