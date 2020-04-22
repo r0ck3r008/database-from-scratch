@@ -1,3 +1,5 @@
+#include<unistd.h>
+
 #include"qp_tree.h"
 
 query :: query(struct FuncOperator *finalFunction, struct TableList *tables,
@@ -121,5 +123,16 @@ void Qptree :: process(struct query *q)
 		this->process_join(j_op, j_done, tree_stk);
 	}
 
+	if(!tree_stk.size()) {
+		// in case of no join
+		struct operation *op;
+		for(auto &i: this->relations) {
+			if((op=i.second.dispense_select())==NULL) {
+				cerr << "Error in making tree!";
+				_exit(-1);
+			}
+			tree_stk.push(op);
+		}
+	}
 	this->tree=tree_stk.top();
 }
