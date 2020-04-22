@@ -83,4 +83,8 @@ int main ()
 	cout << "Enter the query: \n";
 	yyparse();
 
+	Qptree qpt(stat_file, "db/catalog");
+	struct query q(finalFunction, tables, boolean, groupingAtts,
+			attsToSelect, distinctAtts, distinctFunc);
+	qpt.process(&q);
 }
