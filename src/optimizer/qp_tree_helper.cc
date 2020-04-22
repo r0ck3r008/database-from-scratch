@@ -90,3 +90,8 @@ void Qptree :: process(struct AndList *a_list)
 
 	struct operation *op=new operation(a_list, this);
 }
+
+int Qptree :: dispense_join(struct operation **op_p)
+{
+	return 1;
+}

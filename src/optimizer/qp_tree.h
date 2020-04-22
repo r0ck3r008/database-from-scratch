@@ -97,6 +97,7 @@ private:
 	void get_attr(char *, std :: pair<std :: string,
 		std :: unordered_map<std :: string,
 		tableInfo> :: iterator> &);
+	int dispense_join(struct operation **);
 
 public:
 	Qptree(char *, char *);
