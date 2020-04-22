@@ -65,7 +65,7 @@ bool join_op_comp :: operator()(operation *l, operation *r)
 tableInfo :: tableInfo(){}
 tableInfo :: ~tableInfo(){}
 
-int tableInfo :: dispense_select(struct operation **sel_p)
+struct operation *tableInfo :: dispense_select()
 {
 	// Make the select file with the greatest cost
 	// The join must receive minimun tuples and hence select with least cost
@@ -87,12 +87,7 @@ int tableInfo :: dispense_select(struct operation **sel_p)
 		this->sel_queue.pop();
 	} while(!this->sel_queue.empty());
 
-	*sel_p=sel_op;
-
-	if(sel_op==NULL)
-		return 0;
-	else
-		return 1;
+	return sel_op;
 }
 
 Qptree :: Qptree(char *stat_fname, char *catalog_file)
