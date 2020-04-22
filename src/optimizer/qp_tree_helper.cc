@@ -75,8 +75,6 @@ void Qptree :: process(struct operation *op, struct AndList *a_list,
 
 	if(o_list!=NULL && o_list->rightOr!=NULL)
 		this->process(op, a_list, o_list->rightOr, rels, curr_indx);
-	else if(o_list==NULL && a_list->rightAnd!=NULL)
-		this->process(op, a_list->rightAnd, NULL, rels, curr_indx);
 }
 
 void Qptree :: process(struct AndList *a_list)
