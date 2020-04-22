@@ -137,7 +137,7 @@ void Qptree :: process(struct query *q)
 		struct operation *op;
 		for(auto &i: this->relations) {
 			if((op=i.second.dispense_select())==NULL) {
-				cerr << "Error in making tree!";
+				cerr << "Error in making tree!\n";
 				_exit(-1);
 			}
 			tree_stk.push(op);
