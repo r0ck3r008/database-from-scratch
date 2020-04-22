@@ -95,4 +95,32 @@ int Qptree :: dispense_pipe()
 int Qptree :: dispense_join(struct operation **op_p)
 {
 	return 1;
+void Qptree :: process_join(struct operation *j_op, vector<operation *> &j_vec,
+					stack<operation *> &j_stk)
+{
+	int flag=1;
+	for(int i=0; i<j_op->tables.size(); i++) {
+		struct operation **ip_p;
+		if(!j_op->tables[i]->second.dispense_select(ip_p)) {
+			if(!this->dispense_join(j_op, ip_p, i, j_vec, j_stk)) {
+				flag=0;
+				continue;
+			}
+		}
+
+		int pipe=this->dispense_pipe();
+		if(!i) {
+			j_op->l_child=*ip_p;
+			j_op->l_pipe=pipe;
+		} else {
+			j_op->r_child=*ip_p;
+			j_op->r_pipe=pipe;
+		}
+
+		(*ip_p)->parent=j_op;
+		(*ip_p)->p_pipe=pipe;
+	}
+
+	if(flag)
+		j_vec.push_back(j_op);
 }

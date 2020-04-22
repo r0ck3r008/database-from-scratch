@@ -4,6 +4,7 @@
 #include<unordered_map>
 #include<queue>
 #include<vector>
+#include<stack>
 
 #include"statistics.h"
 #include"parser/parse_tree.h"
@@ -109,6 +110,9 @@ private:
 		std :: unordered_map<std :: string,
 		tableInfo> :: iterator> &);
 	int dispense_join(struct operation **);
+	void process_join(struct operation *,
+			std :: vector<operation *> &,
+			std :: stack<operation *> &);
 
 public:
 	Qptree(char *, char *);
