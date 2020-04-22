@@ -112,8 +112,8 @@ private:
 	void process_join(struct operation *,
 			std :: vector<operation *> &,
 			std :: stack<operation *> &);
-	int dispense_join(struct operation *,
-			struct operation **, int,
+	struct operation *dispense_join(
+			struct operation *, int,
 			std :: vector<operation *> &,
 			std :: stack<operation *> &);
 
