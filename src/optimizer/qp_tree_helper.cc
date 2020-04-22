@@ -118,9 +118,10 @@ void Qptree :: process_join(struct operation *j_op, vector<operation *> &j_vec,
 {
 	int flag=1;
 	for(int i=0; i<j_op->tables.size(); i++) {
-		struct operation **ip_p;
-		if(!j_op->tables[i]->second.dispense_select(ip_p)) {
-			if(!this->dispense_join(j_op, ip_p, i, j_vec, j_stk)) {
+		struct operation *ip;
+		if((ip=j_op->tables[i]->second.dispense_select())==NULL) {
+			if((ip=this->dispense_join(j_op, i, j_vec, j_stk))
+									==NULL) {
 				flag=0;
 				continue;
 			}
@@ -128,15 +129,15 @@ void Qptree :: process_join(struct operation *j_op, vector<operation *> &j_vec,
 
 		int pipe=this->dispense_pipe();
 		if(!i) {
-			j_op->l_child=*ip_p;
+			j_op->l_child=ip;
 			j_op->l_pipe=pipe;
 		} else {
-			j_op->r_child=*ip_p;
+			j_op->r_child=ip;
 			j_op->r_pipe=pipe;
 		}
 
-		(*ip_p)->parent=j_op;
-		(*ip_p)->p_pipe=pipe;
+		ip->parent=j_op;
+		ip->p_pipe=pipe;
 	}
 
 	if(flag)
