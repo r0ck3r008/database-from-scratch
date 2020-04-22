@@ -12,8 +12,17 @@
 struct operation;
 class Qptree;
 
-struct operation_comp
+struct sel_op_comp
 {
+	//comparison operation structure for selection
+	//operation priority queue used in tableInfo
+	bool operator()(operation *, operation *);
+};
+
+struct join_op_comp
+{
+	//comparison operator structure for the join
+	//operation priority queue used in Qptree
 	bool operator()(operation *, operation *);
 };
 
@@ -23,7 +32,7 @@ struct tableInfo
 	Qptree *qpt;
 	std :: priority_queue<operation *,
 		std :: vector<operation *>,
-		operation_comp> sel_queue;
+		sel_op_comp> sel_queue;
 
 public:
 	tableInfo();
@@ -86,7 +95,7 @@ class Qptree
 			relations;
 	std :: priority_queue<operation *,
 		std :: vector<operation *>,
-		operation_comp> join_queue;
+		join_op_comp> join_queue;
 
 private:
 	void process(struct TableList *);

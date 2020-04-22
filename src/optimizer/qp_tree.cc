@@ -50,9 +50,14 @@ operation :: operation(struct AndList *a_list, Qptree *ref)
 }
 operation :: ~operation(){}
 
-bool operation_comp :: operator()(operation *l, operation *r)
+bool sel_op_comp :: operator()(operation *l, operation *r)
 {
 	return (l->cost < r->cost);
+}
+
+bool join_op_comp :: operator()(operation *l, operation *r)
+{
+	return (l->cost > r->cost);
 }
 
 tableInfo :: tableInfo(){}
