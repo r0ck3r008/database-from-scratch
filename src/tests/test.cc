@@ -2,7 +2,7 @@
 
 #include"test.h"
 
-char *stat_file="statistics.txt";
+char *stat_file="tmp/statistics.txt";
 
 using namespace std;
 
