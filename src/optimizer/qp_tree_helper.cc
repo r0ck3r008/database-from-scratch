@@ -32,7 +32,6 @@ void Qptree :: process(struct TableList *tables)
 		if(curr->aliasAs!=NULL) {
 			this->s->CopyRel(curr->tableName, curr->aliasAs);
 			r_name=string(curr->aliasAs);
-			sch=new Schema(this->catalog_file, curr->aliasAs);
 		} else {
 			r_name=string(curr->tableName);
 		}
