@@ -9,6 +9,8 @@
 #include"statistics.h"
 #include"parser/parse_tree.h"
 #include"db/schema.h"
+#include"comparator/comparison.h"
+#include"fs/record.h"
 
 struct operation;
 class Qptree;
