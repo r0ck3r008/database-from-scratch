@@ -55,11 +55,7 @@ bool operation_comp :: operator()(operation *l, operation *r)
 	return (l->cost < r->cost);
 }
 
-tableInfo :: tableInfo()
-{
-	this->join_order=0;
-	this->sel_order=0;
-}
+tableInfo :: tableInfo(){}
 tableInfo :: ~tableInfo(){}
 
 int tableInfo :: dispense_select(struct operation **sel_p)

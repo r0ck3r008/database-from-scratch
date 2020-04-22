@@ -37,10 +37,8 @@ void Qptree :: process(struct TableList *tables)
 		}
 		struct tableInfo t_info;
 		t_info.sch=sch;
-		t_info.join_order=0;
-		t_info.sel_order=0;
+		t_info.qpt=this;
 		this->relations.insert(pair<string, tableInfo>(r_name, t_info));
-
 		curr=curr->next;
 	}
 }

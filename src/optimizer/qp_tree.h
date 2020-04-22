@@ -20,8 +20,7 @@ struct operation_comp
 struct tableInfo
 {
 	Schema *sch;
-	int join_order;
-	int sel_order;
+	Qptree *qpt;
 	std :: priority_queue<operation *,
 		std :: vector<operation *>,
 		operation_comp> sel_queue;
@@ -65,6 +64,7 @@ struct operation
 	int type;
 	double cost;
 	operation *l_child, *r_child, *parent;
+	int l_pipe, r_pipe, p_pipe;
 	std :: vector<std :: unordered_map<std ::
 		string, tableInfo> :: iterator> tables;
 
