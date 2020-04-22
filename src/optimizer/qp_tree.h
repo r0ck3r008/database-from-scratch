@@ -77,6 +77,7 @@ public:
 class Qptree
 {
 	friend struct operation;
+	struct operation *tree;
 	Statistics *s;
 	char *catalog_file;
 	std :: unordered_map<std :: string, tableInfo>
