@@ -69,7 +69,7 @@ int tableInfo :: dispense_select(struct operation **sel_p)
 	// The join must receive minimun tuples and hence select with least cost
 	// is selected as the head of select chain.
 	struct operation *sel_op=NULL;
-	while(this->sel_queue.size()) {
+	do {
 		if(sel_op==NULL) {
 			sel_op=this->sel_queue.top();
 			sel_op->type=sel_file;
@@ -83,7 +83,7 @@ int tableInfo :: dispense_select(struct operation **sel_p)
 			sel_op->type=sel_pipe;
 		}
 		this->sel_queue.pop();
-	}
+	} while(!this->sel_queue.empty());
 
 	*sel_p=sel_op;
 
