@@ -155,6 +155,19 @@ Schema :: Schema (char *fName, char *relName) {
 	fclose (foo);
 }
 
+void Schema :: Print()
+{
+	for(int i=0; i<this->numAtts; i++) {
+		cout << this->myAtts[i].name << " ";
+		if(this->myAtts[i].myType == Int)
+			cout << "Int\n";
+		else if(this->myAtts[i].myType == String)
+			cout << "String\n";
+		else if(this->myAtts[i].myType == Double)
+			cout << "Double\n";
+	}
+}
+
 Schema :: ~Schema () {
 	delete [] myAtts;
 	myAtts = 0;
