@@ -29,6 +29,7 @@ struct tableInfo
 public:
 	tableInfo();
 	~tableInfo();
+	int dispense_select(struct operation **);
 };
 
 enum typeFlags : uint8_t

@@ -47,6 +47,33 @@ tableInfo :: tableInfo()
 }
 tableInfo :: ~tableInfo(){}
 
+int tableInfo :: dispense_select(struct operation **sel_p)
+{
+	// Make the select file with the greatest cost
+	// The join must receive minimun tuples and hence select with least cost
+	// is selected as the head of select chain.
+	struct operation *sel_op=NULL;
+	while(this->sel_queue.size()) {
+		if(sel_op==NULL) {
+			sel_op=this->sel_queue.top();
+			sel_op->type=sel_file;
+		} else {
+			sel_op->l_child=this->sel_queue.top();
+			sel_op->l_child->parent=sel_op;
+			sel_op=sel_op->l_child;
+			sel_op->type=sel_pipe;
+		}
+		this->sel_queue.pop();
+	}
+
+	*sel_p=sel_op;
+
+	if(sel_op==NULL)
+		return 0;
+	else
+		return 1;
+}
+
 Qptree :: Qptree(char *stat_fname, char *catalog_file)
 {
 	this->s=new Statistics;
