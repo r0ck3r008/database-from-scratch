@@ -62,7 +62,7 @@ void Qptree :: process(struct operation *op, struct AndList *a_list,
 			op->tables.push_back(p.second);
 			sprintf(rels[*curr_indx], "%s",
 					p.second->first.c_str());
-			*curr_indx++;
+			(*curr_indx)++;
 			n++;
 			operand=cop->right;
 		}
