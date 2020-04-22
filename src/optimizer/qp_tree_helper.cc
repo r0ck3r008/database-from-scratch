@@ -10,7 +10,7 @@ void Qptree :: get_attr(char *att_name, pair<string, unordered_map<string,
 {
 	char name[64];
 	sprintf(name, "%s", att_name);
-	string tbl=string(strtok(att_name, "."));
+	string tbl=string(strtok(name, "."));
 	string att=string(strtok(NULL, "."));
 
 	auto itr=this->relations.find(tbl);
