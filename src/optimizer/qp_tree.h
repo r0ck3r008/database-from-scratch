@@ -81,6 +81,7 @@ struct operation
 public:
 	operation();
 	operation(struct AndList *, Qptree *);
+	operation(int);
 	~operation();
 };
 

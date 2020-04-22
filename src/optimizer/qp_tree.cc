@@ -24,6 +24,13 @@ operation :: operation()
 	this->parent=NULL;
 	this->type=no_op;
 }
+operation :: operation(int flag)
+{
+	this->l_child=NULL;
+	this->r_child=NULL;
+	this->parent=NULL;
+	this->type=flag;
+}
 operation :: operation(struct AndList *a_list, Qptree *ref)
 {
 	this->l_pipe=-1; this->r_pipe=-1; this->p_pipe=-1;
