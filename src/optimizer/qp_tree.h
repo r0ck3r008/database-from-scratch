@@ -84,6 +84,7 @@ public:
 	operation(struct AndList *, Qptree *);
 	operation(int);
 	~operation();
+	void print();
 };
 
 class Qptree
