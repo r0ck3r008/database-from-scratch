@@ -1,5 +1,20 @@
 #include"qp_tree.h"
 
+query :: query(struct FuncOperator *finalFunction, struct TableList *tables,
+		struct AndList *boolean, struct NameList *groupingAtts,
+		struct NameList *attsToSelect, int distinctAtts,
+		int distinctFunc)
+{
+	this->finalFunction=finalFunction;
+	this->tables=tables;
+	this->boolean=boolean;
+	this->groupingAtts=groupingAtts;
+	this->attsToSelect=attsToSelect;
+	this->distinctAtts=distinctAtts;
+	this->distinctFunc=distinctFunc;
+}
+query :: ~query(){}
+
 operation :: operation()
 {
 	this->l_child=NULL;
