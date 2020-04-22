@@ -131,4 +131,6 @@ public:
 	int dispense_pipe();
 };
 
+void print_in_order(struct operation *);
+
 #endif

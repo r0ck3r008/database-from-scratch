@@ -186,4 +186,20 @@ void Qptree :: process(struct query *q)
 		}
 	}
 	this->tree=tree_stk.top();
+	cout << "Printing the tree in order!\n";
+	print_in_order(this->tree);
+}
+
+void print_in_order(struct operation *tree)
+{
+	if(tree->l_child!=NULL)
+		//go left
+		print_in_order(tree->l_child);
+
+	//print
+	tree->print();
+
+	if(tree->r_child!=NULL)
+		//go right
+		print_in_order(tree->r_child);
 }
