@@ -24,6 +24,7 @@ operation :: operation()
 }
 operation :: operation(struct AndList *a_list, Qptree *ref)
 {
+	this->l_pipe=-1; this->r_pipe=-1; this->p_pipe=-1;
 	this->a_list=a_list;
 	if(a_list->rightAnd!=NULL)
 		//assuming all the right Ands have already been dealt with
@@ -93,6 +94,7 @@ Qptree :: Qptree(char *stat_fname, char *catalog_file)
 	this->s=new Statistics;
 	this->s->Read(stat_fname);
 	this->catalog_file=catalog_file;
+	this->pipe_count=0;
 }
 
 Qptree :: ~Qptree()

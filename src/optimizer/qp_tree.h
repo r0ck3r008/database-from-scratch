@@ -77,9 +77,11 @@ public:
 class Qptree
 {
 	friend struct operation;
+
 	struct operation *tree;
 	Statistics *s;
 	char *catalog_file;
+	int pipe_count;
 	std :: unordered_map<std :: string, tableInfo>
 			relations;
 	std :: priority_queue<operation *,
@@ -104,6 +106,7 @@ public:
 	~Qptree();
 
 	void process(struct query *);
+	int dispense_pipe();
 };
 
 #endif
