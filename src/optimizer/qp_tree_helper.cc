@@ -141,6 +141,11 @@ void Qptree :: process_join(struct operation *j_op, vector<operation *> &j_vec,
 		ip->p_pipe=pipe;
 	}
 
-	if(flag)
-		j_vec.push_back(j_op);
+	if(flag) {
+		if(this->join_queue.empty())
+			//last join op
+			j_stk.push(j_op);
+		else
+			j_vec.push_back(j_op);
+	}
 }
