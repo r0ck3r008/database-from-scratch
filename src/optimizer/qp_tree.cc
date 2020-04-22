@@ -69,8 +69,11 @@ int tableInfo :: dispense_select(struct operation **sel_p)
 			sel_op=this->sel_queue.top();
 			sel_op->type=sel_file;
 		} else {
+			int pipe=this->qpt->dispense_pipe();
 			sel_op->parent=this->sel_queue.top();
 			sel_op->parent->l_child=sel_op;
+			sel_op->p_pipe=pipe;
+			sel_op->parent->l_pipe=pipe;
 			sel_op=sel_op->parent;
 			sel_op->type=sel_pipe;
 		}
