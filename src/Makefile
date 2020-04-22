@@ -11,7 +11,7 @@ DBS := db/*.o
 GLBLS := glbl/*.o
 FSS := fs/*.o
 
-TEST_OUT_OBJS := tests/test.o ${OPTIMIZERS} ${PARSERS}
+TEST_OUT_OBJS := tests/test.o ${OPTIMIZERS} ${PARSERS} ${DBS}
 TEST_STAT_OUT_OBJS := tests/test_stat.o ${REL_OPS} ${MEMS} ${DBS} ${OPTIMIZERS} ${PARSERS} ${COMPARATORS} ${GLBLS} ${FSS}
 REL_OPS_OUT_OBJS := tests/test_rel_ops.o ${REL_OPS} ${MEMS} ${DBS} ${PARSERS} ${COMPARATORS} ${GLBLS} ${FSS}
 GTEST_OUT_OBJS := tests/gtest.o ${REL_OPS} ${MEMS} ${DBS} ${PARSERS} ${COMPARATORS} ${GLBLS} ${FSS}
@@ -21,7 +21,7 @@ TEST_BIGQ_OUT_OBJS := tests/test_bigq.o ${REL_OPS} ${MEMS} ${DBS} ${PARSERS} ${C
 
 all: test.out
 
-test.out: test.o parser_objs optimizer_objs
+test.out: test.o parser_objs optimizer_objs db_objs
 	${COMPILER} ${TEST_OUT_OBJS} ${LINKER_FLAGS} test.out
 	make clean_objs
 
