@@ -92,9 +92,30 @@ int Qptree :: dispense_pipe()
 	return pipe_count++;
 }
 
-int Qptree :: dispense_join(struct operation **op_p)
+int Qptree :: dispense_join(struct operation *j_op, struct operation **holder,
+					int indx, vector<operation *> &j_vec,
+					stack<operation *> &j_stk)
 {
-	return 1;
+	int flag=0;
+	int i=0;
+	for(i; i<j_vec.size(); i++) {
+		if(!(j_op->tables[indx]->first.compare(
+					j_vec[i]->tables[indx]->first))) {
+			*holder=j_vec[i];
+			flag=1;
+			break;
+		}
+	}
+
+	if(flag) {
+		j_stk.push(*holder);
+		j_vec.erase(j_vec.begin()+i);
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 void Qptree :: process_join(struct operation *j_op, vector<operation *> &j_vec,
 					stack<operation *> &j_stk)
 {
