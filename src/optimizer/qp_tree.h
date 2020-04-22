@@ -31,6 +31,7 @@ struct tableInfo
 {
 	Schema *sch;
 	Qptree *qpt;
+	int sel_flag;
 	std :: priority_queue<operation *,
 		std :: vector<operation *>,
 		sel_op_comp> sel_queue;

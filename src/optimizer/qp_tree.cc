@@ -79,7 +79,7 @@ struct operation *tableInfo :: dispense_select()
 	// The join must receive minimun tuples and hence select with least cost
 	// is selected as the head of select chain.
 	struct operation *sel_op=NULL;
-	do {
+	while(!this->sel_queue.empty()) {
 		if(sel_op==NULL) {
 			sel_op=this->sel_queue.top();
 			sel_op->type=sel_file;
@@ -93,7 +93,13 @@ struct operation *tableInfo :: dispense_select()
 			sel_op->type=sel_pipe;
 		}
 		this->sel_queue.pop();
-	} while(!this->sel_queue.empty());
+	}
+	if(sel_op==NULL && !this->sel_flag) {
+		//create a dummy operation which is select pipe if no pipes were
+		//there to begin with
+		sel_op=new operation(sel_pipe);
+		sel_flag=1;
+	}
 
 	return sel_op;
 }
