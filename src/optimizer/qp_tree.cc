@@ -112,4 +112,14 @@ void Qptree :: process(struct query *q)
 {
 	this->process(q->tables);
 	this->process(q->boolean);
+	vector<operation *> j_done;
+	stack<operation *> tree_stk;
+
+	while(!this->join_queue.empty()) {
+		struct operation *j_op=this->join_queue.top();
+		this->join_queue.pop();
+		this->process_join(j_op, j_done, tree_stk);
+	}
+
+	this->tree=tree_stk.top();
 }
