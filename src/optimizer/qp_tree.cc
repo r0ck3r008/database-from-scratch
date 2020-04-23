@@ -1,6 +1,15 @@
+#include<set>
 #include<unistd.h>
 
 #include"qp_tree.h"
+
+struct sch_comp
+{
+	bool operator()(Schema *l, Schema *r)
+	{
+		return (l->numAtts > r->numAtts);
+	}
+};
 
 query :: query(struct FuncOperator *finalFunction, struct TableList *tables,
 		struct AndList *boolean, struct NameList *groupingAtts,
