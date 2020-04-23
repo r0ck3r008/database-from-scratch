@@ -77,6 +77,7 @@ public:
 struct operation
 {
 	struct AndList *a_list;
+	struct FuncOperator *f_list;
 	int type;
 	double cost;
 	operation *l_child, *r_child, *parent;

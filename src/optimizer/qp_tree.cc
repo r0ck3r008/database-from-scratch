@@ -32,6 +32,7 @@ operation :: operation()
 	this->r_child=NULL;
 	this->parent=NULL;
 	this->a_list=NULL;
+	this->f_list=NULL;
 	this->type=no_op;
 }
 operation :: operation(int flag)
@@ -40,11 +41,13 @@ operation :: operation(int flag)
 	this->r_child=NULL;
 	this->parent=NULL;
 	this->a_list=NULL;
+	this->f_list=NULL;
 	this->type=flag;
 }
 operation :: operation(struct AndList *a_list, Qptree *ref)
 {
 	this->l_pipe=-1; this->r_pipe=-1; this->p_pipe=-1;
+	this->f_list=NULL;
 	this->a_list=a_list;
 	if(a_list->rightAnd!=NULL)
 		//assuming all the right Ands have already been dealt with
