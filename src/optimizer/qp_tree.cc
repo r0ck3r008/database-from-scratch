@@ -130,12 +130,12 @@ struct operation *tableInfo :: dispense_select()
 	// is selected as the head of select chain.
 	struct operation *sel_op=NULL;
 	while(!this->sel_queue.empty()) {
-		int pipe=this->qpt->dispense_pipe();
 		if(sel_op==NULL) {
 			sel_op=this->sel_queue.top();
 			sel_op->type=sel_file;
-			sel_op->l_pipe=pipe;
+			sel_op->l_pipe=-2;
 		} else {
+			int pipe=this->qpt->dispense_pipe();
 			sel_op->parent=this->sel_queue.top();
 			sel_op->parent->l_child=sel_op;
 			sel_op->p_pipe=pipe;
@@ -150,6 +150,7 @@ struct operation *tableInfo :: dispense_select()
 		//there to begin with
 		sel_op=new operation(sel_file);
 		sel_flag=1;
+		sel_op->l_pipe=-2;
 	}
 
 	return sel_op;
