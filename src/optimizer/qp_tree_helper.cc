@@ -114,7 +114,7 @@ struct operation *Qptree :: dispense_join(struct operation *j_op, int indx,
 	return holder;
 }
 
-void Qptree :: process_join(struct operation *j_op, vector<operation *> &j_vec,
+void Qptree :: process(struct operation *j_op, vector<operation *> &j_vec,
 					stack<operation *> &j_stk)
 {
 	int flag=1;

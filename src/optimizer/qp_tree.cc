@@ -206,7 +206,7 @@ void Qptree :: process(struct query *q)
 	while(!this->join_queue.empty()) {
 		struct operation *j_op=this->join_queue.top();
 		this->join_queue.pop();
-		this->process_join(j_op, j_done, tree_stk);
+		this->process(j_op, j_done, tree_stk);
 	}
 
 	if(!tree_stk.size()) {

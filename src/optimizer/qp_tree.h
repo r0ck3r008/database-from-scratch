@@ -114,7 +114,7 @@ private:
 	void get_attr(char *, std :: pair<std :: string,
 		std :: unordered_map<std :: string,
 		tableInfo> :: iterator> &);
-	void process_join(struct operation *,
+	void process(struct operation *,
 			std :: vector<operation *> &,
 			std :: stack<operation *> &);
 	struct operation *dispense_join(
