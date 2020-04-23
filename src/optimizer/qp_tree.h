@@ -84,6 +84,8 @@ struct operation
 	int l_pipe, r_pipe, p_pipe;
 	std :: vector<std :: unordered_map<std ::
 		string, tableInfo> :: iterator> tables;
+	std :: vector<std :: unordered_map<std ::
+		string, tableInfo> :: iterator> curr_sch;
 
 public:
 	operation();
