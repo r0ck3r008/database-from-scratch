@@ -83,7 +83,7 @@ void Statistics :: Read(char *fname)
 		return;
 
 	char *line=NULL;
-	relInfo curr_rinfo;
+	relInfo *curr_rinfo=new relInfo;
 	string curr_rname;
 	size_t n=0;
 	int begin=1;
@@ -95,7 +95,9 @@ void Statistics :: Read(char *fname)
 		if(!strcmp(start, "R_BEGIN")) {
 			if(!begin) {
 				this->relMap.insert(pair<string, relInfo>
-						(curr_rname, curr_rinfo));
+						(curr_rname, *curr_rinfo));
+				delete curr_rinfo;
+				curr_rinfo=new relInfo;
 			} else {
 				begin=0;
 			}
