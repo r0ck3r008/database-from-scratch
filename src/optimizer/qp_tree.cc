@@ -22,6 +22,7 @@ operation :: operation()
 	this->l_child=NULL;
 	this->r_child=NULL;
 	this->parent=NULL;
+	this->a_list=NULL;
 	this->type=no_op;
 }
 operation :: operation(int flag)
@@ -29,6 +30,7 @@ operation :: operation(int flag)
 	this->l_child=NULL;
 	this->r_child=NULL;
 	this->parent=NULL;
+	this->a_list=NULL;
 	this->type=flag;
 }
 operation :: operation(struct AndList *a_list, Qptree *ref)
@@ -80,6 +82,10 @@ void operation :: print()
 		this->tables[1]->second.sch->Print();
 	} else if(this->type & sel_file) {
 		cout << "SELECT FILE\n";
+		if(this->a_list==NULL && this->parent->l_child==this)
+			this->tables.push_back(this->parent->tables[0]);
+		else if(this->a_list==NULL && this->parent->r_child==this)
+			this->tables.push_back(this->parent->tables[1]);
 		cout << "CNF: \n";
 		Schema *sch=this->tables[0]->second.sch;
 		cnf.GrowFromParseTree(this->a_list, sch, literal);
