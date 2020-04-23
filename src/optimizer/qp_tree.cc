@@ -147,7 +147,7 @@ struct operation *tableInfo :: dispense_select()
 	if(sel_op==NULL && !this->sel_flag) {
 		//create a dummy operation which is select pipe if no pipes were
 		//there to begin with
-		sel_op=new operation(sel_pipe);
+		sel_op=new operation(sel_file);
 		sel_flag=1;
 	}
 
