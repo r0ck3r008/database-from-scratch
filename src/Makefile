@@ -14,7 +14,7 @@ FSS := fs/*.o
 TEST_OUT_OBJS := tests/test.o ${OPTIMIZERS} ${PARSERS} ${DBS} ${COMPARATORS} ${FSS} ${MEMS}
 TEST_STAT_OUT_OBJS := tests/test_stat.o ${REL_OPS} ${MEMS} ${DBS} ${OPTIMIZERS} ${PARSERS} ${COMPARATORS} ${GLBLS} ${FSS}
 REL_OPS_OUT_OBJS := tests/test_rel_ops.o ${REL_OPS} ${MEMS} ${DBS} ${PARSERS} ${COMPARATORS} ${GLBLS} ${FSS}
-GTEST_OUT_OBJS := tests/gtest.o ${REL_OPS} ${MEMS} ${DBS} ${PARSERS} ${COMPARATORS} ${GLBLS} ${FSS}
+GTEST_OUT_OBJS := tests/gtest.o ${REL_OPS} ${MEMS} ${DBS} ${PARSERS} ${COMPARATORS} ${GLBLS} ${FSS} ${OPTIMIZERS}
 SORTED_FILE_OUT_OBJS := tests/test_sorted_file.o ${REL_OPS} ${MEMS} ${DBS} ${PARSERS} ${COMPARATORS} ${GLBLS} ${FSS}
 HEAP_GEN_OUT_OBJS := tests/heap_gen.o ${REL_OPS} ${MEMS} ${DBS} ${PARSERS} ${COMPARATORS} ${GLBLS} ${FSS}
 TEST_BIGQ_OUT_OBJS := tests/test_bigq.o ${REL_OPS} ${MEMS} ${DBS} ${PARSERS} ${COMPARATORS} ${GLBLS} ${FSS}
@@ -29,11 +29,11 @@ test_stat.out: test_stat.o db_objs fs_objs mem_objs dbgen_bin glbl_objs parser_o
 	${COMPILER} ${TEST_STAT_OUT_OBJS} ${LINKER_FLAGS} test_stat.out
 	make clean_objs
 
-test_rel_ops.out: test_rel_ops.o db_objs fs_objs mem_objs dbgen_bin glbl_objs parser_objs comparator_objs rel_ops_objs
+test_rel_ops.out: test_rel_ops.o db_objs fs_objs mem_objs dbgen_bin glbl_objs parser_objs comparator_objs rel_ops_objs 
 	${COMPILER} ${REL_OPS_OUT_OBJS} ${LINKER_FLAGS} test_rel_ops.out
 	make clean_objs
 
-gtest.out: gtest.o db_objs fs_objs mem_objs dbgen_bin glbl_objs parser_objs comparator_objs rel_ops_objs
+gtest.out: gtest.o db_objs fs_objs mem_objs dbgen_bin glbl_objs parser_objs optimizer_objs comparator_objs rel_ops_objs
 	$(COMPILER) ${GTEST_OUT_OBJS} ${LINKER_FLAGS} gtest.out
 	make clean_objs
 
