@@ -102,23 +102,23 @@ void Statistics :: Read(char *fname)
 				begin=0;
 			}
 			curr_rname=string(strtok(NULL, ":"));
-			curr_rinfo.numTuples=strtol(strtok(NULL, ":"),
+			curr_rinfo->numTuples=strtol(strtok(NULL, ":"),
 								NULL, 10);
 			char *join=strtok(NULL, ":");
 			while(join!=NULL) {
 				if(join[strlen(join)-1]=='\n')
 					join[strlen(join)-1]='\0';
-				curr_rinfo.joins.insert(string(join));
+				curr_rinfo->joins.insert(string(join));
 				join=strtok(NULL, ":");
 			}
 		} else if(!strcmp(start, "A_BEGIN")) {
 			string a_name=string(strtok(NULL, ":"));
 			int n_dis=strtol(strtok(NULL, ":"), NULL, 10);
-			curr_rinfo.attMap.insert(pair<string, int>
+			curr_rinfo->attMap.insert(pair<string, int>
 							(a_name, n_dis));
 		}
 	}
-	this->relMap.insert(pair<string, relInfo>(curr_rname, curr_rinfo));
+	this->relMap.insert(pair<string, relInfo>(curr_rname, *curr_rinfo));
 
 	free(line);
 	fclose(f);
