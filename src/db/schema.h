@@ -62,4 +62,6 @@ public:
 
 };
 
+char *remove_prefix(char *);
+
 #endif

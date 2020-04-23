@@ -4,6 +4,17 @@
 #include <stdlib.h>
 #include <iostream>
 
+char *remove_prefix(char *attName, char *buf)
+{
+	sprintf(buf, "%s", attName);
+	char *rel=strtok(buf, ".");
+	if(!strcmp(rel, attName)) {
+		return attName;
+	} else {
+		return strtok(NULL, ".");
+	}
+}
+
 int Schema :: Find (char *attName) {
 
 	for (int i = 0; i < numAtts; i++) {
