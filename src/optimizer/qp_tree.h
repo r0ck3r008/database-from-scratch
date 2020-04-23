@@ -50,6 +50,9 @@ enum typeFlags : uint8_t
 	sel_pipe=1<<2,
 	sel_file=1<<3,
 	sel_any=1<<4,
+	grp_by=1<<5,
+	sum=1<<6,
+	distinct=1<<7,
 	no_op=0
 };
 
