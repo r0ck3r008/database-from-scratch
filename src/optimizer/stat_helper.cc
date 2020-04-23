@@ -66,10 +66,8 @@ int Statistics :: get_rels(vector<pair<unordered_map<string, relInfo> ::
 	while(num<=n && operand->code==NAME) {
 		pair<unordered_map<string, relInfo> :: iterator,
 			unordered_map<string, int> :: iterator> p;
-		char name[64];
-		sprintf(name, "%s", operand->value);
-		char *_r_name=strtok(name, "."), *_a_name=strtok(NULL, ".");
-		string r_name(_r_name), a_name(_a_name);
+		string r_name, a_name;
+		this->fetch_att_name(operand->value, &r_name, &a_name);
 		auto itr1=this->relMap.find(r_name);
 		if(itr1==this->relMap.end())
 			return 0;
