@@ -16,6 +16,8 @@ char *remove_prefix(char *attName, char *buf)
 }
 
 int Schema :: Find (char *attName) {
+	char buf[64];
+	attName=remove_prefix(attName, buf);
 
 	for (int i = 0; i < numAtts; i++) {
 		if (!strcmp (attName, myAtts[i].name)) {
@@ -28,6 +30,8 @@ int Schema :: Find (char *attName) {
 }
 
 Type Schema :: FindType (char *attName) {
+	char buf[64];
+	attName=remove_prefix(attName, buf);
 
 	for (int i = 0; i < numAtts; i++) {
 		if (!strcmp (attName, myAtts[i].name)) {
