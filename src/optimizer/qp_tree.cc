@@ -62,43 +62,45 @@ operation :: ~operation(){}
 
 void operation :: print()
 {
-	cout << "**********\n";
-	if(this->type & join_op)
-		cout << "JOIN OPERATION:\n";
-	else if(this->type & sel_file)
-		cout << "SELECT FILE\n";
-	else if(this->type & sel_pipe)
-		cout << "SELECT PIPE\n";
-
 	CNF cnf;
 	Record literal;
-	cout << "CNF: \n";
+	cout << "**********\n";
 	if(this->type & join_op) {
+		cout << "JOIN OPERATION:\n";
+		cout << "CNF: \n";
 		Schema *sch_l=this->tables[0]->second.sch;
 		Schema *sch_r=this->tables[1]->second.sch;
 		cnf.GrowFromParseTree(this->a_list, sch_l, sch_r, literal);
 		cnf.Print();
-	} else if((this->type & sel_pipe) || (this->type & sel_file)) {
+		cout << "Output pipe ID: " << this->p_pipe << endl;
+		cout << "Input pipe ID: ";
+		cout << this->l_pipe << ", " << this->r_pipe << endl;
+		cout << "Output Schema: \n";
+		this->tables[0]->second.sch->Print();
+		this->tables[1]->second.sch->Print();
+	} else if(this->type & sel_file) {
+		cout << "SELECT FILE\n";
+		cout << "CNF: \n";
 		Schema *sch=this->tables[0]->second.sch;
 		cnf.GrowFromParseTree(this->a_list, sch, literal);
-	}
-
-	cout << "Output pipe ID: " << this->p_pipe << endl;
-	cout << "Input pipe ID: ";
-	if(this->type & join_op)
-		cout << this->l_pipe << ", " << this->r_pipe << endl;
-	else if((this->type & sel_pipe) || (this->type & sel_file))
+		cnf.Print();
+		cout << "Output pipe ID: " << this->p_pipe << endl;
+		cout << "Input pipe ID: ";
 		cout << this->l_pipe << endl;
-
-	cout << "Output Schema: \n";
-	if(this->type & join_op) {
+		cout << "Output Schema: \n";
 		this->tables[0]->second.sch->Print();
-		cout << endl;
-		this->tables[1]->second.sch->Print();
-	} else if((this->type & sel_pipe) || (this->type & sel_file)) {
+	} else if(this->type & sel_pipe) {
+		cout << "SELECT PIPE\n";
+		cout << "CNF: \n";
+		Schema *sch=this->tables[0]->second.sch;
+		cnf.GrowFromParseTree(this->a_list, sch, literal);
+		cnf.Print();
+		cout << "Output pipe ID: " << this->p_pipe << endl;
+		cout << "Input pipe ID: ";
+		cout << this->l_pipe << endl;
+		cout << "Output Schema: \n";
 		this->tables[0]->second.sch->Print();
 	}
-
 	cout << "**********\n";
 }
 
