@@ -126,7 +126,6 @@ private:
 			std :: vector<operation *> &,
 			std :: stack<operation *> &);
 
-
 public:
 	Qptree(char *, char *);
 	~Qptree();
@@ -136,5 +135,7 @@ public:
 };
 
 void print_in_order(struct operation *);
+void mk_parent(Qptree *, struct operation *,
+		struct operation *, int);
 
 #endif

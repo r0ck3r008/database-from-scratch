@@ -28,27 +28,21 @@ query :: ~query(){}
 
 operation :: operation()
 {
-	this->l_child=NULL;
-	this->r_child=NULL;
-	this->parent=NULL;
-	this->a_list=NULL;
-	this->f_list=NULL;
+	this->l_child=NULL;this->r_child=NULL;this->parent=NULL;
+	this->a_list=NULL;this->f_list=NULL;
 	this->type=no_op;
 }
 operation :: operation(int flag)
 {
-	this->l_child=NULL;
-	this->r_child=NULL;
-	this->parent=NULL;
-	this->a_list=NULL;
-	this->f_list=NULL;
+	this->l_child=NULL;this->r_child=NULL;this->parent=NULL;
+	this->a_list=NULL;this->f_list=NULL;
 	this->type=flag;
 }
 operation :: operation(struct AndList *a_list, Qptree *ref)
 {
 	this->l_pipe=-1; this->r_pipe=-1; this->p_pipe=-1;
-	this->f_list=NULL;
-	this->a_list=a_list;
+	this->f_list=NULL;this->a_list=a_list;this->l_child=NULL;
+	this->r_child=NULL;this->parent=NULL;
 	if(a_list->rightAnd!=NULL)
 		//assuming all the right Ands have already been dealt with
 		a_list->rightAnd=NULL;
@@ -86,28 +80,8 @@ void operation :: print()
 		Schema *sch_r=this->tables[1]->second.sch;
 		cnf.GrowFromParseTree(this->a_list, sch_l, sch_r, literal);
 		cnf.Print();
-		cout << "Output pipe ID: " << this->p_pipe << endl;
 		cout << "Input pipe ID: ";
 		cout << this->l_pipe << ", " << this->r_pipe << endl;
-		cout << "Output Schema: \n";
-		set<Schema *, sch_comp> print_set;
-		print_set.insert(this->tables[0]->second.sch);
-		print_set.insert(this->tables[1]->second.sch);
-		if(this->l_child->type & join_op) {
-			for(int i=0; i<this->l_child->tables.size(); i++) {
-				print_set.insert(this->l_child->tables[i]->
-								second.sch);
-			}
-		}
-		if(this->r_child->type & join_op) {
-			for(int i=0; i<this->r_child->tables.size(); i++) {
-				print_set.insert(this->r_child->tables[i]->
-								second.sch);
-			}
-		}
-		cout << "Set Size: " << print_set.size() << endl;
-		for(auto i: print_set)
-			i->Print();
 	} else if(this->type & sel_file) {
 		cout << "SELECT FILE\n";
 		if(this->a_list==NULL && this->parent->l_child==this)
@@ -118,23 +92,22 @@ void operation :: print()
 		Schema *sch=this->tables[0]->second.sch;
 		cnf.GrowFromParseTree(this->a_list, sch, literal);
 		cnf.Print();
-		cout << "Output pipe ID: " << this->p_pipe << endl;
 		cout << "Input pipe ID: ";
 		cout << this->l_pipe << endl;
-		cout << "Output Schema: \n";
-		this->tables[0]->second.sch->Print();
 	} else if(this->type & sel_pipe) {
 		cout << "SELECT PIPE\n";
 		cout << "CNF: \n";
 		Schema *sch=this->tables[0]->second.sch;
 		cnf.GrowFromParseTree(this->a_list, sch, literal);
 		cnf.Print();
-		cout << "Output pipe ID: " << this->p_pipe << endl;
 		cout << "Input pipe ID: ";
 		cout << this->l_pipe << endl;
-		cout << "Output Schema: \n";
-		this->tables[0]->second.sch->Print();
 	}
+	cout << "Output pipe ID: " << this->p_pipe << endl;
+	cout << "Output Schema: \n";
+	for(int i=0; i<this->curr_sch.size(); i++)
+		this->curr_sch[i]->second.sch->Print();
+
 	cout << "**********\n";
 }
 
@@ -163,13 +136,11 @@ struct operation *tableInfo :: dispense_select()
 			sel_op->type=sel_file;
 			sel_op->l_pipe=-2;
 		} else {
-			int pipe=this->qpt->dispense_pipe();
-			sel_op->parent=this->sel_queue.top();
-			sel_op->parent->l_child=sel_op;
-			sel_op->p_pipe=pipe;
-			sel_op->parent->l_pipe=pipe;
-			sel_op=sel_op->parent;
+			struct operation *new_op=this->sel_queue.top();
+			mk_parent(this->qpt, new_op, sel_op, 0);
+			sel_op=new_op;
 			sel_op->type=sel_pipe;
+			this->sel_queue.pop();
 		}
 		this->sel_queue.pop();
 	}

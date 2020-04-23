@@ -5,6 +5,32 @@
 
 using namespace std;
 
+void mk_parent(Qptree *qpt, struct operation *parent, struct operation *child,
+									int side)
+{
+	int pipe=qpt->dispense_pipe();
+	child->p_pipe=pipe;
+	child->parent=parent;
+	if(!side) {
+		//left child
+		parent->l_child=child;
+		parent->l_pipe=pipe;
+	} else {
+		parent->r_child=child;
+		parent->r_pipe=pipe;
+	}
+
+	for(int i=0; i<child->curr_sch.size(); i++){
+		int flag=1;
+		for(int j=0; j<parent->curr_sch.size(); j++) {
+			if(parent->curr_sch[j]==child->curr_sch[i])
+				flag=0;
+		}
+		if(flag)
+			parent->curr_sch.push_back(child->tables[i]);
+	}
+}
+
 void Qptree :: get_attr(char *att_name, pair<string, unordered_map<string,
 			tableInfo> :: iterator> &p)
 {
@@ -127,18 +153,7 @@ void Qptree :: process(struct operation *j_op, vector<operation *> &j_vec,
 				continue;
 			}
 		}
-
-		int pipe=this->dispense_pipe();
-		if(!i) {
-			j_op->l_child=ip;
-			j_op->l_pipe=pipe;
-		} else {
-			j_op->r_child=ip;
-			j_op->r_pipe=pipe;
-		}
-
-		ip->parent=j_op;
-		ip->p_pipe=pipe;
+		mk_parent(this, j_op, ip, i);
 	}
 
 	if(flag) {
