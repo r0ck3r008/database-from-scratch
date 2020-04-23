@@ -45,6 +45,7 @@ void init_stats()
 	s.AddRel(supplier, 10000);
 	s.AddAtt(supplier, "s_suppkey",10000);
 	s.AddAtt(supplier, "s_nationkey",25);
+	s.AddAtt(supplier, "s_acctbal",9955);
 
 	//partsupp
 	s.AddRel(partsupp, 800000);
