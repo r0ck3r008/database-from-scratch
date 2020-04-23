@@ -78,8 +78,24 @@ void operation :: print()
 		cout << "Input pipe ID: ";
 		cout << this->l_pipe << ", " << this->r_pipe << endl;
 		cout << "Output Schema: \n";
-		this->tables[0]->second.sch->Print();
-		this->tables[1]->second.sch->Print();
+		set<Schema *, sch_comp> print_set;
+		print_set.insert(this->tables[0]->second.sch);
+		print_set.insert(this->tables[1]->second.sch);
+		if(this->l_child->type & join_op) {
+			for(int i=0; i<this->l_child->tables.size(); i++) {
+				print_set.insert(this->l_child->tables[i]->
+								second.sch);
+			}
+		}
+		if(this->r_child->type & join_op) {
+			for(int i=0; i<this->r_child->tables.size(); i++) {
+				print_set.insert(this->r_child->tables[i]->
+								second.sch);
+			}
+		}
+		cout << "Set Size: " << print_set.size() << endl;
+		for(auto i: print_set)
+			i->Print();
 	} else if(this->type & sel_file) {
 		cout << "SELECT FILE\n";
 		if(this->a_list==NULL && this->parent->l_child==this)
