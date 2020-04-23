@@ -21,6 +21,8 @@ struct Attribute {
 class OrderMaker;
 class Schema {
 
+public:
+
 	// gives the attributes in the schema
 	int numAtts;
 	Attribute *myAtts;
@@ -29,8 +31,6 @@ class Schema {
 	char *fileName;
 
 	friend class Record;
-
-public:
 
 	// gets the set of attributes, but be careful with this, since it leads
 	// to aliasing!!!
