@@ -121,6 +121,10 @@ void operation :: print()
 		print_f_list(this->f_list);
 		cout << "\nInput pipe ID: ";
 		cout << this->l_pipe << endl;
+	} else if(this->type & distinct) {
+		cout << "DISTINCT:\n";
+		cout << "\nInput pipe ID: ";
+		cout << this->l_pipe << endl;
 	}
 	cout << "Output pipe ID: " << this->p_pipe << endl;
 	cout << "Output Schema: \n";
@@ -216,8 +220,11 @@ void Qptree :: process(struct query *q)
 	this->tree=tree_stk.top();
 
 	process(q->groupingAtts, q->attsToSelect, q->finalFunction);
-//	process(q->distinctAtts, q->distinctFunc);
+	if(q->distinctFunc)
+		add_distinct();
 	process(q->finalFunction);
+	if(q->distinctAtts)
+		add_distinct();
 //	process(q->attsToSelect);
 
 	cout << "Printing the tree in order!\n";

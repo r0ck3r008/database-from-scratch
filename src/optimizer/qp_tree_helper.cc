@@ -224,6 +224,13 @@ void Qptree :: process(struct FuncOperator *f_list)
 	this->tree=op;
 }
 
+void Qptree :: add_distinct()
+{
+	struct operation *op=new operation(distinct);
+	mk_parent(this, op, this->tree, 0);
+	this->tree=op;
+}
+
 void print_f_list(struct FuncOperator *f_list)
 {
 	if(f_list->leftOperator!=NULL)

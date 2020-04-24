@@ -138,6 +138,7 @@ private:
 			std :: stack<operation *> &);
 	struct Schema *mk_sch(struct NameList *,
 				  struct operation *);
+	void add_distinct();
 
 public:
 	Qptree(char *, char *);
