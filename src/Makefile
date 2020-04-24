@@ -11,10 +11,13 @@ DBS := db/*.o
 GLBLS := glbl/*.o
 FSS := fs/*.o
 
+TEST_OUT_OBJS := entrypoint/entrypoint.o ${OPTIMIZERS} ${PARSERS} ${DBS} ${COMPARATORS} ${FSS} ${MEMS}
 GTEST_OUT_OBJS := tests/gtest.o ${OPTIMIZERS} ${PARSERS} ${DBS} ${COMPARATORS} ${FSS} ${MEMS}
 
 all: a5.out
 
+a5.out: entrypoint/entrypoint.o parser_objs optimizer_objs db_objs comparator_objs fs_objs mem_objs
+	${COMPILER} ${TEST_OUT_OBJS} ${LINKER_FLAGS} a5.out
 	make clean_objs
 
 gtest.out: tests/gtest.o parser_objs optimizer_objs db_objs comparator_objs fs_objs mem_objs
@@ -22,6 +25,7 @@ gtest.out: tests/gtest.o parser_objs optimizer_objs db_objs comparator_objs fs_o
 	make clean_objs
 
 test.o:
+	make -C entrypoint/entrypoint.o
 
 gtest.o:
 	make -C tests/gtest.o
