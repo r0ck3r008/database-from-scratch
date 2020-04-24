@@ -67,6 +67,7 @@ clean_objs:
 	make -C rel_ops/ clean
 	make -C glbl/ clean
 	make -C tests/ clean
+	make -C entrypoint/ clean
 	rm -f ./*.o
 
 distclean: clean
