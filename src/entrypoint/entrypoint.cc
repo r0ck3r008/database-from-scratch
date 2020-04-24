@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include"test.h"
+#include"entrypoint.h"
 
 char *stat_file="tmp/statistics.txt";
 
