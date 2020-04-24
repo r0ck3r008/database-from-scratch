@@ -32,7 +32,7 @@ void mk_parent(Qptree *qpt, struct operation *parent, struct operation *child,
 	}
 	parent->curr_sch.insert(parent->curr_sch.end(), tmp_vec.begin(),
 						tmp_vec.end());
-	if(child->tables.size()==0) {
+	if(child->tables.size()==0 && parent->tables.size()!=0) {
 		child->tables.push_back(parent->tables[side]);
 		child->curr_sch.push_back(child->tables[0]);
 	}
@@ -211,6 +211,17 @@ Schema *Qptree :: mk_sch(struct NameList *sel_atts, struct operation *op)
 	}
 	Schema *sch=new Schema("dummy2", num_atts, atts, 0);
 	return sch;
+}
+
+void Qptree :: process(struct FuncOperator *f_list)
+{
+	if(f_list==NULL)
+		return;
+
+	struct operation *op=new operation(sum);
+	mk_parent(this, op, this->tree, 0);
+	op->f_list=f_list;
+	this->tree=op;
 }
 
 void print_f_list(struct FuncOperator *f_list)

@@ -111,8 +111,15 @@ void operation :: print()
 		print_f_list(this->f_list);
 		cout << "\nOrderMaker:\n";
 		this->order->Print();
+		cout << "Group by Schema:\n";
 		this->grp_sch->Print();
 		cout << "Input pipe ID: ";
+		cout << this->l_pipe << endl;
+	} else if(this->type & sum) {
+		cout << "SUM\n";
+		cout << "Function:\n";
+		print_f_list(this->f_list);
+		cout << "\nInput pipe ID: ";
 		cout << this->l_pipe << endl;
 	}
 	cout << "Output pipe ID: " << this->p_pipe << endl;
@@ -209,9 +216,9 @@ void Qptree :: process(struct query *q)
 	this->tree=tree_stk.top();
 
 	process(q->groupingAtts, q->attsToSelect, q->finalFunction);
-/*	process(q->distinctAtts, q->distinctFunc);
+//	process(q->distinctAtts, q->distinctFunc);
 	process(q->finalFunction);
-	process(q->attsToSelect); */
+//	process(q->attsToSelect);
 
 	cout << "Printing the tree in order!\n";
 	print_in_order(this->tree);
