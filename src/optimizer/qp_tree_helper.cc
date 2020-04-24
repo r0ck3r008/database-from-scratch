@@ -231,10 +231,19 @@ void Qptree :: add_distinct()
 	this->tree=op;
 }
 
-void print_f_list(struct FuncOperator *f_list)
+void Qptree :: process(struct NameList *sel_atts, struct FuncOperator *f_list)
+{
+	struct operation *op=new operation(project);
+	mk_parent(this, op, this->tree, 0);
+	op->att_list=sel_atts;
+	op->f_list=f_list;
+	this->tree=op;
+}
+
+void print_f_list(struct FuncOperator *f_list, int p)
 {
 	if(f_list->leftOperator!=NULL)
-		print_f_list(f_list->leftOperator);
+		print_f_list(f_list->leftOperator, p);
 
 	if(f_list->leftOperand!=NULL) {
 		if(f_list->leftOperand->code==Int)
@@ -248,15 +257,29 @@ void print_f_list(struct FuncOperator *f_list)
 
 	}
 
-	if(f_list->code=='+')
-		cout << "+";
-	else if(f_list->code=='-')
-		cout << "-";
-	else if(f_list->code=='*')
-		cout << "*";
-	else if(f_list->code=='/')
-		cout << "/";
+	if(p) {
+		if(f_list->code=='+')
+			cout << "+";
+		else if(f_list->code=='-')
+			cout << "-";
+		else if(f_list->code=='*')
+			cout << "*";
+		else if(f_list->code=='/')
+			cout << "/";
+	} else {
+		cout << ", ";
+	}
 
 	if(f_list->right!=NULL)
-		print_f_list(f_list->right);
+		print_f_list(f_list->right, p);
+}
+
+void print_name_list(struct NameList *att_list)
+{
+	if(att_list!=NULL)
+		cout << att_list->name;
+	else
+		return;
+
+	print_name_list(att_list->next);
 }

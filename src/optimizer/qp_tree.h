@@ -45,7 +45,7 @@ public:
 	struct operation *dispense_select();
 };
 
-enum typeFlags : uint8_t
+enum typeFlags : uint16_t
 {
 	join_op=1<<1,
 	sel_pipe=1<<2,
@@ -54,6 +54,7 @@ enum typeFlags : uint8_t
 	grp_by=1<<5,
 	sum=1<<6,
 	distinct=1<<7,
+	project=1<<8,
 	no_op=0
 };
 
@@ -79,6 +80,7 @@ struct operation
 {
 	struct AndList *a_list;
 	struct FuncOperator *f_list;
+	struct NameList *att_list;
 	OrderMaker *order;
 	Schema *grp_sch;
 	Schema *agg_sch;
@@ -126,6 +128,8 @@ private:
 	void process(struct NameList *, struct NameList *,
 			struct FuncOperator *);
 	void process(struct NameList *);
+	void process(struct NameList *,
+			struct FuncOperator *);
 	void get_attr(char *, std :: pair<std :: string,
 		std :: unordered_map<std :: string,
 		tableInfo> :: iterator> &);
@@ -151,6 +155,7 @@ public:
 void print_in_order(struct operation *);
 void mk_parent(Qptree *, struct operation *,
 		struct operation *, int);
-void print_f_list(struct FuncOperator *);
+void print_f_list(struct FuncOperator *, int);
+void print_name_list(struct NameList *);
 
 #endif

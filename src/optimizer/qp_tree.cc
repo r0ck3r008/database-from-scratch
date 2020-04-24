@@ -32,6 +32,7 @@ operation :: operation()
 	this->a_list=NULL;this->f_list=NULL;
 	this->l_pipe=-1;this->r_pipe=-1;this->p_pipe=-1;
 	this->type=no_op;this->order=NULL;this->order=NULL;this->agg_sch=NULL;
+	this->att_list=NULL;
 }
 operation :: operation(int flag)
 {
@@ -39,13 +40,14 @@ operation :: operation(int flag)
 	this->a_list=NULL;this->f_list=NULL;
 	this->l_pipe=-1;this->r_pipe=-1;this->p_pipe=-1;
 	this->type=flag;this->order=NULL;this->grp_sch=NULL;this->agg_sch=NULL;
+	this->att_list=NULL;
 }
 operation :: operation(struct AndList *a_list, Qptree *ref)
 {
 	this->l_pipe=-1; this->r_pipe=-1; this->p_pipe=-1;
 	this->f_list=NULL;this->a_list=a_list;this->l_child=NULL;
 	this->r_child=NULL;this->parent=NULL;this->order=NULL;
-	this->grp_sch=NULL;this->agg_sch=NULL;
+	this->grp_sch=NULL;this->agg_sch=NULL;this->att_list=NULL;
 	if(a_list->rightAnd!=NULL)
 		//assuming all the right Ands have already been dealt with
 		a_list->rightAnd=NULL;
@@ -108,7 +110,7 @@ void operation :: print()
 	} else if(this->type & grp_by) {
 		cout << "GROUP BY\n";
 		cout << "Function:\n";
-		print_f_list(this->f_list);
+		print_f_list(this->f_list, 1);
 		cout << "\nOrderMaker:\n";
 		this->order->Print();
 		cout << "Group by Schema:\n";
@@ -118,16 +120,32 @@ void operation :: print()
 	} else if(this->type & sum) {
 		cout << "SUM\n";
 		cout << "Function:\n";
-		print_f_list(this->f_list);
+		print_f_list(this->f_list, 1);
 		cout << "\nInput pipe ID: ";
 		cout << this->l_pipe << endl;
 	} else if(this->type & distinct) {
 		cout << "DISTINCT:\n";
 		cout << "\nInput pipe ID: ";
 		cout << this->l_pipe << endl;
+	} else if(this->type & project) {
+		cout << "PROJECT:\n";
+		cout << "Output Attributes: \n";
+		if(this->f_list!=NULL) {
+			print_f_list(this->f_list, 0);
+			cout << "\n";
+		}
+		if(this->att_list!=NULL) {
+			print_name_list(this->att_list);
+			cout << "\n";
+		}
+		cout << "\nInput pipe ID: ";
+		cout << this->l_pipe << endl;
 	}
 	cout << "Output pipe ID: " << this->p_pipe << endl;
-	cout << "Output Schema: \n";
+	if(!(this->type & project))
+		cout << "Output Schema: \n";
+	else
+		cout << "Input Schema: \n";
 	for(int i=0; i<this->curr_sch.size(); i++)
 		this->curr_sch[i]->second.sch->Print();
 
@@ -225,7 +243,7 @@ void Qptree :: process(struct query *q)
 	process(q->finalFunction);
 	if(q->distinctAtts)
 		add_distinct();
-//	process(q->attsToSelect);
+	process(q->attsToSelect, q->finalFunction);
 
 	cout << "Printing the tree in order!\n";
 	print_in_order(this->tree);
