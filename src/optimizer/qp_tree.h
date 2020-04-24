@@ -10,6 +10,7 @@
 #include"parser/parse_tree.h"
 #include"db/schema.h"
 #include"comparator/comparison.h"
+#include"comparator/function.h"
 #include"fs/record.h"
 
 struct operation;
@@ -78,6 +79,9 @@ struct operation
 {
 	struct AndList *a_list;
 	struct FuncOperator *f_list;
+	OrderMaker *order;
+	Schema *grp_sch;
+	Schema *agg_sch;
 	int type;
 	double cost;
 	operation *l_child, *r_child, *parent;
@@ -117,6 +121,11 @@ private:
 	void process(struct operation *,
 		struct AndList *, struct OrList *,
 				char **, int *);
+	void process(int, int);
+	void process(struct FuncOperator *);
+	void process(struct NameList *, struct NameList *,
+			struct FuncOperator *);
+	void process(struct NameList *);
 	void get_attr(char *, std :: pair<std :: string,
 		std :: unordered_map<std :: string,
 		tableInfo> :: iterator> &);
@@ -127,6 +136,8 @@ private:
 			struct operation *, int,
 			std :: vector<operation *> &,
 			std :: stack<operation *> &);
+	struct Schema *mk_sch(struct NameList *,
+				  struct operation *);
 
 public:
 	Qptree(char *, char *);
@@ -139,5 +150,6 @@ public:
 void print_in_order(struct operation *);
 void mk_parent(Qptree *, struct operation *,
 		struct operation *, int);
+void print_f_list(struct FuncOperator *);
 
 #endif

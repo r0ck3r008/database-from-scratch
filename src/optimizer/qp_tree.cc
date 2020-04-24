@@ -30,19 +30,22 @@ operation :: operation()
 {
 	this->l_child=NULL;this->r_child=NULL;this->parent=NULL;
 	this->a_list=NULL;this->f_list=NULL;
-	this->type=no_op;
+	this->l_pipe=-1;this->r_pipe=-1;this->p_pipe=-1;
+	this->type=no_op;this->order=NULL;this->order=NULL;this->agg_sch=NULL;
 }
 operation :: operation(int flag)
 {
 	this->l_child=NULL;this->r_child=NULL;this->parent=NULL;
 	this->a_list=NULL;this->f_list=NULL;
-	this->type=flag;
+	this->l_pipe=-1;this->r_pipe=-1;this->p_pipe=-1;
+	this->type=flag;this->order=NULL;this->grp_sch=NULL;this->agg_sch=NULL;
 }
 operation :: operation(struct AndList *a_list, Qptree *ref)
 {
 	this->l_pipe=-1; this->r_pipe=-1; this->p_pipe=-1;
 	this->f_list=NULL;this->a_list=a_list;this->l_child=NULL;
-	this->r_child=NULL;this->parent=NULL;
+	this->r_child=NULL;this->parent=NULL;this->order=NULL;
+	this->grp_sch=NULL;this->agg_sch=NULL;
 	if(a_list->rightAnd!=NULL)
 		//assuming all the right Ands have already been dealt with
 		a_list->rightAnd=NULL;
@@ -100,6 +103,15 @@ void operation :: print()
 		Schema *sch=this->tables[0]->second.sch;
 		cnf.GrowFromParseTree(this->a_list, sch, literal);
 		cnf.Print();
+		cout << "Input pipe ID: ";
+		cout << this->l_pipe << endl;
+	} else if(this->type & grp_by) {
+		cout << "GROUP BY\n";
+		cout << "Function:\n";
+		print_f_list(this->f_list);
+		cout << "\nOrderMaker:\n";
+		this->order->Print();
+		this->grp_sch->Print();
 		cout << "Input pipe ID: ";
 		cout << this->l_pipe << endl;
 	}
@@ -195,6 +207,12 @@ void Qptree :: process(struct query *q)
 		}
 	}
 	this->tree=tree_stk.top();
+
+	process(q->groupingAtts, q->attsToSelect, q->finalFunction);
+/*	process(q->distinctAtts, q->distinctFunc);
+	process(q->finalFunction);
+	process(q->attsToSelect); */
+
 	cout << "Printing the tree in order!\n";
 	print_in_order(this->tree);
 }
