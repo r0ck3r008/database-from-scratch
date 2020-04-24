@@ -5,6 +5,39 @@
 
 using namespace std;
 
+void mk_parent(Qptree *qpt, struct operation *parent, struct operation *child,
+									int side)
+{
+	int pipe=qpt->dispense_pipe();
+	child->p_pipe=pipe;
+	child->parent=parent;
+	if(!side) {
+		//left child
+		parent->l_child=child;
+		parent->l_pipe=pipe;
+	} else {
+		parent->r_child=child;
+		parent->r_pipe=pipe;
+	}
+
+	vector<unordered_map<string, tableInfo> :: iterator> tmp_vec;
+	for(int i=0; i<child->curr_sch.size(); i++){
+		int flag=1;
+		for(int j=0; j<parent->curr_sch.size(); j++) {
+			if(parent->curr_sch[j]==child->curr_sch[i])
+				flag=0;
+		}
+		if(flag)
+			tmp_vec.push_back(child->curr_sch[i]);
+	}
+	parent->curr_sch.insert(parent->curr_sch.end(), tmp_vec.begin(),
+						tmp_vec.end());
+	if(child->tables.size()==0 && parent->tables.size()!=0) {
+		child->tables.push_back(parent->tables[side]);
+		child->curr_sch.push_back(child->tables[0]);
+	}
+}
+
 void Qptree :: get_attr(char *att_name, pair<string, unordered_map<string,
 			tableInfo> :: iterator> &p)
 {
@@ -59,6 +92,7 @@ void Qptree :: process(struct operation *op, struct AndList *a_list,
 			this->get_attr(operand->value, p);
 			rels[*curr_indx]=new char[64];
 			op->tables.push_back(p.second);
+			op->curr_sch.push_back(p.second);
 			sprintf(rels[*curr_indx], "%s",
 					p.second->first.c_str());
 			(*curr_indx)++;
@@ -114,7 +148,7 @@ struct operation *Qptree :: dispense_join(struct operation *j_op, int indx,
 	return holder;
 }
 
-void Qptree :: process_join(struct operation *j_op, vector<operation *> &j_vec,
+void Qptree :: process(struct operation *j_op, vector<operation *> &j_vec,
 					stack<operation *> &j_stk)
 {
 	int flag=1;
@@ -127,18 +161,7 @@ void Qptree :: process_join(struct operation *j_op, vector<operation *> &j_vec,
 				continue;
 			}
 		}
-
-		int pipe=this->dispense_pipe();
-		if(!i) {
-			j_op->l_child=ip;
-			j_op->l_pipe=pipe;
-		} else {
-			j_op->r_child=ip;
-			j_op->r_pipe=pipe;
-		}
-
-		ip->parent=j_op;
-		ip->p_pipe=pipe;
+		mk_parent(this, j_op, ip, i);
 	}
 
 	if(flag) {
@@ -148,4 +171,92 @@ void Qptree :: process_join(struct operation *j_op, vector<operation *> &j_vec,
 		else
 			j_vec.push_back(j_op);
 	}
+}
+
+void Qptree :: process(struct NameList *grp_atts, struct NameList *sel_atts,
+						struct FuncOperator *f_list)
+{
+	if(grp_atts==NULL)
+		return;
+
+	struct operation *op=new operation(grp_by);
+	mk_parent(this, op, this->tree, 0);
+	op->grp_sch=this->mk_sch(grp_atts, op);
+	op->order=new OrderMaker(op->grp_sch);
+	op->f_list=f_list;
+	this->tree=op;
+}
+
+Schema *Qptree :: mk_sch(struct NameList *sel_atts, struct operation *op)
+{
+	struct NameList *curr=sel_atts;
+	int num_atts=0;
+	//max is 64
+	struct Attribute atts[64];
+	while(curr!=NULL) {
+		int flag=0;
+		for(int i=0; i<op->curr_sch.size(); i++) {
+			Schema *sch=op->curr_sch[i]->second.sch;
+			int indx=sch->Find(curr->name);
+			if(indx!=-1) {
+				atts[num_atts].myType=sch->FindType(curr->name);
+				atts[num_atts].name=curr->name;
+				flag=1;
+				break;
+			}
+		}
+		if(flag)
+			num_atts++;
+		curr=curr->next;
+	}
+	Schema *sch=new Schema("dummy2", num_atts, atts, 0);
+	return sch;
+}
+
+void Qptree :: process(struct FuncOperator *f_list)
+{
+	if(f_list==NULL)
+		return;
+
+	struct operation *op=new operation(sum);
+	mk_parent(this, op, this->tree, 0);
+	op->f_list=f_list;
+	this->tree=op;
+}
+
+void Qptree :: add_distinct()
+{
+	struct operation *op=new operation(distinct);
+	mk_parent(this, op, this->tree, 0);
+	this->tree=op;
+}
+
+void print_f_list(struct FuncOperator *f_list)
+{
+	if(f_list->leftOperator!=NULL)
+		print_f_list(f_list->leftOperator);
+
+	if(f_list->leftOperand!=NULL) {
+		if(f_list->leftOperand->code==Int)
+			cout << "Int: ";
+		else if(f_list->leftOperand->code==Double)
+			cout << "Double: ";
+		else if(f_list->leftOperand->code==String)
+			cout << "String: ";
+
+		cout << f_list->leftOperand->value;
+
+	}
+
+	if(f_list->code=='+')
+		cout << "+";
+	else if(f_list->code=='-')
+		cout << "-";
+	else if(f_list->code=='*')
+		cout << "*";
+	else if(f_list->code=='/')
+		cout << "/";
+
+	if(f_list->right!=NULL)
+		print_f_list(f_list->right);
 }

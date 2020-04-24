@@ -28,24 +28,24 @@ query :: ~query(){}
 
 operation :: operation()
 {
-	this->l_child=NULL;
-	this->r_child=NULL;
-	this->parent=NULL;
-	this->a_list=NULL;
-	this->type=no_op;
+	this->l_child=NULL;this->r_child=NULL;this->parent=NULL;
+	this->a_list=NULL;this->f_list=NULL;
+	this->l_pipe=-1;this->r_pipe=-1;this->p_pipe=-1;
+	this->type=no_op;this->order=NULL;this->order=NULL;this->agg_sch=NULL;
 }
 operation :: operation(int flag)
 {
-	this->l_child=NULL;
-	this->r_child=NULL;
-	this->parent=NULL;
-	this->a_list=NULL;
-	this->type=flag;
+	this->l_child=NULL;this->r_child=NULL;this->parent=NULL;
+	this->a_list=NULL;this->f_list=NULL;
+	this->l_pipe=-1;this->r_pipe=-1;this->p_pipe=-1;
+	this->type=flag;this->order=NULL;this->grp_sch=NULL;this->agg_sch=NULL;
 }
 operation :: operation(struct AndList *a_list, Qptree *ref)
 {
 	this->l_pipe=-1; this->r_pipe=-1; this->p_pipe=-1;
-	this->a_list=a_list;
+	this->f_list=NULL;this->a_list=a_list;this->l_child=NULL;
+	this->r_child=NULL;this->parent=NULL;this->order=NULL;
+	this->grp_sch=NULL;this->agg_sch=NULL;
 	if(a_list->rightAnd!=NULL)
 		//assuming all the right Ands have already been dealt with
 		a_list->rightAnd=NULL;
@@ -83,28 +83,8 @@ void operation :: print()
 		Schema *sch_r=this->tables[1]->second.sch;
 		cnf.GrowFromParseTree(this->a_list, sch_l, sch_r, literal);
 		cnf.Print();
-		cout << "Output pipe ID: " << this->p_pipe << endl;
 		cout << "Input pipe ID: ";
 		cout << this->l_pipe << ", " << this->r_pipe << endl;
-		cout << "Output Schema: \n";
-		set<Schema *, sch_comp> print_set;
-		print_set.insert(this->tables[0]->second.sch);
-		print_set.insert(this->tables[1]->second.sch);
-		if(this->l_child->type & join_op) {
-			for(int i=0; i<this->l_child->tables.size(); i++) {
-				print_set.insert(this->l_child->tables[i]->
-								second.sch);
-			}
-		}
-		if(this->r_child->type & join_op) {
-			for(int i=0; i<this->r_child->tables.size(); i++) {
-				print_set.insert(this->r_child->tables[i]->
-								second.sch);
-			}
-		}
-		cout << "Set Size: " << print_set.size() << endl;
-		for(auto i: print_set)
-			i->Print();
 	} else if(this->type & sel_file) {
 		cout << "SELECT FILE\n";
 		if(this->a_list==NULL && this->parent->l_child==this)
@@ -115,23 +95,42 @@ void operation :: print()
 		Schema *sch=this->tables[0]->second.sch;
 		cnf.GrowFromParseTree(this->a_list, sch, literal);
 		cnf.Print();
-		cout << "Output pipe ID: " << this->p_pipe << endl;
 		cout << "Input pipe ID: ";
 		cout << this->l_pipe << endl;
-		cout << "Output Schema: \n";
-		this->tables[0]->second.sch->Print();
 	} else if(this->type & sel_pipe) {
 		cout << "SELECT PIPE\n";
 		cout << "CNF: \n";
 		Schema *sch=this->tables[0]->second.sch;
 		cnf.GrowFromParseTree(this->a_list, sch, literal);
 		cnf.Print();
-		cout << "Output pipe ID: " << this->p_pipe << endl;
 		cout << "Input pipe ID: ";
 		cout << this->l_pipe << endl;
-		cout << "Output Schema: \n";
-		this->tables[0]->second.sch->Print();
+	} else if(this->type & grp_by) {
+		cout << "GROUP BY\n";
+		cout << "Function:\n";
+		print_f_list(this->f_list);
+		cout << "\nOrderMaker:\n";
+		this->order->Print();
+		cout << "Group by Schema:\n";
+		this->grp_sch->Print();
+		cout << "Input pipe ID: ";
+		cout << this->l_pipe << endl;
+	} else if(this->type & sum) {
+		cout << "SUM\n";
+		cout << "Function:\n";
+		print_f_list(this->f_list);
+		cout << "\nInput pipe ID: ";
+		cout << this->l_pipe << endl;
+	} else if(this->type & distinct) {
+		cout << "DISTINCT:\n";
+		cout << "\nInput pipe ID: ";
+		cout << this->l_pipe << endl;
 	}
+	cout << "Output pipe ID: " << this->p_pipe << endl;
+	cout << "Output Schema: \n";
+	for(int i=0; i<this->curr_sch.size(); i++)
+		this->curr_sch[i]->second.sch->Print();
+
 	cout << "**********\n";
 }
 
@@ -160,13 +159,11 @@ struct operation *tableInfo :: dispense_select()
 			sel_op->type=sel_file;
 			sel_op->l_pipe=-2;
 		} else {
-			int pipe=this->qpt->dispense_pipe();
-			sel_op->parent=this->sel_queue.top();
-			sel_op->parent->l_child=sel_op;
-			sel_op->p_pipe=pipe;
-			sel_op->parent->l_pipe=pipe;
-			sel_op=sel_op->parent;
+			struct operation *new_op=this->sel_queue.top();
+			mk_parent(this->qpt, new_op, sel_op, 0);
+			sel_op=new_op;
 			sel_op->type=sel_pipe;
+			this->sel_queue.pop();
 		}
 		this->sel_queue.pop();
 	}
@@ -206,7 +203,7 @@ void Qptree :: process(struct query *q)
 	while(!this->join_queue.empty()) {
 		struct operation *j_op=this->join_queue.top();
 		this->join_queue.pop();
-		this->process_join(j_op, j_done, tree_stk);
+		this->process(j_op, j_done, tree_stk);
 	}
 
 	if(!tree_stk.size()) {
@@ -221,6 +218,15 @@ void Qptree :: process(struct query *q)
 		}
 	}
 	this->tree=tree_stk.top();
+
+	process(q->groupingAtts, q->attsToSelect, q->finalFunction);
+	if(q->distinctFunc)
+		add_distinct();
+	process(q->finalFunction);
+	if(q->distinctAtts)
+		add_distinct();
+//	process(q->attsToSelect);
+
 	cout << "Printing the tree in order!\n";
 	print_in_order(this->tree);
 }

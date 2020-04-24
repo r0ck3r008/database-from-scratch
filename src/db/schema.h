@@ -22,6 +22,7 @@ class OrderMaker;
 class Schema {
 
 public:
+	int chop;
 
 	// gives the attributes in the schema
 	int numAtts;
@@ -52,6 +53,7 @@ public:
 	// this composes a schema instance in-memory
 	Schema (char *fName, int num_atts, Attribute *atts);
 
+	Schema (char *fName, int num_atts, Attribute *atts, int);
 	// this constructs a sort order structure that can be used to
 	// place a lexicographic ordering on the records using this type of schema
 	int GetSortOrder (OrderMaker &order);
