@@ -188,6 +188,11 @@ int SortedHelper :: reboot()
 		return 0;
 
 	struct stat buf;
+	if(stat("bin/runs.bin", &buf)==0) {
+		if(unlink("bin/runs.bin")<0)
+			return 0;
+	}
+
 	if(!stat(tmp_name, &buf)) {
 		if(rename(tmp_name, this->f_info->fname)<0) {
 			std :: cerr << "Error in renaming!"

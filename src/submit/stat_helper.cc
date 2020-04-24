@@ -1,33 +1,35 @@
 #include<iostream>
 #include<algorithm>
-#include<unistd.h>
+#include<stdio.h>
+#include<string.h>
 #include<sys/stat.h>
 #include<sys/types.h>
-#include<string.h>
+#include<unistd.h>
+#include<math.h>
 
 #include"statistics.h"
+
+using namespace std;
 
 FILE *Statistics :: f_handle(char *fname, const char *perm)
 {
 	FILE *f=NULL;
-	struct stat buf;
-	int ret=stat(fname, &buf);
 	int flag=1;
-	if(!ret && !strcmp(perm, "w")) {
-		cerr << "File " << fname << " exists"
-			<< " and is being over written!\n";
-	} else if(ret==-1 && !strcmp(perm, "r")) {
-		cerr << "File " << fname << " doesnt exist, "
-			<< "creating a new one!\n";
-		if((f=this->f_handle(fname, "w"))==NULL)
-			_exit(-1);
+	struct stat buf;
+	int res=stat(fname, &buf);
+	if(res==0 && !strcmp(perm, "w")) {
+		std :: cerr << "Overwriting file " << fname
+			<< std :: endl;
+	} else if(res<0 && !strcmp(perm, "r")) {
+		std :: cerr << "File " << fname << " doesnt exist!\n";
+		f=this->f_handle(fname, std :: string("w").c_str());
 		flag=0;
 	}
 
 	if(flag) {
 		if((f=fopen(fname, perm))==NULL) {
-			cerr << "Error in opening file "
-				<< fname << endl;
+			std :: cerr << "Error in opening file " << fname
+				<< " in " << perm << " mode!\n";
 			return NULL;
 		}
 	}
@@ -35,84 +37,121 @@ FILE *Statistics :: f_handle(char *fname, const char *perm)
 	return f;
 }
 
-void Statistics :: cost_calc(struct ComparisonOp *op, int apply, double *res)
+void Statistics :: fetch_att_name(char *name, string *r_name, string *a_name)
 {
-	//ugly
-	string val1=string(op->left->value);
-	string val2=string(op->right->value);
-	int flag=0;
-	double numTuples;
-
-	auto att1=this->attrs.find(val1);
-	auto att2=this->attrs.find(val2);
-	if((att1!=this->attrs.end()) && (att2!=this->attrs.end()))
-		flag=1;
-
-	if(flag) {
-		auto rel1=this->relMap.find(att1->second.rel_name);
-		auto rel2=this->relMap.find(att2->second.rel_name);
-		double min_tup=min(rel1->second.numTuples,
-						rel2->second.numTuples);
-		numTuples=(((double)rel1->second.numTuples)*
-				((double)rel2->second.numTuples))/min_tup;
-		*res+=numTuples;
+	char _a_name[64];
+	sprintf(_a_name, "%s", name);
+	char *part=strtok(_a_name, ".");
+	if(!strcmp(part, name)) {
+		*a_name=string(_a_name);
+		*r_name="";
 	} else {
-		//terniary operator doest work with iterators, why?
-		auto att=att1;
-		if(att1==this->attrs.end())
-			att=att2;
-		auto rel=this->relMap.find(att->second.rel_name);
-		if(rel==this->relMap.end())
-			return;
-		*res+=*res+((double)rel->second.numTuples)/
-			((double)(att->second.num_distinct));
-	}
-
-	if(apply && flag) {
-		relInfo relinfo;
-		auto rel1=this->relMap.find(att1->second.rel_name);
-		auto rel2=this->relMap.find(att2->second.rel_name);
-		string rel_name=rel1->first + "|" + rel2->first;
-		//update relation
-		relinfo.numTuples=numTuples;
-		relinfo.numRel=(rel1->second.numRel)+(rel2->second.numRel);
-		this->relMap.insert(pair<string, relInfo>(rel_name, relinfo));
-		//update attributes
-		//super ugly
-		for(auto& i: this->attrs) {
-			if(i.second.rel_name.compare(rel1->first)==0) {
-				char r_name[64], r1_name[64];
-				sprintf(r_name, "%s", rel_name.c_str());
-				sprintf(r1_name, "%s", rel1->first.c_str());
-				this->CopyAttrs(r1_name, r_name);
-			} else if(i.second.rel_name.compare(rel2->first)==0) {
-				char r_name[64], r2_name[64];
-				sprintf(r_name, "%s", rel_name.c_str());
-				sprintf(r2_name, "%s", rel2->first.c_str());
-				this->CopyAttrs(r2_name, r_name);
-			}
-		}
-		this->relMap.erase(rel1->first);
-		this->relMap.erase(rel2->first);
+		*r_name=string(part);
+		*a_name=string(strtok(NULL, "."));
 	}
 }
 
-void Statistics :: stat_helper(struct AndList *alist, struct OrList *olist,
-							int apply, double *res)
+int Statistics :: get_rels(vector<pair<unordered_map<string, relInfo> ::
+			iterator, unordered_map<string, int> :: iterator>>
+			&vec_rels, struct ComparisonOp *cop, char **rel_names,
+			int n)
 {
-	if(olist==NULL)
-		//this is a AND node moving to another OR node
-		this->stat_helper(alist, alist->left, apply, res);
-	else
-		this->cost_calc(olist->left, apply, res);
+	// Since the rels array has the names of relations exactly like the
+	// operation would need to access and we are assuming atomic operations
+	// in per each AndList->left, we can just assume the relations are right
+	// here and skip the set checking altogether. This will speed up lookup
+	// by alot overall
+	struct Operand *operand=cop->left;
+	int num=0;
+	while(num<=n && operand->code==NAME) {
+		pair<unordered_map<string, relInfo> :: iterator,
+			unordered_map<string, int> :: iterator> p;
+		string r_name, a_name;
+		this->fetch_att_name(operand->value, &r_name, &a_name);
+		auto itr1=this->relMap.find(r_name);
+		if(itr1==this->relMap.end())
+			return 0;
+		auto itr2=itr1->second.attMap.find(a_name);
+		if(itr2==itr1->second.attMap.end())
+			return 0;
 
-
-	if(olist!=NULL && olist->rightOr!=NULL)
-		//this is an OR node moving to another OR node
-		this->stat_helper(alist, olist->rightOr, apply, res);
-
-	if(olist==NULL && alist->rightAnd!=NULL)
-		//This is an AND node moving to another AND node
-		this->stat_helper(alist->rightAnd, NULL, apply, res);
-
+		p.first=itr1; p.second=itr2;
+		vec_rels.push_back(p);
+		num++;
+		operand=cop->right;
+	}
+	return 1;
 }
+
+double Statistics :: join_op(struct ComparisonOp *,
+			vector<pair<unordered_map<string, relInfo> :: iterator,
+			unordered_map<string, int> :: iterator>> &vec, int apply)
+{
+	double tuples=(((double)vec[0].first->second.numTuples)*
+			((double)vec[1].first->second.numTuples))/
+		(double)max(vec[0].second->second,
+				vec[1].second->second);
+	if(apply) {
+		vec[0].first->second.joins.insert(vec[1].first->first);
+		vec[1].first->second.joins.insert(vec[0].first->first);
+		vec[0].first->second.numTuples=(int)tuples;
+		vec[1].first->second.numTuples=(int)tuples;
+	}
+
+	return tuples;
+}
+
+double Statistics :: sel_op(struct ComparisonOp *cop,
+			vector<pair<unordered_map<string, relInfo> :: iterator,
+			unordered_map<string, int> :: iterator>> &vec)
+
+{
+	double res;
+	if(cop->code==EQUALS) {
+		res=((double)vec[0].first->second.numTuples)/
+			((double)vec[0].second->second);
+	} else {
+		res=((double)vec[0].first->second.numTuples)/3;
+	}
+
+	return res;
+}
+
+double Statistics :: traverse(AndList *a_list, OrList *o_list, char **rel_names,
+				int n, int apply)
+{
+	double res=0.0;
+	if(o_list==NULL && a_list->left!=NULL) {
+		//Move down from AND to OR
+		res=this->traverse(a_list, a_list->left, rel_names, n, apply);
+	} else if(o_list!=NULL) {
+		//Execute OR
+		vector<pair<unordered_map<string, relInfo> :: iterator,
+			unordered_map<string, int> :: iterator>> vec_rels;
+		if(!this->get_rels(vec_rels, o_list->left, rel_names, n)) {
+			cerr << "Error in fetching the attributes!\n";
+			return 0.0;
+		}
+		if(a_list->is_join)
+			res=this->join_op(o_list->left, vec_rels, apply);
+		else
+			res=this->sel_op(o_list->left, vec_rels);
+	}
+	if(o_list!=NULL && o_list->rightOr!=NULL)  {
+		//Move right from OR to OR and do a+b-a*b
+		double ans=this->traverse(a_list, o_list->rightOr, rel_names,
+								n, apply);
+		res=fabs(res + ans - (res * ans));
+	} else if(o_list==NULL && a_list->rightAnd!=NULL) {
+		//Move right from AND to AND and multiply the AND results
+		//together
+		double ans=this->traverse(a_list->rightAnd, NULL, rel_names, n,
+									apply);
+		res*=ans;
+	}
+
+	return res;
+}
+
+// Either its an Or node or an And node
+// If its an And node, it must receive its total Or answer from its subordinate

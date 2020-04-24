@@ -1,7 +1,7 @@
 COMPILER = g++
 COMPILER_FLAGS :=-g -c
 LINKER_FLAGS := -lfl -lgtest -lpthread -o
-ALL_OBJS := schema.o file.o record.o dbfile.o heap.o sorted.o sort_helper.o two_way_list.o pipe.o tournament.o bigq.o run_gen.o run_merge.o comparison.o comparison_engine.o function.o lex.yy.o lex.yyfunc.o y.tab.o yyfunc.tab.o sel_pipe.o sel_file.o project.o sum.o join.o group_by.o write_out.o rem_dup.o timer.o stat_helper.o statistics.o
+ALL_OBJS := schema.o file.o record.o dbfile.o heap.o sorted.o sort_helper.o two_way_list.o pipe.o tournament.o bigq.o run_gen.o run_merge.o comparison.o comparison_engine.o function.o lex.yy.o lex.yyfunc.o y.tab.o yyfunc.tab.o stat_helper.o statistics.o qp_tree.o qp_tree_helper.o
 
 TAG := -i
 ifdef linux
@@ -10,11 +10,11 @@ endif
 
 all: test.out
 
-test.out: test.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs rel_op_objs
-	${COMPILER} test.o ${ALL_OBJS} ${LINKER_FLAGS} test.out
+test.out: test.o db_objs fs_objs mem_objs lex_objs
+	${COMPILER} test.o ${ALL_OBJS} ${LINKER_FLAGS} a42.out
 	make clean_objs
 
-gtest.out: gtest.o db_objs fs_objs mem_objs lex_objs dbgen_bin glbl_objs rel_op_objs
+gtest.out: gtest.o db_objs fs_objs mem_objs lex_objs
 	$(COMPILER) gtest.o ${ALL_OBJS} ${LINKER_FLAGS} gtest.out
 	make clean_objs
 
@@ -36,15 +36,6 @@ test.o:
 gtest.o:
 	${COMPILER} ${COMPILER_FLAGS} gtest.cc
 
-heap_gen.o:
-	${COMPILER} ${COMPILER_FLAGS} heap_gen.cc
-
-test_bigq.o:
-	${COMPILER} ${COMPILER_FLAGS} test_bigq.cc
-
-test_sorted_file.o:
-	${COMPILER} ${COMPILER_FLAGS} test_sorted_file.cc
-
 fs_objs:
 	${COMPILER} ${COMPILER_FLAGS} dbfile.cc sorted.cc sort_helper.cc heap.cc file.cc record.cc
 
@@ -54,11 +45,8 @@ db_objs:
 mem_objs:
 	${COMPILER} ${COMPILER_FLAGS} bigq.cc run_gen.cc run_merge.cc tournament.cc pipe.cc two_way_list.cc
 
-glbl_objs:
-	${COMPILER} ${COMPILER_FLAGS} timer.cc
-
 lex_objs:
-	${COMPILER} ${COMPILER_FLAGS} comparison_engine.cc comparison.cc function.cc stat_helper.cc statistics.cc
+	${COMPILER} ${COMPILER_FLAGS} comparison_engine.cc comparison.cc function.cc stat_helper.cc statistics.cc qp_tree.cc qp_tree_helper.cc
 	# parser.y
 	yacc -d parser.y
 	sed ${TAG} y.tab.c -e "s/  __attribute__ ((__unused__))$$/# ifndef __cplusplus\n  __attribute__ ((__unused__));\n# endif/"
@@ -73,12 +61,6 @@ lex_objs:
 	# lexer_func.l
 	lex -Pyyfunc lexer_func.l
 	gcc  -c lex.yyfunc.c
-
-rel_op_objs:
-	${COMPILER} ${COMPILER_FLAGS} sel_pipe.cc sel_file.cc project.cc sum.cc join.cc rem_dup.cc group_by.cc write_out.cc
-
-dbgen_bin:
-	make -C tpch-dbgen/
 
 clean_objs:
 	rm -f ./*.o

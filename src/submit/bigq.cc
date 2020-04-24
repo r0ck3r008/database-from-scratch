@@ -20,7 +20,7 @@ thread_arg :: thread_arg(Pipe *in_pipe, Pipe *out_pipe,
 	this->run_len=run_len;
 	long int rand_num=random();
 	this->run_file=new char[128];
-	sprintf(this->run_file, "runs_%ld.bin", rand_num);
+	sprintf(this->run_file, "bin/runs_%ld.bin", rand_num);
 }
 
 BigQ :: BigQ(Pipe *in_pipe, Pipe *out_pipe,

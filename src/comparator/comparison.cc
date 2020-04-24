@@ -302,11 +302,11 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *leftSchema,
 
 	// as kind of a hack, the literal record is built up insiide of a text file,
 	// where it will be read in from subsequently
-	FILE *outRecFile = fopen ("sdafdsfFFDSDA", "w");
+	FILE *outRecFile = fopen ("tmp/sdafdsfFFDSDA", "w");
 
 	// also as kind of a hack, the schema for the literal record is built up
 	// inside of a text file, where it will also be read from subsequently
-	FILE *outSchemaFile = fopen ("hkljdfgkSDFSDF", "w");
+	FILE *outSchemaFile = fopen ("tmp/hkljdfgkSDFSDF", "w");
 	fprintf (outSchemaFile, "BEGIN\ntempSchema\nwherever\n");
 
 	// this tells us the size of the literal record
@@ -484,10 +484,10 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *leftSchema,
 	fclose (outSchemaFile);
 
 	// and open up the record file
-	outRecFile = fopen ("sdafdsfFFDSDA", "r");
+	outRecFile = fopen ("tmp/sdafdsfFFDSDA", "r");
 
 	// read in the record's schema
-	Schema mySchema("hkljdfgkSDFSDF", "tempSchema");
+	Schema mySchema("tmp/hkljdfgkSDFSDF", "tempSchema");
 
 	// and get the record
 	literal.SuckNextRecord (&mySchema, outRecFile);
@@ -495,8 +495,8 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *leftSchema,
 	// close the record file
 	fclose (outRecFile);
 
-	remove("sdafdsfFFDSDA");
-	remove("hkljdfgkSDFSDF");
+	remove("tmp/sdafdsfFFDSDA");
+	remove("tmp/hkljdfgkSDFSDF");
 }
 
 
@@ -508,11 +508,11 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *mySchema,
 
 	// as kind of a hack, the literal record is built up insiide of a text file,
 	// where it will be read in from subsequently
-	FILE *outRecFile = fopen ("sdafdsfFFDSDA", "w");
+	FILE *outRecFile = fopen ("tmp/sdafdsfFFDSDA", "w");
 
 	// also as kind of a hack, the schema for the literal record is built up
 	// inside of a text file, where it will also be read from subsequently
-	FILE *outSchemaFile = fopen ("hkljdfgkSDFSDF", "w");
+	FILE *outSchemaFile = fopen ("tmp/hkljdfgkSDFSDF", "w");
 	fprintf (outSchemaFile, "BEGIN\ntempSchema\nwherever\n");
 
 	// this tells us the size of the literal record
@@ -674,10 +674,10 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *mySchema,
 	fclose (outSchemaFile);
 
 	// and open up the record file
-	outRecFile = fopen ("sdafdsfFFDSDA", "r");
+	outRecFile = fopen ("tmp/sdafdsfFFDSDA", "r");
 
 	// read in the record's schema
-	Schema outSchema("hkljdfgkSDFSDF", "tempSchema");
+	Schema outSchema("tmp/hkljdfgkSDFSDF", "tempSchema");
 
 	// and get the record
 	literal.SuckNextRecord (&outSchema, outRecFile);
@@ -685,6 +685,6 @@ void CNF :: GrowFromParseTree (struct AndList *parseTree, Schema *mySchema,
 	// close the record file
 	fclose (outRecFile);
 
-	remove("sdafdsfFFDSDA");
-	remove("hkljdfgkSDFSDF");
+	remove("tmp/sdafdsfFFDSDA");
+	remove("tmp/hkljdfgkSDFSDF");
 }

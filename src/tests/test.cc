@@ -2,7 +2,7 @@
 
 #include"test.h"
 
-char *stat_file="statistics.txt";
+char *stat_file="tmp/statistics.txt";
 
 using namespace std;
 
@@ -45,6 +45,7 @@ void init_stats()
 	s.AddRel(supplier, 10000);
 	s.AddAtt(supplier, "s_suppkey",10000);
 	s.AddAtt(supplier, "s_nationkey",25);
+	s.AddAtt(supplier, "s_acctbal",9955);
 
 	//partsupp
 	s.AddRel(partsupp, 800000);
@@ -83,4 +84,8 @@ int main ()
 	cout << "Enter the query: \n";
 	yyparse();
 
+	Qptree qpt(stat_file, "db/catalog");
+	struct query q(finalFunction, tables, boolean, groupingAtts,
+			attsToSelect, distinctAtts, distinctFunc);
+	qpt.process(&q);
 }
