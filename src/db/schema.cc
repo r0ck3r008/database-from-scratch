@@ -42,7 +42,7 @@ Attribute *Schema :: GetAtts ()
 
 Schema :: Schema (char *fpath, int num_atts, Attribute *atts)
 {
-	fileName = strdup (fpath);
+	this->fname = string(fpath);
 	numAtts = num_atts;
 	myAtts = new Attribute[numAtts];
 	for (int i = 0; i < numAtts; i++ ) {
@@ -112,7 +112,7 @@ Schema :: Schema (char *fName, char *relName)
 	// suck in the file name
 	fscanf (foo, "%s", space);
 	totscans++;
-	fileName = strdup (space);
+	this->fname= string(space);
 
 	// count the number of attributes specified
 	numAtts = 0;

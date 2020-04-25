@@ -13,7 +13,7 @@ struct Schema
 {
 	int numAtts;
 	Attribute *myAtts;
-	char *fileName;
+	std::string fname;
 
 	Schema (char *, char *);
 	Schema (char *, int , Attribute *);
