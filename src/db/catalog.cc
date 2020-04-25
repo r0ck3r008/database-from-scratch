@@ -8,17 +8,6 @@
 
 using namespace std;
 
-relInfo :: relInfo(){}
-relInfo :: relInfo(const relInfo &in)
-{
-	this->n_att=in.n_att;
-	this->n_tup=in.n_tup;
-	this->type=in.type;
-	this->fname=in.fname;
-	this->attMap=in.attMap;
-}
-relInfo :: ~relInfo(){}
-
 void Catalog :: addRel(char *_rname, char *_fname, fType type, int n_tup)
 {
 	string rname(_rname), fname(_fname);
@@ -28,12 +17,11 @@ void Catalog :: addRel(char *_rname, char *_fname, fType type, int n_tup)
 		return;
 	}
 
-	relInfo rinfo;
+	Schema rinfo;
 	rinfo.n_tup=n_tup;
 	rinfo.type=type;
 	rinfo.fname=fname;
-	rinfo.n_att=0;
-	this->rels.insert(pair<string, relInfo>(rname, rinfo));
+	this->rels.insert(pair<string, Schema>(rname, rinfo));
 }
 
 void Catalog :: addAtt(char *_rname, char *_aname, int n_dis, Type type)
@@ -51,14 +39,13 @@ void Catalog :: addAtt(char *_rname, char *_aname, int n_dis, Type type)
 		return;
 	}
 
-	attInfo ainfo;
+	Attribute ainfo;
 	ainfo.n_dis=(n_dis==-1) ? (itr1->second.n_tup) : (n_dis);
-	ainfo.type=type;
-	itr1->second.attMap.insert(pair<string, attInfo>(aname, ainfo));
-	itr1->second.n_att++;
+	ainfo.myType=type;
+	itr1->second.attMap.insert(pair<string, Attribute>(aname, ainfo));
 }
 
-relInfo *Catalog :: snap(char *_rname)
+Schema *Catalog :: snap(char *_rname)
 {
 	string rname(_rname);
 	auto itr=this->rels.find(rname);
@@ -67,7 +54,7 @@ relInfo *Catalog :: snap(char *_rname)
 		return NULL;
 	}
 
-	relInfo *rinfo=new relInfo(itr->second);
+	Schema *rinfo=new Schema(itr->second);
 	return rinfo;
 }
 
@@ -99,7 +86,7 @@ void Catalog :: read(char *fname)
 	char *line_tmp=NULL;
 	size_t n=0;
 	int begin=1;
-	relInfo *curr_rinfo=new relInfo;
+	Schema *curr_rinfo=new Schema;
 	string curr_rname;
 	while(!feof(f)) {
 		int stat=getline(&line_tmp, &n, f);
@@ -111,25 +98,24 @@ void Catalog :: read(char *fname)
 		char *part=strtok(line, ":");
 		if(!strcmp(part, "R_BEGIN")) {
 			if(!begin) {
-				this->rels.insert(pair<string, relInfo>
+				this->rels.insert(pair<string, Schema>
 						(curr_rname, *(curr_rinfo)));
 				delete curr_rinfo;
-				curr_rinfo=new relInfo;
+				curr_rinfo=new Schema;
 			} else {
 				begin=1;
 			}
 			curr_rname=string(strtok(NULL, ":"));
-			curr_rinfo->n_att=strtol(strtok(NULL, ":"), NULL, 10);
 			curr_rinfo->n_tup=strtol(strtok(NULL, ":"), NULL, 10);
 			curr_rinfo->type=(fType)strtol(strtok(NULL, ":"),
 								NULL, 10);
 			curr_rinfo->fname=string(strtok(NULL, ":"));
 		} else if(!strcmp(part, "A_BEGIN")) {
-			attInfo ainfo;
+			Attribute ainfo;
 			string aname(strtok(NULL, ":"));
-			ainfo.type=(Type)strtol(strtok(NULL, ":"), NULL, 10);
+			ainfo.myType=(Type)strtol(strtok(NULL, ":"), NULL, 10);
 			ainfo.n_dis=strtol(strtok(NULL, ":"), NULL, 10);
-			curr_rinfo->attMap.insert(pair<string, attInfo>
+			curr_rinfo->attMap.insert(pair<string, Attribute>
 							(aname, ainfo));
 		}
 
@@ -139,45 +125,6 @@ void Catalog :: read(char *fname)
 
 	free(line_tmp);
 	fclose(f);
-}
-
-int Catalog :: Find(char *_aname)
-{
-	string rname, aname;
-	splice(_aname, &rname, &aname);
-	auto itr=this->rels.find(rname);
-	if(itr==this->rels.end())
-		return -1;
-
-	auto itr1=itr->second.attMap.find(aname);
-	if(itr1==itr->second.attMap.end())
-		return -1;
-
-	return 1;
-}
-
-Type Catalog :: FindType(char *_aname)
-{
-	string rname, aname;
-	splice(_aname, &rname, &aname);
-	Type type;
-	auto itr=this->rels.find(rname);
-	if(itr==this->rels.end())
-		return Int;
-
-	auto itr1=itr->second.attMap.find(aname);
-	if(itr1==itr->second.attMap.end())
-		return itr1->second.type;
-
-	return Int;
-}
-
-void splice(char *_aname, string *rname, string *aname)
-{
-	char name[64];
-	sprintf(name, "%s", _aname);
-	*rname=string(strtok(name, "."));
-	*aname=string(strtok(NULL, "."));
 }
 
 FILE *f_handle(char *fname, const char *perm)
