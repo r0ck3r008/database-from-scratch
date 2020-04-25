@@ -146,6 +146,16 @@ Schema :: ~Schema ()
 	delete [] myAtts;
 }
 
+void Schema :: addAtt(char *aname, Type type, int n_dis)
+{
+	if(numAtts==15) {
+		cerr << "No more attributes can be added!\n";
+		return;
+	}
+	myAtts[numAtts].name=strdup(aname);
+	myAtts[numAtts].myType=type;
+	myAtts[numAtts].n_dis=n_dis;
+	numAtts++;
 }
 
 int Schema :: Find (char *attName)

@@ -22,6 +22,7 @@ struct Schema
 	Schema (char *, char *);
 	Schema (char *, int , Attribute *);
 	~Schema ();
+	void addAtt(char *, Type, int);
 	Attribute *GetAtts ();
 	int GetNumAtts ();
 	int Find (char *);
