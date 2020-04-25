@@ -5,41 +5,6 @@
 
 using namespace std;
 
-int Schema :: Find (char *attName)
-{
-	for (int i = 0; i < numAtts; i++) {
-		if (!strcmp (attName, myAtts[i].name)) {
-			return i;
-		}
-	}
-
-	// if we made it here, the attribute was not found
-	return -1;
-}
-
-Type Schema :: FindType (char *attName)
-{
-	for (int i = 0; i < numAtts; i++) {
-		if (!strcmp (attName, myAtts[i].name)) {
-			return myAtts[i].myType;
-		}
-	}
-
-	// if we made it here, the attribute was not found
-	return Int;
-}
-
-int Schema :: GetNumAtts ()
-{
-	return numAtts;
-}
-
-Attribute *Schema :: GetAtts ()
-{
-	return myAtts;
-}
-
-
 Schema :: Schema (char *fpath, int num_atts, Attribute *atts)
 {
 	this->fname = string(fpath);
@@ -160,6 +125,46 @@ Schema :: Schema (char *fName, char *relName)
 	fclose (foo);
 }
 
+Schema :: ~Schema ()
+{
+	delete [] myAtts;
+	myAtts = 0;
+}
+
+int Schema :: Find (char *attName)
+{
+	for (int i = 0; i < numAtts; i++) {
+		if (!strcmp (attName, myAtts[i].name)) {
+			return i;
+		}
+	}
+
+	// if we made it here, the attribute was not found
+	return -1;
+}
+
+Type Schema :: FindType (char *attName)
+{
+	for (int i = 0; i < numAtts; i++) {
+		if (!strcmp (attName, myAtts[i].name)) {
+			return myAtts[i].myType;
+		}
+	}
+
+	// if we made it here, the attribute was not found
+	return Int;
+}
+
+int Schema :: GetNumAtts ()
+{
+	return numAtts;
+}
+
+Attribute *Schema :: GetAtts ()
+{
+	return myAtts;
+}
+
 void Schema :: Print()
 {
 	for(int i=0; i<this->numAtts; i++) {
@@ -172,9 +177,3 @@ void Schema :: Print()
 			cout << "Double\n";
 	}
 }
-
-Schema :: ~Schema () {
-	delete [] myAtts;
-	myAtts = 0;
-}
-
