@@ -13,6 +13,8 @@ Schema :: Schema(string fname, fType type, int n_tup)
 	this->n_tup=n_tup;
 	this->numAtts=16;
 	this->myAtts=new Attribute[16];
+	for(int i=0; i<numAtts; i++)
+		myAtts[i].name=NULL;
 }
 
 Schema :: Schema (char *fpath, int num_atts, Attribute *atts)
@@ -137,8 +139,13 @@ Schema :: Schema (char *fName, char *relName)
 
 Schema :: ~Schema ()
 {
+	for(int i=0; i<16; i++) {
+		if(myAtts[i].name!=NULL)
+			free(myAtts[i].name);
+	}
 	delete [] myAtts;
-	myAtts = 0;
+}
+
 }
 
 int Schema :: Find (char *attName)
