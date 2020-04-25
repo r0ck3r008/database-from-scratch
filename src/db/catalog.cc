@@ -116,7 +116,8 @@ void Catalog :: read(char *fname)
 		free(line_tmp);
 		line_tmp=NULL;
 	}
-
+	this->rels.insert(pair<string, Schema> (curr_rname, *(curr_rinfo)));
+	delete curr_rinfo;
 	free(line_tmp);
 	fclose(f);
 }
