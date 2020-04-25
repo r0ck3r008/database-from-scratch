@@ -21,25 +21,22 @@ void Catalog :: addRel(char *_rname, char *_fname, fType type, int n_tup)
 	this->rels.insert(pair<string, Schema>(rname, sch));
 }
 
-void Catalog :: addAtt(char *_rname, char *_aname, int n_dis, Type type)
+void Catalog :: addAtt(char *_rname, char *aname, int n_dis, Type type)
 {
-	string rname(_rname), aname(_aname);
+	string rname(_rname);
 	auto itr1=this->rels.find(rname);
 	if(itr1==this->rels.end()) {
 		cerr << "This relation does not exit!\n";
 		return;
 	}
 
-	auto itr2=itr1->second.attMap.find(aname);
-	if(itr2!=itr1->second.attMap.end()) {
+	if(itr1->second.Find(aname)!=-1) {
 		cerr << "This attribute already exists!\n";
 		return;
 	}
 
-	Attribute ainfo;
-	ainfo.n_dis=(n_dis==-1) ? (itr1->second.n_tup) : (n_dis);
-	ainfo.myType=type;
-	itr1->second.attMap.insert(pair<string, Attribute>(aname, ainfo));
+	int dis=(n_dis==-1) ? (itr1->second.n_tup) : (n_dis);
+	itr1->second.addAtt(aname, type, dis);
 }
 
 Schema *Catalog :: snap(char *_rname)
@@ -108,12 +105,10 @@ void Catalog :: read(char *fname)
 								NULL, 10);
 			curr_rinfo->fname=string(strtok(NULL, ":"));
 		} else if(!strcmp(part, "A_BEGIN")) {
-			Attribute ainfo;
-			string aname(strtok(NULL, ":"));
-			ainfo.myType=(Type)strtol(strtok(NULL, ":"), NULL, 10);
-			ainfo.n_dis=strtol(strtok(NULL, ":"), NULL, 10);
-			curr_rinfo->attMap.insert(pair<string, Attribute>
-							(aname, ainfo));
+			char *aname=strtok(NULL, ":");
+			Type myType=(Type)strtol(strtok(NULL, ":"), NULL, 10);
+			int n_dis=strtol(strtok(NULL, ":"), NULL, 10);
+			curr_rinfo->addAtt(aname, myType, n_dis);
 		}
 
 		free(line_tmp);
