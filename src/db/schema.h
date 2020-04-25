@@ -4,6 +4,7 @@
 #include<unordered_map>
 
 #include"glbl/defs.h"
+//#include "comparator/comparison.h"
 
 struct Attribute
 {
@@ -22,6 +23,7 @@ struct Schema
 	~Schema ();
 	int Find (char *attName);
 	Type FindType (char *attName);
+//	int GetSortOrder (OrderMaker &order);
 	void Print();
 };
 
