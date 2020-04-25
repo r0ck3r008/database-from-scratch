@@ -65,12 +65,12 @@ void Catalog :: write(char *fname)
 		return;
 
 	for(auto &i: this->rels) {
-		fprintf(f, "R_BEGIN:%s:%d:%d:%d:%s\n", i.first.c_str(),
-			i.second.n_att, i.second.n_tup, i.second.type,
+		fprintf(f, "R_BEGIN:%s:%d:%d:%s\n", i.first.c_str(),
+			i.second.n_tup, i.second.type,
 						i.second.fname.c_str());
 		for(auto &j: i.second.attMap) {
 			fprintf(f, "A_BEGIN:%s:%d:%d\n", j.first.c_str(),
-				j.second.type, j.second.n_dis);
+				j.second.myType, j.second.n_dis);
 		}
 	}
 
