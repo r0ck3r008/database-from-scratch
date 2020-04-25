@@ -1,32 +1,69 @@
 #ifndef SCHEMA_H
 #define SCHEMA_H
 
-#include<unordered_map>
+#include <stdio.h>
+#include "fs/record.h"
+#include "schema.h"
+#include "fs/file.h"
+#include "comparator/comparison.h"
+#include "comparator/comparison_engine.h"
 
-#include"glbl/defs.h"
-//#include "comparator/comparison.h"
+struct att_pair {
+	char *name;
+	Type type;
+};
+struct Attribute {
 
-struct Attribute
-{
-	int n_dis;
+	char *name;
 	Type myType;
 };
 
-struct Schema
-{
-	std::string fname;
-	int n_tup;
-	fType type;
-	std::unordered_map<std::string, Attribute> attMap;
+class OrderMaker;
+class Schema {
 
-	Schema();
-	~Schema ();
+public:
+	int chop;
+
+	// gives the attributes in the schema
+	int numAtts;
+	Attribute *myAtts;
+
+	// gives the physical location of the binary file storing the relation
+	char *fileName;
+
+	friend class Record;
+
+	// gets the set of attributes, but be careful with this, since it leads
+	// to aliasing!!!
+	Attribute *GetAtts ();
+
+	// returns the number of attributes
+	int GetNumAtts ();
+
+	// this finds the position of the specified attribute in the schema
+	// returns a -1 if the attribute is not present in the schema
 	int Find (char *attName);
+
+	// this finds the type of the given attribute
 	Type FindType (char *attName);
-//	int GetSortOrder (OrderMaker &order);
+
+	// this reads the specification for the schema in from a file
+	Schema (char *fName, char *relName);
+
+	// this composes a schema instance in-memory
+	Schema (char *fName, int num_atts, Attribute *atts);
+
+	Schema (char *fName, int num_atts, Attribute *atts, int);
+	// this constructs a sort order structure that can be used to
+	// place a lexicographic ordering on the records using this type of schema
+	int GetSortOrder (OrderMaker &order);
+
 	void Print();
+
+	~Schema ();
+
 };
 
-void splice(char *, std::string *, std::string *);
+char *remove_prefix(char *);
 
 #endif
