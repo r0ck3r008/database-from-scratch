@@ -1,9 +1,19 @@
-#include <iostream>
-#include <string.h>
+#include<iostream>
+#include<stdlib.h>
+#include<string.h>
 
-#include "schema.h"
+#include"schema.h"
 
 using namespace std;
+
+Schema :: Schema(string fname, fType type, int n_tup)
+{
+	this->fname=fname;
+	this->type=type;
+	this->n_tup=n_tup;
+	this->numAtts=16;
+	this->myAtts=new Attribute[16];
+}
 
 Schema :: Schema (char *fpath, int num_atts, Attribute *atts)
 {
