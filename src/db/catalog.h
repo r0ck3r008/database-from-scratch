@@ -16,11 +16,8 @@ public:
 	Schema *snap(char *);
 	void write(char *);
 	void read(char *);
-	int Find(char *);
-	Type FindType(char *);
 };
 
-void splice(char *, std::string *, std::string *);
 FILE *f_handle(char *, const char *);
 
 #endif
