@@ -62,9 +62,11 @@ void Catalog :: write(char *fname)
 		fprintf(f, "R_BEGIN:%s:%d:%d:%s\n", i.first.c_str(),
 			i.second.n_tup, i.second.type,
 						i.second.fname.c_str());
-		for(auto &j: i.second.attMap) {
-			fprintf(f, "A_BEGIN:%s:%d:%d\n", j.first.c_str(),
-				j.second.myType, j.second.n_dis);
+		for(int j=0; j<i.second.numAtts; j++) {
+			fprintf(f, "A_BEGIN:%s:%d:%d\n",
+				i.second.myAtts[j].name,
+				i.second.myAtts[j].myType,
+				i.second.myAtts[j].n_dis);
 		}
 	}
 
