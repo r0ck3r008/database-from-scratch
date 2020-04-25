@@ -1,25 +1,12 @@
-#include "schema.h"
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <iostream>
+#include <string.h>
 
-char *remove_prefix(char *attName, char *buf)
+#include "schema.h"
+
+using namespace std;
+
+int Schema :: Find (char *attName)
 {
-	sprintf(buf, "%s", attName);
-	char *rel=strtok(buf, ".");
-	if(!strcmp(rel, attName)) {
-		return attName;
-	} else {
-		return strtok(NULL, ".");
-	}
-}
-
-int Schema :: Find (char *attName) {
-	if(this->chop!=0) {
-		char buf[64];
-		attName=remove_prefix(attName, buf);
-	}
 	for (int i = 0; i < numAtts; i++) {
 		if (!strcmp (attName, myAtts[i].name)) {
 			return i;
@@ -30,12 +17,8 @@ int Schema :: Find (char *attName) {
 	return -1;
 }
 
-Type Schema :: FindType (char *attName) {
-	if(this->chop!=0) {
-		char buf[64];
-		attName=remove_prefix(attName, buf);
-	}
-
+Type Schema :: FindType (char *attName)
+{
 	for (int i = 0; i < numAtts; i++) {
 		if (!strcmp (attName, myAtts[i].name)) {
 			return myAtts[i].myType;
@@ -46,17 +29,19 @@ Type Schema :: FindType (char *attName) {
 	return Int;
 }
 
-int Schema :: GetNumAtts () {
+int Schema :: GetNumAtts ()
+{
 	return numAtts;
 }
 
-Attribute *Schema :: GetAtts () {
+Attribute *Schema :: GetAtts ()
+{
 	return myAtts;
 }
 
 
-Schema :: Schema (char *fpath, int num_atts, Attribute *atts, int chop) {
-	this->chop=chop;
+Schema :: Schema (char *fpath, int num_atts, Attribute *atts)
+{
 	fileName = strdup (fpath);
 	numAtts = num_atts;
 	myAtts = new Attribute[numAtts];
@@ -69,7 +54,7 @@ Schema :: Schema (char *fpath, int num_atts, Attribute *atts, int chop) {
 		}
 		else if (atts[i].myType == String) {
 			myAtts[i].myType = String;
-		} 
+		}
 		else {
 			cout << "Bad attribute type for " << atts[i].myType << "\n";
 			delete [] myAtts;
@@ -80,33 +65,8 @@ Schema :: Schema (char *fpath, int num_atts, Attribute *atts, int chop) {
 
 }
 
-Schema :: Schema (char *fpath, int num_atts, Attribute *atts) {
-	this->chop=1;
-	fileName = strdup (fpath);
-	numAtts = num_atts;
-	myAtts = new Attribute[numAtts];
-	for (int i = 0; i < numAtts; i++ ) {
-		if (atts[i].myType == Int) {
-			myAtts[i].myType = Int;
-		}
-		else if (atts[i].myType == Double) {
-			myAtts[i].myType = Double;
-		}
-		else if (atts[i].myType == String) {
-			myAtts[i].myType = String;
-		} 
-		else {
-			cout << "Bad attribute type for " << atts[i].myType << "\n";
-			delete [] myAtts;
-			exit (1);
-		}
-		myAtts[i].name = strdup (atts[i].name);
-	}
-}
-
-Schema :: Schema (char *fName, char *relName) {
-	this->chop=1;
-
+Schema :: Schema (char *fName, char *relName)
+{
 	FILE *foo = fopen (fName, "r");
 
 	// this is enough space to hold any tokens
@@ -119,7 +79,7 @@ Schema :: Schema (char *fName, char *relName) {
 	if (strcmp (space, "BEGIN")) {
 		cout << "Unfortunately, this does not seem to be a schema file.\n";
 		exit (1);
-	}	
+	}
 
 	while (1) {
 
@@ -159,7 +119,7 @@ Schema :: Schema (char *fName, char *relName) {
 	while (1) {
 		fscanf (foo, "%s", space);
 		if (!strcmp (space, "END")) {
-			break;		
+			break;
 		} else {
 			fscanf (foo, "%s", space);
 			numAtts++;
@@ -180,7 +140,7 @@ Schema :: Schema (char *fName, char *relName) {
 	for (int i = 0; i < numAtts; i++ ) {
 
 		// read in the attribute name
-		fscanf (foo, "%s", space);	
+		fscanf (foo, "%s", space);
 		myAtts[i].name = strdup (space);
 
 		// read in the attribute type
