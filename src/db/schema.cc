@@ -6,6 +6,13 @@
 
 using namespace std;
 
+Schema :: Schema()
+{
+	this->numAtts=16;
+	this->myAtts=new Attribute[16];
+	for(int i=0; i<numAtts; i++)
+		myAtts[i].name=NULL;
+}
 Schema :: Schema(string fname, fType type, int n_tup)
 {
 	this->fname=fname;

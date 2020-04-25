@@ -17,11 +17,8 @@ void Catalog :: addRel(char *_rname, char *_fname, fType type, int n_tup)
 		return;
 	}
 
-	Schema rinfo;
-	rinfo.n_tup=n_tup;
-	rinfo.type=type;
-	rinfo.fname=fname;
-	this->rels.insert(pair<string, Schema>(rname, rinfo));
+	Schema sch(fname, type, n_tup);
+	this->rels.insert(pair<string, Schema>(rname, sch));
 }
 
 void Catalog :: addAtt(char *_rname, char *_aname, int n_dis, Type type)
