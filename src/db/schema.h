@@ -3,10 +3,11 @@
 
 #include"glbl/defs.h"
 
-struct Attribute {
-
+struct Attribute
+{
 	char *name;
 	Type myType;
+	int n_dis;
 };
 
 struct Schema
@@ -14,6 +15,8 @@ struct Schema
 	int numAtts;
 	Attribute *myAtts;
 	std::string fname;
+	fType type;
+	int n_tup;
 
 	Schema (char *, char *);
 	Schema (char *, int , Attribute *);
