@@ -41,7 +41,7 @@ class Qptree
 	std::priority_queue<operation *,
 		vector<operation *>, op_comp_join>
 					join_queue;
-	std::unordered_map<std::string, tableInfo>
+	std::unordered_map<std::string, tableInfo *>
 		relations;
 	Pipe *curr_pipe;
 	int curr_pipe_id;
@@ -49,6 +49,8 @@ class Qptree
 private:
 	void process(struct TableList *);
 	void mk_ops(struct AndList *);
+	void process(struct AndList *,
+			struct OrList *);
 
 public:
 	Qptree(Catalog *);

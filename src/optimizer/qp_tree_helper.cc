@@ -28,9 +28,10 @@ void Qptree :: process(struct TableList *tbls)
 			rname=string(curr->tableName);
 		else
 			rname=string(curr->aliasAs);
-		tableInfo tbl;
-		tbl.sch=sch;
-		this->relations.insert(pair<string, tableInfo>(rname, tbl));
+		tableInfo *tbl=new tableInfo;
+		tbl->sch=sch;
+		tbl->add_sel(NULL, 0);
+		this->relations.insert(pair<string, tableInfo *>(rname, tbl));
 		curr=curr->next;
 	}
 }
