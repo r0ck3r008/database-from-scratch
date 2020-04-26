@@ -54,6 +54,8 @@ Qptree :: Qptree(Catalog *cat)
 {
 	this->c=cat;
 	this->s=new Statistics(cat);
+	this->curr_pipe_id=0;
+	this->curr_pipe=NULL;
 }
 Qptree :: ~Qptree()
 {

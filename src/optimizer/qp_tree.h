@@ -43,6 +43,8 @@ class Qptree
 					join_queue;
 	std::unordered_map<std::string, tableInfo>
 		relations;
+	Pipe *curr_pipe;
+	int curr_pipe_id;
 
 private:
 	void process(struct TableList *);
