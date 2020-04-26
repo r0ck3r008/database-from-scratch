@@ -29,8 +29,8 @@ struct tableInfo
 		vector<operation *>, op_comp_sel>
 					sel_que;
 
-	void dispense_sel();
 	void add_sel(struct AndList *, double);
+	struct operation *dispense_sel(Qptree *);
 };
 
 class Qptree

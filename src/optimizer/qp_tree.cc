@@ -22,7 +22,32 @@ void tableInfo :: add_sel(struct AndList *alist, double cost)
 	}
 }
 
+struct operation *tableInfo :: dispense_sel(Qptree *qpt)
+{
+	struct operation *curr_op=NULL;
+	while(!(this->sel_que.empty())) {
+		int pipe=0;
+		Pipe *p=qpt->dispense_pipe(&pipe);
+		if(curr_op==NULL) {
+			curr_op=this->sel_que.top();
+			curr_op->pid=pipe;
+			curr_op->self.opipe=p;
+		} else {
+			struct operation *op=this->sel_que.top();
+			curr_op->parent=op;
+			op->lchild=curr_op;
+			if(curr_op->type & self_f)
+				op->selp.ipipe=curr_op->self.opipe;
+			else
+				op->selp.ipipe=curr_op->selp.opipe;
+			op->lid=curr_op->pid;
+			op->selp.opipe=p;
+			op->pid=pipe;
+			curr_op=op;
+		}
+	}
 
+	return curr_op;
 }
 
 Qptree :: Qptree(Catalog *cat)
