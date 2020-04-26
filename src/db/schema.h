@@ -11,6 +11,10 @@ struct Attribute
 	char *name;
 	Type myType;
 	int n_dis;
+
+	const Attribute &operator=(const Attribute &);
+	Attribute();
+	~Attribute();
 };
 
 struct Schema

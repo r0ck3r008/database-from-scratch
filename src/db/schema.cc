@@ -5,12 +5,29 @@
 
 using namespace std;
 
+Attribute :: Attribute()
+{
+	this->name=NULL;
+}
+Attribute :: ~Attribute()
+{
+	if(this->name!=NULL)
+		free(this->name);
+}
+
+const Attribute &Attribute :: operator=(const Attribute &in)
+{
+	this->name=strdup(in.name);
+	this->myType=in.myType;
+	this->n_dis=n_dis;
+
+	return *(this);
+}
+
 Schema :: Schema()
 {
 	this->numAtts=0;
 	this->myAtts=new Attribute[16];
-	for(int i=0; i<16; i++)
-		myAtts[i].name=NULL;
 }
 
 Schema :: Schema(const Schema &in)
@@ -22,8 +39,6 @@ Schema :: Schema(const Schema &in)
 			this->myAtts[i].name=strdup(in.myAtts[i].name);
 			this->myAtts[i].myType=in.myAtts[i].myType;
 			this->myAtts[i].n_dis=in.myAtts[i].n_dis;
-		} else {
-			this->myAtts[i].name=NULL;
 			this->attMap.insert(pair<string, Attribute *>
 					(string(myAtts[i].name), &(myAtts[i])));
 		}
@@ -37,8 +52,6 @@ Schema :: Schema(string fname, fType type, int n_tup)
 	this->n_tup=n_tup;
 	this->numAtts=0;
 	this->myAtts=new Attribute[16];
-	for(int i=0; i<16; i++)
-		myAtts[i].name=NULL;
 }
 
 Schema :: Schema (char *fpath, int num_atts, Attribute *atts)
@@ -163,10 +176,6 @@ Schema :: Schema (char *fName, char *relName)
 
 Schema :: ~Schema ()
 {
-	for(int i=0; i<16; i++) {
-		if(myAtts[i].name!=NULL)
-			free(myAtts[i].name);
-	}
 	delete [] myAtts;
 }
 
