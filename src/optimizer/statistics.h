@@ -20,7 +20,7 @@ private:
 	double operate(struct OrList *);
 	void get_rel(char *, Schema **, Attribute **);
 
-private:
+public:
 	Statistics(Catalog *);
 	~Statistics();
 	void addRel(char *, char *);
