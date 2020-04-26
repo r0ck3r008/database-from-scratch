@@ -52,6 +52,7 @@ public:
 	Qptree(Catalog *);
 	~Qptree();
 	void process(struct query *);
+	Pipe *dispense_pipe(int *);
 };
 
 #endif
