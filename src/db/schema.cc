@@ -18,12 +18,14 @@ Schema :: Schema(const Schema &in)
 	this->numAtts=in.numAtts;
 	this->myAtts=new Attribute[16];
 	for(int i=0; i<16; i++) {
-		if(i<in.numAtts) {
+		if(i<this->numAtts) {
 			this->myAtts[i].name=strdup(in.myAtts[i].name);
 			this->myAtts[i].myType=in.myAtts[i].myType;
 			this->myAtts[i].n_dis=in.myAtts[i].n_dis;
 		} else {
 			this->myAtts[i].name=NULL;
+			this->attMap.insert(pair<string, Attribute *>
+					(string(myAtts[i].name), &(myAtts[i])));
 		}
 	}
 }
@@ -177,6 +179,8 @@ void Schema :: addAtt(char *aname, Type type, int n_dis)
 	myAtts[numAtts].name=strdup(aname);
 	myAtts[numAtts].myType=type;
 	myAtts[numAtts].n_dis=n_dis;
+	this->attMap.insert(pair<string, Attribute *>(string(aname),
+							&(myAtts[numAtts])));
 	numAtts++;
 }
 
