@@ -36,9 +36,23 @@ void Qptree :: process(struct TableList *tbls)
 	}
 }
 
+void Qptree :: process(struct AndList *alist, struct OrList *olist)
+{
+	if(olist==NULL && alist->left!=NULL) {
+		this->process(alist, alist->left);
+	} else {
+
+	}
+
+	if(olist!=NULL && olist->rightOr!=NULL)
+		this->process(alist, olist->rightOr);
+}
+
 void Qptree :: mk_ops(struct AndList *alist)
 {
-	//traverse to right most and
+	//traverse to right most and make an op
 	if(alist->rightAnd!=NULL)
 		mk_ops(alist->rightAnd);
+
+	this->process(alist, NULL);
 }
