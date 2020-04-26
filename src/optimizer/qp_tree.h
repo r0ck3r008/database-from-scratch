@@ -21,6 +21,7 @@ struct op_comp_sel
 	bool operator()(operation *, operation *);
 };
 
+class Qptree;
 struct tableInfo
 {
 	Schema *sch;
@@ -28,8 +29,8 @@ struct tableInfo
 		vector<operation *>, op_comp_sel>
 					sel_que;
 
-	void add_sel();
 	void dispense_sel();
+	void add_sel(struct AndList *, double);
 };
 
 class Qptree
