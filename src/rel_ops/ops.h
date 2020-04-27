@@ -19,8 +19,7 @@ struct self_op
 
 	self_op();
 	~self_op();
-	void exec();
-	void print();
+	void traverse(int);
 };
 
 struct selp_op
@@ -34,8 +33,7 @@ struct selp_op
 
 	selp_op();
 	~selp_op();
-	void exec();
-	void print();
+	void traverse(int);
 };
 
 struct join_op
@@ -50,8 +48,7 @@ struct join_op
 
 	join_op();
 	~join_op();
-	void exec();
-	void print();
+	void traverse(int);
 };
 
 struct grpby_op
