@@ -113,7 +113,7 @@ struct operation *Qptree :: dispense_join(struct operation *op,
 		if(op->tables[indx]->sch==j_done[i]->tables[0]->sch
 			|| op->tables[indx]->sch==j_done[i]->tables[1]->sch) {
 			op_ret=j_done[i];
-			j_done.erase(j_done.begin() + i + 1);
+			j_done.erase(j_done.begin() + i);
 			break;
 		}
 	}
