@@ -72,3 +72,23 @@ void Qptree :: mk_ops(struct AndList *alist)
 
 	this->process(alist, NULL);
 }
+
+//process join ops
+void Qptree :: process(struct operation *op, vector<struct operation *> &j_done)
+{
+	int i=0;
+	for(i; i<op->tables.size(); i++) {
+		struct operation *ip;
+		struct tableInfo *tbl=op->tables[i];
+		if((ip=tbl->dispense_sel(this))==NULL) {
+			if((ip=this->dispense_join(op, j_done, i))==NULL) {
+				cerr << "Error in dispensing select or join!\n";
+				_exit(-1);
+			}
+		}
+		this->mk_parent(op, ip, i);
+	}
+
+	if(i==op->tables.size())
+		j_done.push_back(op);
+}

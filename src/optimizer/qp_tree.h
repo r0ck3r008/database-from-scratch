@@ -39,6 +39,8 @@ private:
 	void mk_ops(struct AndList *);
 	void process(struct AndList *,
 			struct OrList *);
+	void process(struct operation *,
+		std::vector<struct operation *> &);
 
 public:
 	Qptree(Catalog *);
