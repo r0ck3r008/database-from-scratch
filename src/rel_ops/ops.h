@@ -17,6 +17,7 @@ struct self_op
 	Record *literal;
 
 	self_op(struct AndList *, Pipe *);
+	self_op();
 	~self_op();
 	void exec();
 	void print();
@@ -31,6 +32,7 @@ struct selp_op
 	Record *literal;
 
 	selp_op(struct AndList *, Pipe *, Pipe *);
+	selp_op();
 	~selp_op();
 	void exec();
 	void print();
@@ -46,6 +48,7 @@ struct join_op
 	CNF *cnf;
 
 	join_op(struct AndList *, Pipe *, Pipe *, Pipe *);
+	join_op();
 	~join_op();
 	void exec();
 	void print();
