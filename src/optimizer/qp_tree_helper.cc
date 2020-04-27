@@ -105,26 +105,27 @@ struct operation *Qptree :: dispense_join(struct operation *op,
 			break;
 		}
 	}
+	if(op_ret!=NULL)
+		this->tree=op_ret;
 
 	return op_ret;
 }
 
-void Qptree :: mk_parent(struct operation *parent, struct operation *child,
+void mk_parent(Qptree *qpt, struct operation *parent, struct operation *child,
 									int indx)
 {
 	int pipe=0;
-	Pipe *p=this->dispense_pipe(&pipe);
-
+	Pipe *p=qpt->dispense_pipe(&pipe);
 	child->parent=parent;
 	child->pid=pipe;
-	child->ppipe=p;
-	if(indx==0) {
-		parent->lchild=child;
+	child->add_pipe(parent_out, p);
+	if(!indx) {
 		parent->lid=pipe;
-		parent->lpipe=p;
+		parent->lchild=child;
+		parent->add_pipe(left_in, p);
 	} else {
-		parent->rchild=child;
 		parent->rid=pipe;
-		parent->rpipe=p;
+		parent->rchild=child;
+		parent->add_pipe(right_in, p);
 	}
 }

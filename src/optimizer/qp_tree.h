@@ -45,8 +45,6 @@ private:
 						int);
 	void process(struct operation *,
 		std::vector<struct operation *> &);
-	void mk_parent(struct operation *,
-			struct operation *, int);
 
 public:
 	Qptree(Catalog *);
@@ -54,5 +52,8 @@ public:
 	void process(struct query *);
 	Pipe *dispense_pipe(int *);
 };
+
+void mk_parent(Qptree *, struct operation *,
+			struct operation *, int);
 
 #endif
