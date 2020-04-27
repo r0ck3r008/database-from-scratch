@@ -2,15 +2,11 @@ COMPILER := g++
 COMPILER_FLAGS :=-g -c
 TAG := -i
 
-ifdef linux
-	TAG := -n
-endif
-
 all: y.tab.o lex.yy.o
 
 y.tab.o: parser.y
 	yacc -d parser.y
-	sed $(tag) y.tab.c -e "s/  __attribute__ ((__unused__))$$/# ifndef __cplusplus\n  __attribute__ ((__unused__));\n# endif/"
+	sed -i y.tab.c -e "s/  __attribute__ ((__unused__))$$/# ifndef __cplusplus\n  __attribute__ ((__unused__));\n# endif/"
 	g++ -c y.tab.c
 
 lex.yy.o: lexer.l
