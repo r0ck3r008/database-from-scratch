@@ -37,6 +37,8 @@ struct operation
 	operation *lchild, *rchild, *parent;
 	int lid, rid, pid;
 	double cost;
+	std::vector<tableInfo *> tables;
+	std::vector<tableInfo *> rels;
 
 	operation(type_flag);
 	~operation();
