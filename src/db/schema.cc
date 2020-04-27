@@ -54,7 +54,7 @@ Schema :: Schema (char *fpath, int num_atts, Attribute *atts)
 {
 	this->fname = string(fpath);
 	numAtts = num_atts;
-	myAtts = new Attribute[numAtts];
+	this->myAtts=new Attribute[16];
 	for (int i = 0; i < numAtts; i++ ) {
 		if (atts[i].myType == Int) {
 			myAtts[i].myType = Int;
@@ -146,7 +146,7 @@ Schema :: Schema (char *fName, char *relName)
 	}
 
 	// and load up the schema
-	myAtts = new Attribute[numAtts];
+	this->myAtts=new Attribute[16];
 	for (int i = 0; i < numAtts; i++ ) {
 
 		// read in the attribute name
