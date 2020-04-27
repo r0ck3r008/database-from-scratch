@@ -37,11 +37,7 @@ struct operation *tableInfo :: dispense_sel(Qptree *qpt)
 	struct operation *curr_op=NULL;
 	while(!(this->sel_que.empty())) {
 		if(curr_op==NULL) {
-			int pipe=0;
-			Pipe *p=qpt->dispense_pipe(&pipe);
 			curr_op=this->sel_que.top();
-			curr_op->pid=pipe;
-			curr_op->add_pipe(parent_out, p);
 		} else {
 			struct operation *op=this->sel_que.top();
 			mk_parent(qpt, op, curr_op, 0);
