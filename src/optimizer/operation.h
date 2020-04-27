@@ -50,8 +50,7 @@ struct operation
 	operation(type_flag, double,
 		std::vector<tableInfo *> &);
 	~operation();
-	void exec();
-	void print();
+	void traverse(int);
 	void add_pipe(pipe_type, Pipe *);
 };
 

@@ -48,3 +48,24 @@ void operation :: add_pipe(pipe_type p_type, Pipe *pipe)
 			this->join.opipe=pipe;
 	}
 }
+
+void operation :: traverse(int indx)
+{
+	if(this->lchild!=NULL)
+		this->lchild->traverse(indx);
+
+	if(!indx) {
+		cout << "Input pipes: " << lid << " " << rid << endl;
+		cout << "Output pipe: " << pid << endl;
+	}
+
+	if(this->type & self_f)
+		this->self.traverse(indx);
+	else if(this->type & selp_f)
+		this->selp.traverse(indx);
+	else if(this->type & join_f)
+		this->join.traverse(indx);
+
+	if(this->rchild!=NULL)
+		this->rchild->traverse(indx);
+}
