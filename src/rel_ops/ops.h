@@ -15,8 +15,8 @@ struct self_op
 	struct AndList *alist;
 	CNF *cnf;
 	Record *literal;
+	Pipe *opipe;
 
-	self_op(struct AndList *, Pipe *);
 	self_op();
 	~self_op();
 	void exec();
@@ -27,11 +27,11 @@ struct selp_op
 {
 	SelectPipe *selp;
 	struct AndList *alist;
+	Pipe *ipipe, *opipe;
 
 	CNF *cnf;
 	Record *literal;
 
-	selp_op(struct AndList *, Pipe *, Pipe *);
 	selp_op();
 	~selp_op();
 	void exec();
@@ -42,12 +42,12 @@ struct join_op
 {
 	Join *j;
 	struct AndList *alist;
+	Pipe *ipipe1, *ipipe2, *opipe;
 
 	Schema *schl, *schr;
 	Record *literal;
 	CNF *cnf;
 
-	join_op(struct AndList *, Pipe *, Pipe *, Pipe *);
 	join_op();
 	~join_op();
 	void exec();
