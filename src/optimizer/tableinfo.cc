@@ -41,17 +41,17 @@ struct operation *tableInfo :: dispense_sel(Qptree *qpt)
 		if(curr_op==NULL) {
 			curr_op=this->sel_que.top();
 			curr_op->pid=pipe;
-			curr_op->self.opipe=p;
+			curr_op->ppipe=p;
 		} else {
 			struct operation *op=this->sel_que.top();
 			curr_op->parent=op;
 			op->lchild=curr_op;
 			if(curr_op->type & self_f)
-				op->selp.ipipe=curr_op->self.opipe;
+				op->lpipe=curr_op->ppipe;
 			else
-				op->selp.ipipe=curr_op->selp.opipe;
+				op->lpipe=curr_op->ppipe;
 			op->lid=curr_op->pid;
-			op->selp.opipe=p;
+			op->ppipe=p;
 			op->pid=pipe;
 			curr_op=op;
 		}
