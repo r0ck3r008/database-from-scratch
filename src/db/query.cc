@@ -17,11 +17,13 @@ query :: query(struct FuncOperator *func, struct TableList *tbls,
 
 query :: ~query()
 {
+	/*
 	del_name_list(this->grp_atts);
 	del_name_list(this->sel_atts);
 	del_tbl_list(this->tbls);
 	del_and_list(this->a_list, NULL);
 	del_func_list(this->func);
+	*/
 }
 
 void del_name_list(struct NameList *n_list)
