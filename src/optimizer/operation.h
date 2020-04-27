@@ -22,6 +22,13 @@ enum type_flag : uint16_t
 	wrout_f=1<<8
 };
 
+enum pipe_type : uint8_t
+{
+	left_in=1<<1,
+	right_in=1<<2,
+	parent_out=1<<3
+};
+
 struct operation
 {
 	type_flag type;
@@ -46,6 +53,7 @@ struct operation
 	~operation();
 	void exec();
 	void print();
+	void add_pipe(pipe_type, Pipe *);
 };
 
 #endif
