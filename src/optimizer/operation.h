@@ -43,7 +43,6 @@ struct operation
 	};
 	operation *lchild, *rchild, *parent;
 	int lid, rid, pid;
-	Pipe *lpipe, *rpipe, *ppipe;
 	double cost;
 	std::vector<tableInfo *> tables;
 	std::vector<tableInfo *> rels;
