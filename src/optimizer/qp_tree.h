@@ -39,6 +39,10 @@ private:
 	void mk_ops(struct AndList *);
 	void process(struct AndList *,
 			struct OrList *);
+	struct operation *dispense_join(
+		struct operation *,
+		std::vector<struct operation *> &,
+						int);
 	void process(struct operation *,
 		std::vector<struct operation *> &);
 

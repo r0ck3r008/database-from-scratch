@@ -92,3 +92,19 @@ void Qptree :: process(struct operation *op, vector<struct operation *> &j_done)
 	if(i==op->tables.size())
 		j_done.push_back(op);
 }
+
+struct operation *Qptree :: dispense_join(struct operation *op,
+				vector<struct operation *> &j_done, int indx)
+{
+	struct operation *op_ret=NULL;
+	for(int i=0; i<j_done.size(); i++) {
+		if(op->tables[indx]->sch==j_done[i]->tables[0]->sch
+			|| op->tables[indx]->sch==j_done[i]->tables[1]->sch) {
+			op_ret=j_done[i];
+			j_done.erase(j_done.begin() + i + 1);
+			break;
+		}
+	}
+
+	return op_ret;
+}
