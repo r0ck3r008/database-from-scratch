@@ -86,7 +86,7 @@ void Qptree :: process(struct operation *op, vector<struct operation *> &j_done)
 				_exit(-1);
 			}
 		}
-		this->mk_parent(op, ip, i);
+		mk_parent(this, op, ip, i);
 	}
 
 	if(i==op->tables.size())
