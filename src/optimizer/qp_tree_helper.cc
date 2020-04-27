@@ -73,6 +73,9 @@ void Qptree :: mk_ops(struct AndList *alist)
 	if(alist->rightAnd!=NULL)
 		mk_ops(alist->rightAnd);
 
+	if(alist->rightAnd!=NULL)
+		alist->rightAnd=NULL;
+
 	this->process(alist, NULL);
 }
 
