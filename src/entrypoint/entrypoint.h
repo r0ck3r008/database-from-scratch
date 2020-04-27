@@ -4,6 +4,7 @@
 #include"optimizer/statistics.h"
 #include"parser/parse_tree.h"
 #include"optimizer/qp_tree.h"
+#include"glbl/defs.h"
 
 // the aggregate function (NULL if no agg)
 extern struct FuncOperator *finalFunction;
