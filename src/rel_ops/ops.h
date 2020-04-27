@@ -13,7 +13,6 @@ struct self_op
 {
 	SelectFile *self;
 	struct AndList *alist;
-	Pipe *opipe;
 	CNF *cnf;
 	Record *literal;
 
@@ -27,7 +26,6 @@ struct selp_op
 {
 	SelectPipe *selp;
 	struct AndList *alist;
-	Pipe *opipe, *ipipe;
 
 	CNF *cnf;
 	Record *literal;
@@ -42,7 +40,6 @@ struct join_op
 {
 	Join *j;
 	struct AndList *alist;
-	Pipe *ipipe1, *ipipe2, *opipe;
 
 	Schema *schl, *schr;
 	Record *literal;
