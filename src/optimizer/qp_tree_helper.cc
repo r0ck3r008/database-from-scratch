@@ -53,6 +53,7 @@ void Qptree :: process(struct AndList *alist, struct OrList *olist)
 		}
 		if(vec.size()==2) {
 			struct operation *op=new operation(join_f, cost, vec);
+			op->join.alist=alist;
 			this->join_queue.push(op);
 		} else {
 			vec[0]->add_sel(alist, cost);
