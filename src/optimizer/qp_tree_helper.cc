@@ -1,3 +1,6 @@
+#include<string.h>
+#include<unistd.h>
+
 #include"qp_tree.h"
 
 using namespace std;
@@ -32,7 +35,28 @@ void Qptree :: process(struct AndList *alist, struct OrList *olist)
 	if(olist==NULL && alist->left!=NULL) {
 		this->process(alist, alist->left);
 	} else {
-
+		double cost=this->s->Estimate(alist);
+		struct ComparisonOp *cop=olist->left;
+		struct Operand *op=cop->left;
+		vector<tableInfo *> vec;
+		while(vec.size()<3 && op->code==NAME) {
+			char name[64];
+			sprintf(name, "%s", op->value);
+			char *rel=strtok(name, ".");
+			if(!strcmp(rel, op->value)) {
+				cerr << "Bad attribute: " << op->value << endl;
+				_exit(-1);
+			}
+			auto itr=this->relations.find(string(rel));
+			vec.push_back(itr->second);
+			op=cop->right;
+		}
+		if(vec.size()==2) {
+			struct operation *op=new operation(join_f, cost, vec);
+			this->join_queue.push(op);
+		} else {
+			vec[0]->add_sel(alist, cost);
+		}
 	}
 
 	if(olist!=NULL && olist->rightOr!=NULL)
