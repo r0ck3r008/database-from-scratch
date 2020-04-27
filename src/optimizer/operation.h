@@ -40,7 +40,8 @@ struct operation
 	std::vector<tableInfo *> tables;
 	std::vector<tableInfo *> rels;
 
-	operation(type_flag);
+	operation(type_flag, double,
+		std::vector<tableInfo *> &);
 	~operation();
 	void exec();
 	void print();
