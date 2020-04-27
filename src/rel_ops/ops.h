@@ -13,9 +13,11 @@ struct self_op
 {
 	SelectFile *self;
 	struct AndList *alist;
+	Pipe *opipe;
+	Schema *sch;
+
 	CNF *cnf;
 	Record *literal;
-	Pipe *opipe;
 
 	self_op();
 	~self_op();
