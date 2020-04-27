@@ -13,10 +13,11 @@ void tableInfo :: add_sel(struct AndList *alist, double cost)
 {
 	type_flag type;
 	struct operation *op;
+	vector<tableInfo *> vec;
+	vec.push_back(this);
 	if(alist==NULL) {
-		op=new operation(self_f);
+		op=new operation(self_f, cost, vec);
 		op->lid=-2;
-		op->cost=0;
 		op->self.alist=NULL;
 		this->sel_que.push(op);
 	} else {
@@ -25,7 +26,7 @@ void tableInfo :: add_sel(struct AndList *alist, double cost)
 			op->self.alist=alist;
 			op->cost=cost;
 		} else {
-			op=new operation(selp_f);
+			op=new operation(selp_f, cost, vec);
 			this->sel_que.push(op);
 		}
 	}
