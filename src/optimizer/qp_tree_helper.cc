@@ -39,7 +39,7 @@ void Qptree :: process(struct AndList *alist, struct OrList *olist)
 		struct ComparisonOp *cop=olist->left;
 		struct Operand *op=cop->left;
 		vector<tableInfo *> vec;
-		while(vec.size()<3 && op->code==NAME) {
+		while(vec.size()<2 && op->code==NAME) {
 			char name[64];
 			sprintf(name, "%s", op->value);
 			char *rel=strtok(name, ".");
