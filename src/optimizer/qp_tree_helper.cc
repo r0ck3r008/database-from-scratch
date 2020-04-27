@@ -89,8 +89,14 @@ void Qptree :: process(struct operation *op, vector<struct operation *> &j_done)
 		mk_parent(this, op, ip, i);
 	}
 
-	if(i==op->tables.size())
-		j_done.push_back(op);
+	if(i==op->tables.size()) {
+		if(this->join_queue.size()==0)
+			this->tree=op;
+		else
+			j_done.push_back(op);
+	} else {
+		cerr << "There is an error in processing join!\n";
+	}
 }
 
 struct operation *Qptree :: dispense_join(struct operation *op,
