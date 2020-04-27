@@ -13,6 +13,8 @@ void self_op :: traverse(int indx)
 	this->literal=new Record;
 	this->cnf->GrowFromParseTree(this->alist, sch, *(this->literal));
 	if(!indx) {
+		cout << "**********\n";
+		cout << "SELECT FILE:\n";
 		this->cnf->Print();
 		this->sch->Print();
 	}
@@ -31,6 +33,8 @@ void selp_op :: traverse(int indx)
 	this->literal=new Record;
 	this->cnf->GrowFromParseTree(this->alist, sch, *(this->literal));
 	if(!indx) {
+		cout << "**********\n";
+		cout << "SELECT PIPE:\n";
 		this->cnf->Print();
 		this->sch->Print();
 	}
@@ -50,6 +54,8 @@ void join_op :: traverse(int indx)
 	this->literal=new Record;
 	this->cnf->GrowFromParseTree(this->alist, schl, schr, *(this->literal));
 	if(!indx) {
+		cout << "**********\n";
+		cout << "JOIN:\n";
 		this->cnf->Print();
 		this->schl->Print();
 		this->schr->Print();
