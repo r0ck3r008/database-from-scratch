@@ -29,6 +29,7 @@ struct selp_op
 	SelectPipe *selp;
 	struct AndList *alist;
 	Pipe *ipipe, *opipe;
+	Schema *sch;
 
 	CNF *cnf;
 	Record *literal;
