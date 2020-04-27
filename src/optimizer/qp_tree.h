@@ -45,6 +45,8 @@ private:
 						int);
 	void process(struct operation *,
 		std::vector<struct operation *> &);
+	void mk_parent(struct operation *,
+			struct operation *, int);
 
 public:
 	Qptree(Catalog *);

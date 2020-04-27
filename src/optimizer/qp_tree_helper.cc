@@ -108,3 +108,23 @@ struct operation *Qptree :: dispense_join(struct operation *op,
 
 	return op_ret;
 }
+
+void Qptree :: mk_parent(struct operation *parent, struct operation *child,
+									int indx)
+{
+	int pipe=0;
+	Pipe *p=this->dispense_pipe(&pipe);
+
+	child->parent=parent;
+	child->pid=pipe;
+	child->ppipe=p;
+	if(indx==0) {
+		parent->lchild=child;
+		parent->lid=pipe;
+		parent->lpipe=p;
+	} else {
+		parent->rchild=child;
+		parent->rid=pipe;
+		parent->rpipe=p;
+	}
+}
