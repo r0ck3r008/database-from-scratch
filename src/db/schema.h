@@ -41,4 +41,6 @@ struct Schema
 	void Print();
 };
 
+void splice(char *, char *);
+
 #endif

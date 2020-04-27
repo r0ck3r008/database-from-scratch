@@ -5,6 +5,17 @@
 
 using namespace std;
 
+void splice(char *attName, char *placeholder)
+{
+	char name[64];
+	sprintf(name, "%s", attName);
+	char *tbl=strtok(name, ".");
+	if(!strcmp(tbl, attName))
+		sprintf(placeholder, "%s", attName);
+	else
+		sprintf(placeholder, "%s", strtok(NULL, "."));
+}
+
 Attribute :: Attribute()
 {
 	this->name=NULL;
@@ -195,8 +206,10 @@ void Schema :: addAtt(char *aname, Type type, int n_dis)
 
 int Schema :: Find (char *attName)
 {
+	char placeholder[64];
+	splice(attName, placeholder);
 	for (int i = 0; i < numAtts; i++) {
-		if (!strcmp (attName, myAtts[i].name)) {
+		if (!strcmp (placeholder, myAtts[i].name)) {
 			return i;
 		}
 	}
@@ -207,8 +220,10 @@ int Schema :: Find (char *attName)
 
 Type Schema :: FindType (char *attName)
 {
+	char placeholder[64];
+	splice(attName, placeholder);
 	for (int i = 0; i < numAtts; i++) {
-		if (!strcmp (attName, myAtts[i].name)) {
+		if (!strcmp (placeholder, myAtts[i].name)) {
 			return myAtts[i].myType;
 		}
 	}
