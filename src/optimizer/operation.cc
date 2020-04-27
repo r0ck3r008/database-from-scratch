@@ -12,6 +12,15 @@ operation :: operation(type_flag type, double cost, vector<tableInfo *> &vec)
 	this->type=type;
 	this->tables=vector<tableInfo *>(vec);
 	this->rels=vector<tableInfo *>(vec);
+	// add schema
+	if(this->type & self_f) {
+		this->self.sch=vec[0]->sch;
+	} else if(this->type & selp_f) {
+		this->selp.sch=vec[0]->sch;
+	} else if(this->type & join_f) {
+		this->join.schl=vec[0]->sch;
+		this->join.schr=vec[1]->sch;
+	}
 }
 
 operation :: ~operation(){}
