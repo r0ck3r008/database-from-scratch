@@ -1,7 +1,7 @@
 COMPILER := g++
 COMPILER_FLAGS := -g -c
 
-all: sel_file.o sel_pipe.o project.o sum.o join.o group_by.o rem_dup.o write_out.o
+all: sel_file.o sel_pipe.o project.o sum.o join.o group_by.o rem_dup.o write_out.o ops.o
 
 sel_file.o: sel_file.cc sel_file.h
 	${COMPILER} ${COMPILER_FLAGS} sel_file.cc
@@ -26,6 +26,9 @@ rem_dup.o: rem_dup.cc rem_dup.h
 
 write_out.o: write_out.cc write_out.h
 	${COMPILER} ${COMPILER_FLAGS} write_out.cc
+
+ops.o: ops.cc ops.h
+	${COMPILER} ${COMPILER_FLAGS} ops.cc
 
 clean:
 	rm -f ./*.o
