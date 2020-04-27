@@ -12,7 +12,7 @@ void Catalog :: addRel(char *_rname, char *_fname, fType type, int n_tup)
 {
 	string rname(_rname), fname(_fname);
 	auto itr=this->rels.find(rname);
-	if(itr==this->rels.end()) {
+	if(itr!=this->rels.end()) {
 		cerr << "This relation already exists!\n";
 		return;
 	}
@@ -30,13 +30,13 @@ void Catalog :: addAtt(char *_rname, char *aname, int n_dis, Type type)
 		return;
 	}
 
-	if(itr1->second.Find(aname)!=-1) {
+	if(itr1->second->Find(aname)!=-1) {
 		cerr << "This attribute already exists!\n";
 		return;
 	}
 
-	int dis=(n_dis==-1) ? (itr1->second.n_tup) : (n_dis);
-	itr1->second.addAtt(aname, type, dis);
+	int dis=(n_dis==-1) ? (itr1->second->n_tup) : (n_dis);
+	itr1->second->addAtt(aname, type, dis);
 }
 
 Schema *Catalog :: snap(char *_rname)
