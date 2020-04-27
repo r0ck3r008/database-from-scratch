@@ -8,15 +8,6 @@ bool op_comp_join :: operator()(operation *l, operation *r)
 	return (l->cost > r->cost);
 }
 
-bool op_comp_sel :: operator()(operation *l, operation *r)
-{
-	//max queue which always keeps select file op at the top
-	if(l->type & self_f)
-		return false;
-	else
-		return(l->cost < r->cost);
-}
-
 void Qptree :: process(struct TableList *tbls)
 {
 	struct TableList *curr=tbls;
