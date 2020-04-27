@@ -3,8 +3,11 @@
 
 #include<iostream>
 
+#include"tableinfo.h"
 #include"rel_ops/ops.h"
 #include"parser/parse_tree.h"
+
+struct tableInfo;
 
 enum type_flag : uint16_t
 {

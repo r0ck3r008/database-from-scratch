@@ -6,31 +6,19 @@
 #include<vector>
 #include<queue>
 
+#include"mem/pipe.h"
 #include"statistics.h"
 #include"parser/parse_tree.h"
 #include"operation.h"
+#include"tableinfo.h"
 #include"db/query.h"
+
+struct operation;
+struct tableInfo;
 
 struct op_comp_join
 {
 	bool operator()(operation *, operation *);
-};
-
-struct op_comp_sel
-{
-	bool operator()(operation *, operation *);
-};
-
-class Qptree;
-struct tableInfo
-{
-	Schema *sch;
-	std::priority_queue<operation *,
-		vector<operation *>, op_comp_sel>
-					sel_que;
-
-	void add_sel(struct AndList *, double);
-	struct operation *dispense_sel(Qptree *);
 };
 
 class Qptree
@@ -39,8 +27,8 @@ class Qptree
 	Catalog *c;
 	struct operation *tree;
 	std::priority_queue<operation *,
-		vector<operation *>, op_comp_join>
-					join_queue;
+		std::vector<operation *>,
+		op_comp_join> join_queue;
 	std::unordered_map<std::string, tableInfo *>
 		relations;
 	Pipe *curr_pipe;
