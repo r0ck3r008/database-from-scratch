@@ -39,6 +39,8 @@ void Qptree :: process(struct query *q)
 			this->tree=op;
 		}
 	}
+
+	this->tree->print();
 }
 
 Pipe *Qptree :: dispense_pipe(int *pipe_id)
