@@ -8,7 +8,7 @@
 
 class Catalog
 {
-	std::unordered_map<std::string, Schema> rels;
+	std::unordered_map<std::string, Schema *> rels;
 
 public:
 	void addRel(char *, char *, fType, int);

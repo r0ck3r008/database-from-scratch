@@ -17,8 +17,8 @@ void Catalog :: addRel(char *_rname, char *_fname, fType type, int n_tup)
 		return;
 	}
 
-	Schema sch(fname, type, n_tup);
-	this->rels.insert(pair<string, Schema>(rname, sch));
+	Schema *sch=new Schema(fname, type, n_tup);
+	this->rels.insert(pair<string, Schema *>(rname, sch));
 }
 
 void Catalog :: addAtt(char *_rname, char *aname, int n_dis, Type type)
@@ -48,7 +48,7 @@ Schema *Catalog :: snap(char *_rname)
 		return NULL;
 	}
 
-	Schema *rinfo=new Schema(itr->second);
+	Schema *rinfo=itr->second;
 	return rinfo;
 }
 
@@ -60,13 +60,13 @@ void Catalog :: write(char *fname)
 
 	for(auto &i: this->rels) {
 		fprintf(f, "R_BEGIN:%s:%d:%d:%s\n", i.first.c_str(),
-			i.second.n_tup, i.second.type,
-						i.second.fname.c_str());
-		for(int j=0; j<i.second.numAtts; j++) {
+			i.second->n_tup, i.second->type,
+						i.second->fname.c_str());
+		for(int j=0; j<i.second->numAtts; j++) {
 			fprintf(f, "A_BEGIN:%s:%d:%d\n",
-				i.second.myAtts[j].name,
-				i.second.myAtts[j].myType,
-				i.second.myAtts[j].n_dis);
+				i.second->myAtts[j].name,
+				i.second->myAtts[j].myType,
+				i.second->myAtts[j].n_dis);
 		}
 	}
 
@@ -94,18 +94,20 @@ void Catalog :: read(char *fname)
 		char *part=strtok(line, ":");
 		if(!strcmp(part, "R_BEGIN")) {
 			if(!begin) {
-				this->rels.insert(pair<string, Schema>
-						(curr_rname, *(curr_rinfo)));
-				delete curr_rinfo;
+				this->rels.insert(pair<string, Schema *>
+						(curr_rname, curr_rinfo));
 				curr_rinfo=new Schema;
 			} else {
-				begin=1;
+				begin=0;
 			}
 			curr_rname=string(strtok(NULL, ":"));
 			curr_rinfo->n_tup=strtol(strtok(NULL, ":"), NULL, 10);
 			curr_rinfo->type=(fType)strtol(strtok(NULL, ":"),
 								NULL, 10);
-			curr_rinfo->fname=string(strtok(NULL, ":"));
+			char *fname=strtok(NULL, ":");
+			if(fname[strlen(fname)-1]=='\n')
+				fname[strlen(fname)-1]='\0';
+			curr_rinfo->fname=string(fname);
 		} else if(!strcmp(part, "A_BEGIN")) {
 			char *aname=strtok(NULL, ":");
 			Type myType=(Type)strtol(strtok(NULL, ":"), NULL, 10);
@@ -116,8 +118,7 @@ void Catalog :: read(char *fname)
 		free(line_tmp);
 		line_tmp=NULL;
 	}
-	this->rels.insert(pair<string, Schema> (curr_rname, *(curr_rinfo)));
-	delete curr_rinfo;
+	this->rels.insert(pair<string, Schema *> (curr_rname, curr_rinfo));
 	free(line_tmp);
 	fclose(f);
 }
