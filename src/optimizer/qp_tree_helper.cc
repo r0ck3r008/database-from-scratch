@@ -67,6 +67,9 @@ void Qptree :: process(struct AndList *alist, struct OrList *olist)
 void Qptree :: mk_ops(struct AndList *alist)
 {
 	//traverse to right most and make an op
+	if(alist==NULL)
+		return;
+
 	if(alist->rightAnd!=NULL)
 		mk_ops(alist->rightAnd);
 
