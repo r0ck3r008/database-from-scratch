@@ -41,21 +41,6 @@ Schema :: Schema()
 	this->myAtts=new Attribute[16];
 }
 
-Schema :: Schema(const Schema &in)
-{
-	this->numAtts=in.numAtts;
-	this->myAtts=new Attribute[16];
-	for(int i=0; i<16; i++) {
-		if(i<this->numAtts) {
-			this->myAtts[i].name=strdup(in.myAtts[i].name);
-			this->myAtts[i].myType=in.myAtts[i].myType;
-			this->myAtts[i].n_dis=in.myAtts[i].n_dis;
-			this->attMap.insert(pair<string, Attribute *>
-					(string(myAtts[i].name), &(myAtts[i])));
-		}
-	}
-}
-
 Schema :: Schema(string fname, fType type, int n_tup)
 {
 	this->fname=fname;

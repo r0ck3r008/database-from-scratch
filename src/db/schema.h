@@ -28,7 +28,6 @@ struct Schema
 	int n_tup;
 
 	Schema();
-	Schema(const Schema &);
 	Schema(std::string, fType, int);
 	Schema (char *, char *);
 	Schema (char *, int , Attribute *);
