@@ -40,11 +40,7 @@ void Qptree :: process(struct query *q)
 			this->tree=op;
 		}
 	}
-	this->tree->traverse(0);
-	int pipe=0;
-	Pipe *p=this->dispense_pipe(&pipe);
-	this->tree->add_pipe(parent_out, p);
-	this->clear_pipe();
+	this->execute(1);
 }
 
 Pipe *Qptree :: dispense_pipe(int *pipe_id)
@@ -55,21 +51,29 @@ Pipe *Qptree :: dispense_pipe(int *pipe_id)
 	return p;
 }
 
-void Qptree :: clear_pipe()
+void Qptree :: execute(int flag)
 {
-	this->tree->traverse(1);
-	Record tmp;
-	Schema sch;
-	if(this->tree->type & join_f) {
-		sch=*(this->tree->join.schl) + *(this->tree->join.schr);
-	} else if(this->tree->type & self_f) {
-		sch=*(this->tree->self.sch);
-	}
+	//add final pipe
+	int pipe=0;
+	Pipe *p=this->dispense_pipe(&pipe);
+	this->tree->add_pipe(parent_out, p);
+	this->tree->pid=pipe;
+	//traverse as instructed
+	this->tree->traverse(flag);
+	//output if necessary
+	if(flag) {
+		Record tmp;
+		Schema sch;
+		if(this->tree->type & join_f)
+			sch=*(this->tree->join.schl) + *(this->tree->join.schr);
+		else if(this->tree->type & self_f)
+			sch=*(this->tree->self.sch);
 
-	while(1) {
-		int stat=this->curr_pipe->Remove(&tmp);
-		if(!stat)
-			break;
-		tmp.Print(&sch);
+		while(1) {
+			int stat=this->curr_pipe->Remove(&tmp);
+			if(!stat)
+				break;
+			tmp.Print(&sch);
+		}
 	}
 }
