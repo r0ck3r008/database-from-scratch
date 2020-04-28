@@ -10,8 +10,8 @@
 
 void sort_merge(struct join_args *arg)
 {
-	Pipe out_pipeL(100);
-	Pipe out_pipeR(100);
+	Pipe out_pipeL(1000);
+	Pipe out_pipeR(1000);
 	BigQ bq_l(arg->in_pipe, &out_pipeL, arg->o_left, 8);
 	BigQ bq_r(arg->in_pipeR, &out_pipeR, arg->o_right, 8);
 	struct comparator comp((void *)arg->o_left, (void *)arg->o_right, 1);
