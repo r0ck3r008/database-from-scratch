@@ -175,6 +175,15 @@ Schema :: ~Schema ()
 	delete [] myAtts;
 }
 
+Schema &Schema :: operator+(Schema &in)
+{
+	for(int i=0; i<in.numAtts; i++)
+		this->addAtt(in.myAtts[i].name, in.myAtts[i].myType,
+						in.myAtts[i].n_dis);
+
+	return *(this);
+}
+
 void Schema :: addAtt(char *aname, Type type, int n_dis)
 {
 	if(numAtts==15) {

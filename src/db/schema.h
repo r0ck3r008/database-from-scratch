@@ -32,6 +32,7 @@ struct Schema
 	Schema (char *, char *);
 	Schema (char *, int , Attribute *);
 	~Schema ();
+	Schema &operator+(Schema &);
 	void addAtt(char *, Type, int);
 	Attribute *GetAtts ();
 	int GetNumAtts ();
