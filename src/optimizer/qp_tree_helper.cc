@@ -161,5 +161,4 @@ void Qptree :: process(struct NameList *grp_atts, struct FuncOperator *flist)
 {
 	if(grp_atts==NULL)
 		return;
-
 }

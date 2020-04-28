@@ -45,7 +45,7 @@ struct operation
 	int lid, rid, pid;
 	double cost;
 	std::vector<tableInfo *> tables;
-	std::vector<tableInfo *> oschl, oschr;
+	Schema *oschl, *oschr;
 
 	operation(type_flag, double,
 		std::vector<tableInfo *> &);

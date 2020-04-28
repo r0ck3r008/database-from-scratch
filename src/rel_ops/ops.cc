@@ -71,12 +71,8 @@ void join_op :: traverse(int indx, struct operation *parent)
 	this->literal=new Record;
 	this->schl=new Schema;
 	this->schr=new Schema;
-	for(int i=0; i<parent->oschl.size(); i++)
-		*(this->schl)=*(this->schl)+*(parent->oschl[i]->sch);
-	for(int i=0; i<parent->oschr.size(); i++)
-		*(this->schr)=*(this->schr)+*(parent->oschr[i]->sch);
-	*(this->schl)=*(this->schl)+*(parent->tables[0]->sch);
-	*(this->schr)=*(this->schr)+*(parent->tables[1]->sch);
+	*(this->schl)=*(parent->oschl)+*(parent->tables[0]->sch);
+	*(this->schr)=*(parent->oschr)+*(parent->tables[1]->sch);
 	this->cnf->GrowFromParseTree(this->alist, schl, schr, *(this->literal));
 	if(!indx) {
 		cout << "**********\n";

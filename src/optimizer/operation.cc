@@ -11,6 +11,8 @@ operation :: operation(type_flag type, double cost, vector<tableInfo *> &vec)
 	this->cost=cost;
 	this->type=type;
 	this->tables=vector<tableInfo *>(vec);
+	this->oschl=new Schema;
+	this->oschr=new Schema;
 }
 
 operation :: ~operation(){}
@@ -41,20 +43,22 @@ void operation :: add_pipe(pipe_type p_type, Pipe *pipe)
 
 void operation :: append_sch(int indx, struct operation *child)
 {
-	for(int i=0; i<child->oschl.size(); i++)
-		this->oschl.push_back(child->oschl[i]);
-	for(int i=0; i<child->oschr.size(); i++)
-		this->oschr.push_back(child->oschr[i]);
+	if(child->oschl->numAtts)
+		*(this->oschl)=*(this->oschl)+*(child->oschl);
+	if(child->oschr->numAtts)
+		*(this->oschr)=*(this->oschr)+*(child->oschr);
 
 	if(!indx) {
 		for(int i=0; i<child->tables.size(); i++) {
 			if(child->tables[i]->sch!=this->tables[0]->sch)
-				this->oschl.push_back(child->tables[i]);
+				*(this->oschl)=*(this->oschl)+
+						*(child->tables[i]->sch);
 		}
 	} else {
 		for(int i=0; i<child->tables.size(); i++) {
 			if(child->tables[i]->sch!=this->tables[1]->sch)
-				this->oschr.push_back(child->tables[i]);
+				*(this->oschr)=*(this->oschr)+
+						*(child->tables[i]->sch);
 		}
 	}
 }
