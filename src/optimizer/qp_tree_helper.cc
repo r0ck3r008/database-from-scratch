@@ -140,4 +140,13 @@ void mk_parent(Qptree *qpt, struct operation *parent, struct operation *child,
 		parent->rchild=child;
 		parent->add_pipe(right_in, p);
 	}
+	parent->append_sch(indx, child);
+
+}
+
+void Qptree :: process(struct NameList *grp_atts, struct FuncOperator *flist)
+{
+	if(grp_atts==NULL)
+		return;
+
 }

@@ -3,8 +3,8 @@
 
 #include<iostream>
 
-#include"tableinfo.h"
 #include"rel_ops/ops.h"
+#include"tableinfo.h"
 #include"parser/parse_tree.h"
 
 struct tableInfo;
@@ -45,13 +45,14 @@ struct operation
 	int lid, rid, pid;
 	double cost;
 	std::vector<tableInfo *> tables;
-	std::vector<tableInfo *> rels;
+	std::vector<tableInfo *> oschl, oschr;
 
 	operation(type_flag, double,
 		std::vector<tableInfo *> &);
 	~operation();
 	void traverse(int);
 	void add_pipe(pipe_type, Pipe *);
+	void append_sch(int, struct operation *);
 };
 
 #endif

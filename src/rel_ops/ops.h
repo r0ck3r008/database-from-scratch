@@ -21,7 +21,7 @@ struct self_op
 
 	self_op();
 	~self_op();
-	void traverse(int);
+	void traverse(int, struct operation *);
 };
 
 struct selp_op
@@ -36,7 +36,7 @@ struct selp_op
 
 	selp_op();
 	~selp_op();
-	void traverse(int);
+	void traverse(int, struct operation *);
 };
 
 struct join_op
@@ -51,12 +51,22 @@ struct join_op
 
 	join_op();
 	~join_op();
-	void traverse(int);
+	void traverse(int, struct operation *);
 };
 
 struct grpby_op
 {
+	GroupBy *grp;
+	OrderMaker *order;
+	Function *f;
 
+	FuncOperator *flist;
+	Pipe *ipipe, *opipe;
+	Schema *sch;
+
+	grpby_op();
+	~grpby_op();
+	void traverse(int, struct operation *);
 };
 
 struct sum_op

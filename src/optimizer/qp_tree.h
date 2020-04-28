@@ -47,6 +47,15 @@ private:
 						int);
 	void process(struct operation *,
 		std::vector<struct operation *> &);
+	//grp by
+	void process(struct NameList *,
+			struct FuncOperator *);
+	//aggregate
+	void process(struct FuncOperator *);
+	//distinct
+	void process();
+	//project
+	void process(struct NameList *);
 	void execute(int);
 
 public:

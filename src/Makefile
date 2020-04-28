@@ -16,11 +16,11 @@ GTEST_OUT_OBJS := tests/gtest.o ${OPTIMIZERS} ${PARSERS} ${DBS} ${COMPARATORS} $
 
 all: a5.out
 
-a5.out: entrypoint.o parser_objs optimizer_objs db_objs comparator_objs fs_objs mem_objs rel_ops_objs glbl_objs
+a5.out: entrypoint.o parser_objs optimizer_objs db_objs comparator_objs fs_objs mem_objs rel_ops_objs glbl_objs dbgen_bin
 	${COMPILER} ${TEST_OUT_OBJS} ${LINKER_FLAGS} a5.out
 	make clean_objs
 
-gtest.out: gtest.o parser_objs optimizer_objs db_objs comparator_objs fs_objs mem_objs rel_ops_objs glbl_objs
+gtest.out: gtest.o parser_objs optimizer_objs db_objs comparator_objs fs_objs mem_objs rel_ops_objs glbl_objs dbgen_bin
 	$(COMPILER) ${GTEST_OUT_OBJS} ${LINKER_FLAGS} gtest.out
 	make clean_objs
 

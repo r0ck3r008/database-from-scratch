@@ -38,7 +38,7 @@ const Attribute &Attribute :: operator=(const Attribute &in)
 Schema :: Schema()
 {
 	this->numAtts=0;
-	this->myAtts=new Attribute[16];
+	this->myAtts=new Attribute[64];
 }
 
 Schema :: Schema(string fname, fType type, int n_tup)
@@ -47,14 +47,14 @@ Schema :: Schema(string fname, fType type, int n_tup)
 	this->type=type;
 	this->n_tup=n_tup;
 	this->numAtts=0;
-	this->myAtts=new Attribute[16];
+	this->myAtts=new Attribute[64];
 }
 
 Schema :: Schema (char *fpath, int num_atts, Attribute *atts)
 {
 	this->fname = string(fpath);
 	numAtts = num_atts;
-	this->myAtts=new Attribute[16];
+	this->myAtts=new Attribute[64];
 	for (int i = 0; i < numAtts; i++ ) {
 		if (atts[i].myType == Int) {
 			myAtts[i].myType = Int;
@@ -146,7 +146,7 @@ Schema :: Schema (char *fName, char *relName)
 	}
 
 	// and load up the schema
-	this->myAtts=new Attribute[16];
+	this->myAtts=new Attribute[64];
 	for (int i = 0; i < numAtts; i++ ) {
 
 		// read in the attribute name
@@ -186,7 +186,7 @@ Schema &Schema :: operator+(Schema &in)
 
 void Schema :: addAtt(char *aname, Type type, int n_dis)
 {
-	if(numAtts==16) {
+	if(numAtts==64) {
 		cerr << "No more attributes can be added!\n";
 		return;
 	}

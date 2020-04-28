@@ -40,7 +40,7 @@ void Qptree :: process(struct query *q)
 			this->tree=op;
 		}
 	}
-	this->execute(1);
+	this->execute(0);
 }
 
 Pipe *Qptree :: dispense_pipe(int *pipe_id)
@@ -69,11 +69,14 @@ void Qptree :: execute(int flag)
 		else if(this->tree->type & self_f)
 			sch=*(this->tree->self.sch);
 
+		int count=0;
 		while(1) {
 			int stat=this->curr_pipe->Remove(&tmp);
 			if(!stat)
 				break;
 			tmp.Print(&sch);
+			count++;
 		}
+		cout << "Counted: " << count << " records!\n";
 	}
 }
