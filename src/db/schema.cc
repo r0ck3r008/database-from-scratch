@@ -31,6 +31,14 @@ Attribute :: Attribute(char *name, Type type)
 	this->myType=type;
 }
 
+void Attribute :: update(char *name, Type type)
+{
+	this->name=strdup(name);
+	this->key=0;
+	this->n_dis=0;
+	this->myType=type;
+}
+
 Attribute :: ~Attribute()
 {
 	if(this->name!=NULL)
@@ -68,20 +76,18 @@ Schema :: Schema (char *fpath, int num_atts, Attribute *atts)
 	this->myAtts=new Attribute[64];
 	for (int i = 0; i < numAtts; i++ ) {
 		if (atts[i].myType == Int) {
-			myAtts[i].myType = Int;
+			myAtts[i].update(atts[i].name, Int);
 		}
 		else if (atts[i].myType == Double) {
-			myAtts[i].myType = Double;
+			myAtts[i].update(atts[i].name, Double);
 		}
 		else if (atts[i].myType == String) {
-			myAtts[i].myType = String;
-		}
-		else {
+			myAtts[i].update(atts[i].name, String);
+		} else {
 			cout << "Bad attribute type for " << atts[i].myType << "\n";
 			delete [] myAtts;
 			exit (1);
 		}
-		myAtts[i].name = strdup (atts[i].name);
 	}
 
 }

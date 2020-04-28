@@ -16,6 +16,7 @@ struct Attribute
 	const Attribute &operator=(const Attribute &);
 	Attribute();
 	Attribute(char *, Type);
+	void update(char *, Type);
 	~Attribute();
 };
 
