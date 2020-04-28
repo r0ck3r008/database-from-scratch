@@ -119,5 +119,8 @@ void grpby_op :: traverse(int indx, struct operation *parent)
 		this->order->Print();
 		cout << "Output Schema:\n";
 		parent->oschl->Print();
+	} else {
+		this->grp=new GroupBy;
+		this->grp->Run(this->ipipe, this->opipe, this->order, this->f);
 	}
 }

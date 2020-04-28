@@ -20,7 +20,17 @@ Attribute :: Attribute()
 {
 	this->key=0;
 	this->name=NULL;
+	this->n_dis=0;
 }
+
+Attribute :: Attribute(char *name, Type type)
+{
+	this->name=strdup(name);
+	this->key=0;
+	this->n_dis=0;
+	this->myType=type;
+}
+
 Attribute :: ~Attribute()
 {
 	if(this->name!=NULL)

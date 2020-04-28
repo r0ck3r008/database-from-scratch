@@ -34,13 +34,13 @@ void operation :: add_pipe(pipe_type p_type, Pipe *pipe)
 			this->self.opipe=pipe;
 		else
 			cerr << "Unknown pipe type for select file op!\n";
-	} else if((this->type & selp_f) || (this->type & grpby_f)) {
+	} else if(this->type & selp_f) {
 		if(p_type & left_in)
 			this->selp.ipipe=pipe;
 		else if(p_type & parent_out)
 			this->selp.opipe=pipe;
 		else
-			cerr << "Unknown pipe type for selectPipe/GroupBy op!\n";
+			cerr << "Unknown pipe type for selectPipe!\n";
 	} else if(this->type & join_f) {
 		if(p_type & left_in)
 			this->join.ipipe1=pipe;
@@ -48,6 +48,13 @@ void operation :: add_pipe(pipe_type p_type, Pipe *pipe)
 			this->join.ipipe2=pipe;
 		else if(p_type & parent_out)
 			this->join.opipe=pipe;
+	} else if(this->type & grpby_f) {
+		if(p_type & left_in)
+			this->grpby.ipipe=pipe;
+		else if(p_type & parent_out)
+			this->grpby.opipe=pipe;
+		else
+			cerr << "Unknown pipe type for Group By!\n";
 	}
 }
 

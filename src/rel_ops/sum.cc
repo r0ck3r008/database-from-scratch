@@ -27,9 +27,7 @@ void *sum_thr(void *a)
 	struct sum_args *arg=(struct sum_args *)a;
 
 	Type ret_type=((arg->func->get_ret_type()==1) ? (Int) : (Double));
-	Attribute atts;
-	atts.name="Double";
-	atts.myType=Double;
+	Attribute atts("Double", Double);
 	Schema sch("out_atts", 1, &atts);
 
 	int int_res=0; double double_res=0;
