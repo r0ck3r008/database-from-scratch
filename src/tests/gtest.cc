@@ -13,7 +13,7 @@ int q() {
 	Schema schem;
 	char ch = 'char';
 	char *c = &ch;
-	schem.addAtt(c, Int, 1);
+	schem.addAtt(c, Int, 1, 1);
 	return schem.attMap.size();
 }
 
