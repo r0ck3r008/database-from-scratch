@@ -49,6 +49,7 @@ struct operation
 
 	operation(type_flag, double,
 		std::vector<tableInfo *> &);
+	operation(type_flag, Schema *);
 	~operation();
 	void traverse(int);
 	void add_pipe(pipe_type, Pipe *);

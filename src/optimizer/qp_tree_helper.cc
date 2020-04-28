@@ -2,6 +2,7 @@
 #include<string.h>
 #include<unistd.h>
 
+#include"comparator/comparison.h"
 #include"qp_tree.h"
 
 using namespace std;
@@ -153,7 +154,8 @@ void mk_parent(Qptree *qpt, struct operation *parent, struct operation *child,
 		parent->rchild=child;
 		parent->add_pipe(right_in, p);
 	}
-	parent->append_sch(indx, child);
+	if(parent->tables.size())
+		parent->append_sch(indx, child);
 
 }
 
@@ -161,4 +163,38 @@ void Qptree :: process(struct NameList *grp_atts, struct FuncOperator *flist)
 {
 	if(grp_atts==NULL)
 		return;
+	Schema *sch=new Schema;
+	if(this->tree->type & join_f) {
+		*sch=*sch+*(this->tree->oschl);
+		*sch=*sch+*(this->tree->tables[0]->sch);
+		*sch=*sch+*(this->tree->oschr);
+		*sch=*sch+*(this->tree->tables[1]->sch);
+	} else {
+		if(this->tree->oschl->numAtts)
+			*sch=*(this->tree->oschl)+*(this->tree->tables[0]->sch);
+		else
+			*sch=*(this->tree->tables[0]->sch);
+	}
+
+	struct NameList *curr=grp_atts;
+	int stat=0;
+	while(curr!=NULL) {
+		stat=sch->Find(curr->name);
+		if(stat==-1) {
+			cerr << "Grouping attribute not found!\n";
+			_exit(-1);
+		} else {
+			break;
+		}
+		curr=curr->next;
+	}
+	OrderMaker *order=new OrderMaker(sch, stat);
+	Function *f=new Function;
+	f->GrowFromParseTree(flist, *sch);
+	struct operation *op=new operation(grpby_f, sch);
+	mk_parent(this, op, this->tree, 0);
+	op->grpby.order=order;
+	op->grpby.f=f;
+	op->grpby.flist=flist;
+	this->tree=op;
 }

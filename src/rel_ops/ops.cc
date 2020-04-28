@@ -110,5 +110,14 @@ grpby_op :: ~grpby_op(){}
 
 void grpby_op :: traverse(int indx, struct operation *parent)
 {
-
+	if(!indx) {
+		cout << "*********\n";
+		cout << "GROUP BY:\n";
+		cout << "Function:\n";
+		this->f->Print();
+		cout << "Order:\n";
+		this->order->Print();
+		cout << "Output Schema:\n";
+		parent->oschl->Print();
+	}
 }
