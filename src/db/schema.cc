@@ -186,7 +186,7 @@ Schema &Schema :: operator+(Schema &in)
 
 void Schema :: addAtt(char *aname, Type type, int n_dis)
 {
-	if(numAtts==15) {
+	if(numAtts==16) {
 		cerr << "No more attributes can be added!\n";
 		return;
 	}
