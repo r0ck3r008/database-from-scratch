@@ -117,10 +117,36 @@ void grpby_op :: traverse(int indx, struct operation *parent)
 		this->f->Print();
 		cout << "Order:\n";
 		this->order->Print();
-		cout << "Output Schema:\n";
+		cout << "Input Schema:\n";
 		parent->oschl->Print();
+		cout << "Output Schema:\n";
+		this->sch->Print();
 	} else {
 		this->grp=new GroupBy;
 		this->grp->Run(this->ipipe, this->opipe, this->order, this->f);
+	}
+}
+
+sum_op :: sum_op()
+{
+	this->s=NULL; this->f=NULL;
+	this->flist=NULL; this->ipipe=NULL; this->opipe=NULL;
+}
+sum_op :: ~sum_op(){}
+
+void sum_op :: traverse(int indx, struct operation *parent)
+{
+	if(!indx) {
+		cout << "**********\n";
+		cout << "SUM:\n";
+		cout << "Function:\n";
+		f->Print();
+		cout << "Input Schema: \n";
+		parent->oschl->Print();
+		cout << "Output Schema:\n";
+		this->sch->Print();
+	} else {
+		this->s=new Sum;
+		s->Run(this->ipipe, this->opipe, this->f);
 	}
 }

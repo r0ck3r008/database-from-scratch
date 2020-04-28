@@ -71,7 +71,16 @@ struct grpby_op
 
 struct sum_op
 {
+	Sum *s;
+	Function *f;
+	Schema *sch;
 
+	FuncOperator *flist;
+	Pipe *ipipe, *opipe;
+
+	sum_op();
+	~sum_op();
+	void traverse(int, struct operation *);
 };
 
 struct proj_op

@@ -55,6 +55,13 @@ void operation :: add_pipe(pipe_type p_type, Pipe *pipe)
 			this->grpby.opipe=pipe;
 		else
 			cerr << "Unknown pipe type for Group By!\n";
+	} else if(this->type & sum_f) {
+		if(p_type & left_in)
+			this->sum.ipipe=pipe;
+		else if(p_type & parent_out)
+			this->sum.opipe=pipe;
+		else
+			cerr << "Unknown pipe type for Sum!\n";
 	}
 }
 
@@ -93,6 +100,8 @@ void operation :: traverse(int indx)
 		this->join.traverse(indx, this);
 	else if(this->type & grpby_f)
 		this->grpby.traverse(indx, this);
+	else if(this->type & sum_f)
+		this->sum.traverse(indx, this);
 
 	if(!indx) {
 		cout << "Input pipes: " << lid << " " << rid << endl;

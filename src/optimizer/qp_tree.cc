@@ -41,7 +41,8 @@ void Qptree :: process(struct query *q)
 		}
 	}
 
-	this->process(q->grp_atts, q->func);
+	if(this->process(q->grp_atts, q->func)==0)
+		this->process(q->func);
 	this->execute(1);
 }
 
@@ -70,10 +71,10 @@ void Qptree :: execute(int flag)
 			sch=*(this->tree->join.schl) + *(this->tree->join.schr);
 		} else if(this->tree->type & self_f) {
 			sch=*(this->tree->self.sch);
-		} else if((this->tree->type & grpby_f) ||
-				(this->tree->type & sum_f)) {
-			sch.myAtts[0].update("Double", Double);
-			sch.numAtts=1;
+		} else if(this->tree->type & grpby_f) {
+			sch=*(this->tree->grpby.sch);
+		} else if(this->tree->type & sum_f) {
+			sch=*(this->tree->sum.sch);
 		}
 		int count=0;
 		while(1) {

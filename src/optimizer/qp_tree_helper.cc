@@ -159,23 +159,11 @@ void mk_parent(Qptree *qpt, struct operation *parent, struct operation *child,
 
 }
 
-void Qptree :: process(struct NameList *grp_atts, struct FuncOperator *flist)
+int Qptree :: process(struct NameList *grp_atts, struct FuncOperator *flist)
 {
 	if(grp_atts==NULL)
-		return;
-	Schema *sch=new Schema;
-	if(this->tree->type & join_f) {
-		*sch=*sch+*(this->tree->oschl);
-		*sch=*sch+*(this->tree->tables[0]->sch);
-		*sch=*sch+*(this->tree->oschr);
-		*sch=*sch+*(this->tree->tables[1]->sch);
-	} else {
-		if(this->tree->oschl->numAtts)
-			*sch=*(this->tree->oschl)+*(this->tree->tables[0]->sch);
-		else
-			*sch=*(this->tree->tables[0]->sch);
-	}
-
+		return 0;
+	Schema *sch=mk_agg_sch();
 	struct NameList *curr=grp_atts;
 	int stat=0;
 	while(curr!=NULL) {
@@ -196,5 +184,44 @@ void Qptree :: process(struct NameList *grp_atts, struct FuncOperator *flist)
 	op->grpby.order=order;
 	op->grpby.f=f;
 	op->grpby.flist=flist;
+	op->grpby.sch=new Schema;
+	op->grpby.sch->numAtts=1;
+	op->grpby.sch->myAtts[0].update("Double", Double);
 	this->tree=op;
+	return 1;
+}
+
+void Qptree :: process(struct FuncOperator *flist)
+{
+	if(flist==NULL)
+		return;
+	Function *f=new Function;
+	Schema *sch=mk_agg_sch();
+	f->GrowFromParseTree(flist, *sch);
+	struct operation *op=new operation(sum_f, sch);
+	mk_parent(this, op, this->tree, 0);
+	op->sum.f=f;
+	op->sum.flist=flist;
+	op->sum.sch=new Schema;
+	op->sum.sch->numAtts=1;
+	op->sum.sch->myAtts[0].update("Double", Double);
+	this->tree=op;
+}
+
+Schema *Qptree :: mk_agg_sch()
+{
+	Schema *sch=new Schema;
+	if(this->tree->type & join_f) {
+		*sch=*sch+*(this->tree->oschl);
+		*sch=*sch+*(this->tree->tables[0]->sch);
+		*sch=*sch+*(this->tree->oschr);
+		*sch=*sch+*(this->tree->tables[1]->sch);
+	} else {
+		if(this->tree->oschl->numAtts)
+			*sch=*(this->tree->oschl)+*(this->tree->tables[0]->sch);
+		else
+			*sch=*(this->tree->tables[0]->sch);
+	}
+
+	return sch;
 }

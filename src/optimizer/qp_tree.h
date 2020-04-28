@@ -48,7 +48,7 @@ private:
 	void process(struct operation *,
 		std::vector<struct operation *> &);
 	//grp by
-	void process(struct NameList *,
+	int process(struct NameList *,
 			struct FuncOperator *);
 	//aggregate
 	void process(struct FuncOperator *);
@@ -56,6 +56,7 @@ private:
 	void process();
 	//project
 	void process(struct NameList *);
+	Schema *mk_agg_sch();
 	void execute(int);
 
 public:
