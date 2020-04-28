@@ -4,39 +4,34 @@
 #include<unistd.h>
 #include<iostream>
 
-#include"optimizer/statistics.h"
-#include"parser/parse_tree.h"
-#include"optimizer/qp_tree.h"
+#include"db/catalog.h"
+#include"db/schema.h"
 
 using namespace std;
 
 int q() {
-	Qptree qtree(NULL, NULL);
-	int f = qtree.dispense_pipe();
-	return f;
+	Schema schem;
+	char ch = 'char';
+	char *c = &ch;
+	schem.addAtt(c, Int, 1, 1);
+	return schem.attMap.size();
 }
 
-int qop() {
-	sel_op_comp selop;
-	operation le(1);
-	operation ri(2);
-	operation *l, *r;
-	l = &le;
-	r = &ri;
-	l->cost = 200.0;
-	r->cost = 20000.0;
-	int f = selop.operator()(l, r);
-	return f;
+Schema *qop() {
+	Catalog cat;
+	char ch = 'char';
+	char *c = &ch;
+	return cat.snap(c);
 }
 
-TEST(QTREETEST, pipecount) {
+TEST(SCHEMATEST, addattribute) {
 	int fr = q();
-	EXPECT_EQ(fr, 0);
+	EXPECT_EQ(fr, 1);
 }
 
-TEST(QTREETEST, selops){
-	int fr = qop();
-	EXPECT_EQ(fr, 1);
+TEST(CATALOGTEST, snap){
+	Schema *fr = qop();
+	EXPECT_EQ(fr, nullptr);
 }
 
 int main (int argc, char **argv) {
