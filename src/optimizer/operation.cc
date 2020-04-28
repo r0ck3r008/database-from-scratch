@@ -11,6 +11,18 @@ operation :: operation(type_flag type, double cost, vector<tableInfo *> &vec)
 	this->cost=cost;
 	this->type=type;
 	this->tables=vector<tableInfo *>(vec);
+	this->oschl=new Schema;
+	this->oschr=new Schema;
+}
+
+operation :: operation(type_flag type, Schema *sch)
+{
+	this->lid=-1; this->rid=-1; this->pid=-1;
+	this->lchild=NULL; this->rchild=NULL; this->parent=NULL;
+	this->cost=0;
+	this->type=type;
+	this->oschl=sch;
+	this->oschr=new Schema;
 }
 
 operation :: ~operation(){}
@@ -28,7 +40,7 @@ void operation :: add_pipe(pipe_type p_type, Pipe *pipe)
 		else if(p_type & parent_out)
 			this->selp.opipe=pipe;
 		else
-			cerr << "Unknown pipe type for select pipe op!\n";
+			cerr << "Unknown pipe type for selectPipe!\n";
 	} else if(this->type & join_f) {
 		if(p_type & left_in)
 			this->join.ipipe1=pipe;
@@ -36,25 +48,34 @@ void operation :: add_pipe(pipe_type p_type, Pipe *pipe)
 			this->join.ipipe2=pipe;
 		else if(p_type & parent_out)
 			this->join.opipe=pipe;
+	} else if(this->type & grpby_f) {
+		if(p_type & left_in)
+			this->grpby.ipipe=pipe;
+		else if(p_type & parent_out)
+			this->grpby.opipe=pipe;
+		else
+			cerr << "Unknown pipe type for Group By!\n";
 	}
 }
 
 void operation :: append_sch(int indx, struct operation *child)
 {
-	for(int i=0; i<child->oschl.size(); i++)
-		this->oschl.push_back(child->oschl[i]);
-	for(int i=0; i<child->oschr.size(); i++)
-		this->oschr.push_back(child->oschr[i]);
+	if(child->oschl->numAtts)
+		*(this->oschl)=*(this->oschl)+*(child->oschl);
+	if(child->oschr->numAtts)
+		*(this->oschr)=*(this->oschr)+*(child->oschr);
 
 	if(!indx) {
 		for(int i=0; i<child->tables.size(); i++) {
 			if(child->tables[i]->sch!=this->tables[0]->sch)
-				this->oschl.push_back(child->tables[i]);
+				*(this->oschl)=*(this->oschl)+
+						*(child->tables[i]->sch);
 		}
 	} else {
 		for(int i=0; i<child->tables.size(); i++) {
 			if(child->tables[i]->sch!=this->tables[1]->sch)
-				this->oschr.push_back(child->tables[i]);
+				*(this->oschr)=*(this->oschr)+
+						*(child->tables[i]->sch);
 		}
 	}
 }
@@ -70,6 +91,8 @@ void operation :: traverse(int indx)
 		this->selp.traverse(indx, this);
 	else if(this->type & join_f)
 		this->join.traverse(indx, this);
+	else if(this->type & grpby_f)
+		this->grpby.traverse(indx, this);
 
 	if(!indx) {
 		cout << "Input pipes: " << lid << " " << rid << endl;

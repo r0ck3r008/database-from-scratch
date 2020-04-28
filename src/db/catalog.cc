@@ -21,7 +21,7 @@ void Catalog :: addRel(char *_rname, char *_fname, fType type, int n_tup)
 	this->rels.insert(pair<string, Schema *>(rname, sch));
 }
 
-void Catalog :: addAtt(char *_rname, char *aname, int n_dis, Type type)
+void Catalog :: addAtt(char *_rname, char *aname, int n_dis, Type type, int key)
 {
 	string rname(_rname);
 	auto itr1=this->rels.find(rname);
@@ -36,7 +36,7 @@ void Catalog :: addAtt(char *_rname, char *aname, int n_dis, Type type)
 	}
 
 	int dis=(n_dis==-1) ? (itr1->second->n_tup) : (n_dis);
-	itr1->second->addAtt(aname, type, dis);
+	itr1->second->addAtt(aname, type, dis, key);
 }
 
 Schema *Catalog :: snap(char *_rname)
@@ -63,10 +63,11 @@ void Catalog :: write(char *fname)
 			i.second->n_tup, i.second->type,
 						i.second->fname.c_str());
 		for(int j=0; j<i.second->numAtts; j++) {
-			fprintf(f, "A_BEGIN:%s:%d:%d\n",
+			fprintf(f, "A_BEGIN:%s:%d:%d:%d\n",
 				i.second->myAtts[j].name,
 				i.second->myAtts[j].myType,
-				i.second->myAtts[j].n_dis);
+				i.second->myAtts[j].n_dis,
+				i.second->myAtts[j].key);
 		}
 	}
 
@@ -112,7 +113,8 @@ void Catalog :: read(char *fname)
 			char *aname=strtok(NULL, ":");
 			Type myType=(Type)strtol(strtok(NULL, ":"), NULL, 10);
 			int n_dis=strtol(strtok(NULL, ":"), NULL, 10);
-			curr_rinfo->addAtt(aname, myType, n_dis);
+			int key=strtol(strtok(NULL, ":"), NULL, 10);
+			curr_rinfo->addAtt(aname, myType, n_dis, key);
 		}
 
 		free(line_tmp);

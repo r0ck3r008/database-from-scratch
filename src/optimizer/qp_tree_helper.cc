@@ -1,6 +1,8 @@
+#include<algorithm>
 #include<string.h>
 #include<unistd.h>
 
+#include"comparator/comparison.h"
 #include"qp_tree.h"
 
 using namespace std;
@@ -35,10 +37,10 @@ void Qptree :: process(struct AndList *alist, struct OrList *olist)
 	if(olist==NULL && alist->left!=NULL) {
 		this->process(alist, alist->left);
 	} else {
-		double cost=this->s->Estimate(alist);
 		struct ComparisonOp *cop=olist->left;
 		struct Operand *op=cop->left;
 		vector<tableInfo *> vec;
+		vector<int> vec_key;
 		while(vec.size()<2 && op->code==NAME) {
 			char name[64];
 			sprintf(name, "%s", op->value);
@@ -48,14 +50,26 @@ void Qptree :: process(struct AndList *alist, struct OrList *olist)
 				_exit(-1);
 			}
 			auto itr=this->relations.find(string(rel));
+			auto itr2=itr->second->sch->attMap.find(
+						string(strtok(NULL, ".")));
+			vec_key.push_back(itr2->second->key);
 			vec.push_back(itr->second);
 			op=cop->right;
 		}
 		if(vec.size()==2) {
+			if((!vec_key[0] && vec_key[1])) {
+				//swap alist and vectors
+				iter_swap(vec.begin(), vec.begin()+1);
+				struct Operand *op=alist->left->left->left;
+				alist->left->left->left=alist->left->left->right;
+				alist->left->left->right=op;
+			}
+			double cost=this->s->Estimate(alist);
 			struct operation *op=new operation(join_f, cost, vec);
 			op->join.alist=alist;
 			this->join_queue.push(op);
 		} else {
+			double cost=this->s->Estimate(alist);
 			vec[0]->add_sel(alist, cost);
 		}
 	}
@@ -140,7 +154,8 @@ void mk_parent(Qptree *qpt, struct operation *parent, struct operation *child,
 		parent->rchild=child;
 		parent->add_pipe(right_in, p);
 	}
-	parent->append_sch(indx, child);
+	if(parent->tables.size())
+		parent->append_sch(indx, child);
 
 }
 
@@ -148,5 +163,38 @@ void Qptree :: process(struct NameList *grp_atts, struct FuncOperator *flist)
 {
 	if(grp_atts==NULL)
 		return;
+	Schema *sch=new Schema;
+	if(this->tree->type & join_f) {
+		*sch=*sch+*(this->tree->oschl);
+		*sch=*sch+*(this->tree->tables[0]->sch);
+		*sch=*sch+*(this->tree->oschr);
+		*sch=*sch+*(this->tree->tables[1]->sch);
+	} else {
+		if(this->tree->oschl->numAtts)
+			*sch=*(this->tree->oschl)+*(this->tree->tables[0]->sch);
+		else
+			*sch=*(this->tree->tables[0]->sch);
+	}
 
+	struct NameList *curr=grp_atts;
+	int stat=0;
+	while(curr!=NULL) {
+		stat=sch->Find(curr->name);
+		if(stat==-1) {
+			cerr << "Grouping attribute not found!\n";
+			_exit(-1);
+		} else {
+			break;
+		}
+		curr=curr->next;
+	}
+	OrderMaker *order=new OrderMaker(sch, stat);
+	Function *f=new Function;
+	f->GrowFromParseTree(flist, *sch);
+	struct operation *op=new operation(grpby_f, sch);
+	mk_parent(this, op, this->tree, 0);
+	op->grpby.order=order;
+	op->grpby.f=f;
+	op->grpby.flist=flist;
+	this->tree=op;
 }

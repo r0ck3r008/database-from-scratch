@@ -40,7 +40,9 @@ void Qptree :: process(struct query *q)
 			this->tree=op;
 		}
 	}
-	this->execute(0);
+
+	this->process(q->grp_atts, q->func);
+	this->execute(1);
 }
 
 Pipe *Qptree :: dispense_pipe(int *pipe_id)
@@ -64,11 +66,15 @@ void Qptree :: execute(int flag)
 	if(flag) {
 		Record tmp;
 		Schema sch;
-		if(this->tree->type & join_f)
+		if(this->tree->type & join_f) {
 			sch=*(this->tree->join.schl) + *(this->tree->join.schr);
-		else if(this->tree->type & self_f)
+		} else if(this->tree->type & self_f) {
 			sch=*(this->tree->self.sch);
-
+		} else if((this->tree->type & grpby_f) ||
+				(this->tree->type & sum_f)) {
+			sch.myAtts[0].update("Double", Double);
+			sch.numAtts=1;
+		}
 		int count=0;
 		while(1) {
 			int stat=this->curr_pipe->Remove(&tmp);

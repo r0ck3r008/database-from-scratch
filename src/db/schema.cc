@@ -18,8 +18,27 @@ void splice(char *attName, char *placeholder)
 
 Attribute :: Attribute()
 {
+	this->key=0;
 	this->name=NULL;
+	this->n_dis=0;
 }
+
+Attribute :: Attribute(char *name, Type type)
+{
+	this->name=strdup(name);
+	this->key=0;
+	this->n_dis=0;
+	this->myType=type;
+}
+
+void Attribute :: update(char *name, Type type)
+{
+	this->name=strdup(name);
+	this->key=0;
+	this->n_dis=0;
+	this->myType=type;
+}
+
 Attribute :: ~Attribute()
 {
 	if(this->name!=NULL)
@@ -57,20 +76,18 @@ Schema :: Schema (char *fpath, int num_atts, Attribute *atts)
 	this->myAtts=new Attribute[64];
 	for (int i = 0; i < numAtts; i++ ) {
 		if (atts[i].myType == Int) {
-			myAtts[i].myType = Int;
+			myAtts[i].update(atts[i].name, Int);
 		}
 		else if (atts[i].myType == Double) {
-			myAtts[i].myType = Double;
+			myAtts[i].update(atts[i].name, Double);
 		}
 		else if (atts[i].myType == String) {
-			myAtts[i].myType = String;
-		}
-		else {
+			myAtts[i].update(atts[i].name, String);
+		} else {
 			cout << "Bad attribute type for " << atts[i].myType << "\n";
 			delete [] myAtts;
 			exit (1);
 		}
-		myAtts[i].name = strdup (atts[i].name);
 	}
 
 }
@@ -179,12 +196,12 @@ Schema &Schema :: operator+(Schema &in)
 {
 	for(int i=0; i<in.numAtts; i++)
 		this->addAtt(in.myAtts[i].name, in.myAtts[i].myType,
-						in.myAtts[i].n_dis);
+						in.myAtts[i].n_dis, 0);
 
 	return *(this);
 }
 
-void Schema :: addAtt(char *aname, Type type, int n_dis)
+void Schema :: addAtt(char *aname, Type type, int n_dis, int key)
 {
 	if(numAtts==64) {
 		cerr << "No more attributes can be added!\n";
@@ -193,6 +210,7 @@ void Schema :: addAtt(char *aname, Type type, int n_dis)
 	myAtts[numAtts].name=strdup(aname);
 	myAtts[numAtts].myType=type;
 	myAtts[numAtts].n_dis=n_dis;
+	myAtts[numAtts].key=key;
 	this->attMap.insert(pair<string, Attribute *>(string(aname),
 							&(myAtts[numAtts])));
 	numAtts++;
