@@ -1,3 +1,5 @@
+#include<string.h>
+
 #include"ops.h"
 
 self_op :: self_op()
@@ -17,6 +19,14 @@ void self_op :: traverse(int indx)
 		cout << "SELECT FILE:\n";
 		this->cnf->Print();
 		this->sch->Print();
+	} else {
+		char tblname[64], binname[64];
+		sprintf(tblname, "%s", sch->fname.c_str());
+		sprintf(binname, "bin/%s.bin", strtok(tblname, "."));
+		DBFile *dbf=new DBFile;
+		dbf->Open(binname);
+		this->self=new SelectFile;
+		self->Run(dbf, this->opipe, this->cnf, this->literal);
 	}
 }
 
@@ -37,6 +47,10 @@ void selp_op :: traverse(int indx)
 		cout << "SELECT PIPE:\n";
 		this->cnf->Print();
 		this->sch->Print();
+	} else {
+		this->selp=new SelectPipe;
+		this->selp->Run(this->ipipe, this->opipe, this->cnf,
+								this->literal);
 	}
 }
 
@@ -59,5 +73,9 @@ void join_op :: traverse(int indx)
 		this->cnf->Print();
 		this->schl->Print();
 		this->schr->Print();
+	} else {
+		this->j=new Join;
+		this->j->Run(this->ipipe1, this->ipipe2, this->opipe, this->cnf,
+				this->literal, this->schl, this->schr);
 	}
 }
