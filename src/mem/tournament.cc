@@ -103,25 +103,31 @@ int Tournament :: play_matches(int pos)
 
 int Tournament :: feed(Record *in)
 {
-	int e_pos;
-	if((e_pos=this->get_nxt_spot(1))<0) {
-		std :: cerr << "Cant feed more!\n";
-		return 0;
-	}
-	struct node *new_node=new struct node(in, e_pos, this);
-	this->tree[e_pos]=new_node;
+	if(this->size!=1) {
+		int e_pos;
+		if((e_pos=this->get_nxt_spot(1))<0) {
+			std :: cerr << "Cant feed more!\n";
+			return 0;
+		}
+		struct node *new_node=new struct node(in, e_pos, this);
+		this->tree[e_pos]=new_node;
 
-	if(!this->play_matches(e_pos))
-		return 0;
+		if(!this->play_matches(e_pos))
+			return 0;
+	} else {
+		this->win_queue.push(in);
+	}
 
 	return 1;
 }
 
 std :: queue <Record *> *Tournament :: flush()
 {
-	while(1) {
-		if(!this->feed(NULL)) {
-			break;
+	if(this->size!=1) {
+		while(1) {
+			if(!this->feed(NULL)) {
+				break;
+			}
 		}
 	}
 	return &(this->win_queue);
