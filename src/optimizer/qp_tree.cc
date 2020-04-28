@@ -12,7 +12,7 @@ Qptree :: Qptree(Catalog *cat)
 }
 Qptree :: ~Qptree()
 {
-	delete this->s;
+//	delete this->s;
 }
 
 void Qptree :: process(struct query *q)
