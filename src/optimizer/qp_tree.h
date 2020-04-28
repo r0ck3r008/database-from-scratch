@@ -6,6 +6,8 @@
 #include<vector>
 #include<queue>
 
+#include"fs/record.h"
+#include"db/schema.h"
 #include"mem/pipe.h"
 #include"statistics.h"
 #include"parser/parse_tree.h"

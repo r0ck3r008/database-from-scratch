@@ -34,13 +34,14 @@ void Qptree :: process(struct query *q)
 				cerr << "Error in fetching the select!\n";
 				_exit(-1);
 			}
-			if(this->tree!=NULL)
+			if(this->tree!=NULL) {
 				mk_parent(this, op, this->tree, 0);
+			}
 			this->tree=op;
 		}
 	}
-
 	this->tree->traverse(0);
+	this->clear_pipe();
 }
 
 Pipe *Qptree :: dispense_pipe(int *pipe_id)
@@ -49,4 +50,23 @@ Pipe *Qptree :: dispense_pipe(int *pipe_id)
 	Pipe *p=new Pipe(1000);
 	this->curr_pipe=p;
 	return p;
+}
+
+void Qptree :: clear_pipe()
+{
+	this->tree->traverse(1);
+	Record tmp;
+	Schema sch;
+	if(this->tree->type & join_f) {
+		sch=*(this->tree->join.schl) + *(this->tree->join.schr);
+	} else if(this->tree->type & self_f) {
+		sch=*(this->tree->self.sch);
+	}
+
+	while(1) {
+		int stat=this->curr_pipe->Remove(&tmp);
+		if(!stat)
+			break;
+		tmp.Print(&sch);
+	}
 }
