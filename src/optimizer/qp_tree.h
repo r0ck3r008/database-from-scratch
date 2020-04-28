@@ -47,6 +47,7 @@ private:
 						int);
 	void process(struct operation *,
 		std::vector<struct operation *> &);
+	void clear_pipe();
 
 public:
 	Qptree(Catalog *);
