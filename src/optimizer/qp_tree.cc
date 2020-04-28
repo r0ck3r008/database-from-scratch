@@ -41,6 +41,9 @@ void Qptree :: process(struct query *q)
 		}
 	}
 	this->tree->traverse(0);
+	int pipe=0;
+	Pipe *p=this->dispense_pipe(&pipe);
+	this->tree->add_pipe(parent_out, p);
 	this->clear_pipe();
 }
 
