@@ -40,7 +40,7 @@ void Qptree :: process(struct query *q)
 			this->tree=op;
 		}
 	}
-	this->execute(0);
+	this->execute(1);
 }
 
 Pipe *Qptree :: dispense_pipe(int *pipe_id)

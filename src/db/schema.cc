@@ -18,6 +18,7 @@ void splice(char *attName, char *placeholder)
 
 Attribute :: Attribute()
 {
+	this->key=0;
 	this->name=NULL;
 }
 Attribute :: ~Attribute()
@@ -179,12 +180,12 @@ Schema &Schema :: operator+(Schema &in)
 {
 	for(int i=0; i<in.numAtts; i++)
 		this->addAtt(in.myAtts[i].name, in.myAtts[i].myType,
-						in.myAtts[i].n_dis);
+						in.myAtts[i].n_dis, 0);
 
 	return *(this);
 }
 
-void Schema :: addAtt(char *aname, Type type, int n_dis)
+void Schema :: addAtt(char *aname, Type type, int n_dis, int key)
 {
 	if(numAtts==64) {
 		cerr << "No more attributes can be added!\n";
@@ -193,6 +194,7 @@ void Schema :: addAtt(char *aname, Type type, int n_dis)
 	myAtts[numAtts].name=strdup(aname);
 	myAtts[numAtts].myType=type;
 	myAtts[numAtts].n_dis=n_dis;
+	myAtts[numAtts].key=key;
 	this->attMap.insert(pair<string, Attribute *>(string(aname),
 							&(myAtts[numAtts])));
 	numAtts++;

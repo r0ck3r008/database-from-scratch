@@ -1,3 +1,4 @@
+#include<algorithm>
 #include<string.h>
 #include<unistd.h>
 
@@ -35,10 +36,10 @@ void Qptree :: process(struct AndList *alist, struct OrList *olist)
 	if(olist==NULL && alist->left!=NULL) {
 		this->process(alist, alist->left);
 	} else {
-		double cost=this->s->Estimate(alist);
 		struct ComparisonOp *cop=olist->left;
 		struct Operand *op=cop->left;
 		vector<tableInfo *> vec;
+		vector<int> vec_key;
 		while(vec.size()<2 && op->code==NAME) {
 			char name[64];
 			sprintf(name, "%s", op->value);
@@ -48,14 +49,26 @@ void Qptree :: process(struct AndList *alist, struct OrList *olist)
 				_exit(-1);
 			}
 			auto itr=this->relations.find(string(rel));
+			auto itr2=itr->second->sch->attMap.find(
+						string(strtok(NULL, ".")));
+			vec_key.push_back(itr2->second->key);
 			vec.push_back(itr->second);
 			op=cop->right;
 		}
 		if(vec.size()==2) {
+			if((!vec_key[0] && vec_key[1])) {
+				//swap alist and vectors
+				iter_swap(vec.begin(), vec.begin()+1);
+				struct Operand *op=alist->left->left->left;
+				alist->left->left->left=alist->left->left->right;
+				alist->left->left->right=op;
+			}
+			double cost=this->s->Estimate(alist);
 			struct operation *op=new operation(join_f, cost, vec);
 			op->join.alist=alist;
 			this->join_queue.push(op);
 		} else {
+			double cost=this->s->Estimate(alist);
 			vec[0]->add_sel(alist, cost);
 		}
 	}

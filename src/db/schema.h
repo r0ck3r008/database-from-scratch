@@ -11,6 +11,7 @@ struct Attribute
 	char *name;
 	Type myType;
 	int n_dis;
+	int key;
 
 	const Attribute &operator=(const Attribute &);
 	Attribute();
@@ -33,7 +34,7 @@ struct Schema
 	Schema (char *, int , Attribute *);
 	~Schema ();
 	Schema &operator+(Schema &);
-	void addAtt(char *, Type, int);
+	void addAtt(char *, Type, int, int);
 	Attribute *GetAtts ();
 	int GetNumAtts ();
 	int Find (char *);
