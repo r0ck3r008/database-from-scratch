@@ -62,6 +62,13 @@ void operation :: add_pipe(pipe_type p_type, Pipe *pipe)
 			this->sum.opipe=pipe;
 		else
 			cerr << "Unknown pipe type for Sum!\n";
+	} else if(this->type & dist_f) {
+		if(p_type & left_in)
+			this->dist.ipipe=pipe;
+		else if(p_type & parent_out)
+			this->dist.opipe=pipe;
+		else
+			cerr << "Unknown pipe type for Distinct!\n";
 	}
 }
 
@@ -102,6 +109,8 @@ void operation :: traverse(int indx)
 		this->grpby.traverse(indx, this);
 	else if(this->type & sum_f)
 		this->sum.traverse(indx, this);
+	else if(this->type & dist_f)
+		this->dist.traverse(indx, this);
 
 	if(!indx) {
 		cout << "Input pipes: " << lid << " " << rid << endl;

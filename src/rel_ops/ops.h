@@ -88,4 +88,15 @@ struct proj_op
 
 };
 
+struct dist_op
+{
+	DuplicateRemoval *dist;
+	Schema *sch;
+	Pipe *ipipe, *opipe;
+
+	dist_op();
+	~dist_op();
+	void traverse(int, struct operation *);
+};
+
 #endif

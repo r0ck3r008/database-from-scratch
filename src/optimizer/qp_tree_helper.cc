@@ -208,18 +208,32 @@ void Qptree :: process(struct FuncOperator *flist)
 	this->tree=op;
 }
 
+void Qptree :: process()
+{
+	Schema *sch=mk_agg_sch();
+	struct operation *op=new operation(dist_f, sch);
+	mk_parent(this, op, this->tree, 0);
+	op->dist.sch=sch;
+	this->tree=op;
+}
+
 Schema *Qptree :: mk_agg_sch()
 {
 	Schema *sch=new Schema;
+	int size=this->tree->tables.size();
 	if(this->tree->type & join_f) {
 		*sch=*sch+*(this->tree->oschl);
-		*sch=*sch+*(this->tree->tables[0]->sch);
+		if(size)
+			*sch=*sch+*(this->tree->tables[0]->sch);
 		*sch=*sch+*(this->tree->oschr);
-		*sch=*sch+*(this->tree->tables[1]->sch);
+		if(size)
+			*sch=*sch+*(this->tree->tables[1]->sch);
 	} else {
-		if(this->tree->oschl->numAtts)
-			*sch=*(this->tree->oschl)+*(this->tree->tables[0]->sch);
-		else
+		if(this->tree->oschl->numAtts) {
+			*sch=*(this->tree->oschl);
+			if(size)
+				*sch=*sch+*(this->tree->tables[0]->sch);
+		} else if(size)
 			*sch=*(this->tree->tables[0]->sch);
 	}
 

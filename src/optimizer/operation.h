@@ -40,6 +40,7 @@ struct operation
 		struct grpby_op grpby;
 		struct sum_op sum;
 		struct proj_op proj;
+		struct dist_op dist;
 	};
 	operation *lchild, *rchild, *parent;
 	int lid, rid, pid;

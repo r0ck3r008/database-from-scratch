@@ -150,3 +150,22 @@ void sum_op :: traverse(int indx, struct operation *parent)
 		s->Run(this->ipipe, this->opipe, this->f);
 	}
 }
+
+dist_op :: dist_op()
+{
+	this->dist=NULL; this->sch=NULL; this->ipipe=NULL; this->opipe=NULL;
+}
+dist_op :: ~dist_op(){}
+
+void dist_op :: traverse(int indx, struct operation *op)
+{
+	if(!indx) {
+		cout << "**********\n";
+		cout << "DUPLICATE REMOVAL:\n";
+		cout << "Output Schema:\n";
+		this->sch->Print();
+	} else {
+		this->dist=new DuplicateRemoval;
+		dist->Run(this->ipipe, this->opipe, this->sch);
+	}
+}

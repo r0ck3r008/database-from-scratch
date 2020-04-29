@@ -41,8 +41,13 @@ void Qptree :: process(struct query *q)
 		}
 	}
 
+	if(q->dis_func)
+		this->process();
 	if(this->process(q->grp_atts, q->func)==0)
 		this->process(q->func);
+	if(q->dis_att)
+		this->process();
+	//this->process(q->sel_atts);
 	this->execute(1);
 }
 
@@ -67,15 +72,16 @@ void Qptree :: execute(int flag)
 	if(flag) {
 		Record tmp;
 		Schema sch;
-		if(this->tree->type & join_f) {
+		if(this->tree->type & join_f)
 			sch=*(this->tree->join.schl) + *(this->tree->join.schr);
-		} else if(this->tree->type & self_f) {
+		else if(this->tree->type & self_f)
 			sch=*(this->tree->self.sch);
-		} else if(this->tree->type & grpby_f) {
+		else if(this->tree->type & grpby_f)
 			sch=*(this->tree->grpby.sch);
-		} else if(this->tree->type & sum_f) {
+		else if(this->tree->type & sum_f)
 			sch=*(this->tree->sum.sch);
-		}
+		else if(this->tree->type & dist_f)
+			sch=*(this->tree->dist.sch);
 		int count=0;
 		while(1) {
 			int stat=this->curr_pipe->Remove(&tmp);
