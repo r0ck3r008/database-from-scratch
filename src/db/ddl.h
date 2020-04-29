@@ -1,6 +1,7 @@
 #ifndef DDL_H
 #define DDL_H
 
+#include"db/schema.h"
 #include"glbl/defs.h"
 #include"catalog.h"
 #include"query.h"

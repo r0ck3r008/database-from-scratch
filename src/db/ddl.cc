@@ -1,4 +1,7 @@
 #include<iostream>
+#include<string.h>
+#include<unistd.h>
+#include<errno.h>
 
 #include"ddl.h"
 
@@ -20,7 +23,7 @@ void Ddl :: process()
 		break;
 	case 3:
 		//drop
-		//this->drop();
+		this->drop();
 		break;
 	case 4:
 		//insert
@@ -51,5 +54,27 @@ void Ddl :: create()
 		i++;
 	}
 
+	c.write(this->cat_file);
+}
+
+void Ddl :: drop()
+{
+	Catalog c;
+	c.read(this->cat_file);
+
+	Schema *sch=c.snap(q->table);
+	if(sch==NULL)
+		return;
+
+	const char *fname=sch->fname.c_str();
+	if(strlen(fname)==0) {
+		cerr << "Unable to find db file, Did you insert?\n";
+	} else {
+		int stat=unlink(fname);
+		if(stat==-1)
+			cerr << "Error in unlinking the dbfile: "
+				<< strerror(errno) << endl;
+	}
+	c.remRel(q->table);
 	c.write(this->cat_file);
 }

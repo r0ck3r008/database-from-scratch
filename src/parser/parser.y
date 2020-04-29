@@ -196,7 +196,7 @@ NewAtts: Name Name
 	$$->next = NULL;
 }
 
-| Name Name ',' NewAtts
+| Name Name',' NewAtts
 {
 	$$ = (struct AttrList *) malloc (sizeof (struct AttrList));
 	$$->name = $1;

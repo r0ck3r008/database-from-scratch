@@ -49,6 +49,15 @@ void Catalog :: addAtt(char *_rname, char *aname, Type type, int key)
 	this->addAtt(_rname, aname, -1, type, key);
 }
 
+void Catalog :: remRel(char *_rname)
+{
+	string rname=string(_rname);
+	auto itr=this->rels.find(rname);
+	if(itr==this->rels.end())
+		cerr << "Relation not found!\n";
+	this->rels.erase(itr);
+}
+
 Schema *Catalog :: snap(char *_rname)
 {
 	string rname(_rname);
