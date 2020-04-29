@@ -159,6 +159,7 @@ void mk_parent(Qptree *qpt, struct operation *parent, struct operation *child,
 
 }
 
+//grp_by
 int Qptree :: process(struct NameList *grp_atts, struct FuncOperator *flist)
 {
 	if(grp_atts==NULL)
@@ -191,6 +192,7 @@ int Qptree :: process(struct NameList *grp_atts, struct FuncOperator *flist)
 	return 1;
 }
 
+//sum
 void Qptree :: process(struct FuncOperator *flist)
 {
 	if(flist==NULL)
@@ -208,6 +210,7 @@ void Qptree :: process(struct FuncOperator *flist)
 	this->tree=op;
 }
 
+//distinct
 void Qptree :: process()
 {
 	Schema *sch=mk_agg_sch();
@@ -217,20 +220,54 @@ void Qptree :: process()
 	this->tree=op;
 }
 
+//project
+void Qptree :: process(struct NameList *sel_atts)
+{
+	if(sel_atts==NULL)
+		return;
+	Schema *sch=mk_agg_sch();
+	struct operation *op=new operation(proj_f, sch);
+	mk_parent(this, op, this->tree, 0);
+	struct NameList *curr=sel_atts;
+	int *keep=new int[16];
+	int atts_out=0;
+	op->proj.sch=new Schema;
+	while(curr!=NULL) {
+		int stat=sch->Find(curr->name);
+		if(stat==-1) {
+			cerr << "Error in finding projection attr!\n";
+			_exit(-1);
+		}
+		Type type=sch->FindType(curr->name);
+		op->proj.sch->myAtts[atts_out].update(curr->name, type);
+		keep[atts_out]=stat;
+		atts_out++;
+		curr=curr->next;
+	}
+	op->proj.sch->numAtts=atts_out;
+	op->proj.keep=keep;
+	op->proj.atts_in=sch->numAtts;
+	op->proj.atts_out=atts_out;
+	this->tree=op;
+}
+
 Schema *Qptree :: mk_agg_sch()
 {
 	Schema *sch=new Schema;
 	int size=this->tree->tables.size();
 	if(this->tree->type & join_f) {
-		*sch=*sch+*(this->tree->oschl);
+		if(this->tree->oschl->numAtts)
+			*sch=*sch+*(this->tree->oschl);
 		if(size)
 			*sch=*sch+*(this->tree->tables[0]->sch);
-		*sch=*sch+*(this->tree->oschr);
+		if(this->tree->oschr->numAtts)
+			*sch=*sch+*(this->tree->oschr);
 		if(size)
 			*sch=*sch+*(this->tree->tables[1]->sch);
 	} else {
 		if(this->tree->oschl->numAtts) {
-			*sch=*(this->tree->oschl);
+			if(this->tree->oschl->numAtts)
+				*sch=*(this->tree->oschl);
 			if(size)
 				*sch=*sch+*(this->tree->tables[0]->sch);
 		} else if(size)

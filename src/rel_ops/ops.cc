@@ -169,3 +169,27 @@ void dist_op :: traverse(int indx, struct operation *op)
 		dist->Run(this->ipipe, this->opipe, this->sch);
 	}
 }
+
+proj_op :: proj_op()
+{
+	this->proj=NULL; this->ipipe=NULL; this->opipe=NULL;
+	this->keep=NULL; this->atts_in=0; this->atts_out=0;
+	this->sch=NULL;
+}
+proj_op :: ~proj_op(){}
+
+void proj_op :: traverse(int indx, struct operation *parent)
+{
+	if(!indx) {
+		cout << "**********\n";
+		cout << "PROJECT:\n";
+		cout << "Input Schema:\n";
+		parent->oschl->Print();
+		cout << "OutPut Schema:\n";
+		this->sch->Print();
+	} else {
+		this->proj=new Project;
+		proj->Run(this->ipipe, this->opipe, this->keep, this->atts_in,
+				this->atts_out);
+	}
+}

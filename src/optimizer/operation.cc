@@ -69,6 +69,13 @@ void operation :: add_pipe(pipe_type p_type, Pipe *pipe)
 			this->dist.opipe=pipe;
 		else
 			cerr << "Unknown pipe type for Distinct!\n";
+	} else if(this->type & proj_f) {
+		if(p_type & left_in)
+			this->proj.ipipe=pipe;
+		else if(p_type & parent_out)
+			this->proj.opipe=pipe;
+		else
+			cerr << "Unknown pipe type for Project!\n";
 	}
 }
 
@@ -111,6 +118,8 @@ void operation :: traverse(int indx)
 		this->sum.traverse(indx, this);
 	else if(this->type & dist_f)
 		this->dist.traverse(indx, this);
+	else if(this->type & proj_f)
+		this->proj.traverse(indx, this);
 
 	if(!indx) {
 		cout << "Input pipes: " << lid << " " << rid << endl;

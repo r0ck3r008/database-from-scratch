@@ -47,7 +47,7 @@ void Qptree :: process(struct query *q)
 		this->process(q->func);
 	if(q->dis_att)
 		this->process();
-	//this->process(q->sel_atts);
+	this->process(q->sel_atts);
 	this->execute(1);
 }
 
@@ -82,6 +82,8 @@ void Qptree :: execute(int flag)
 			sch=*(this->tree->sum.sch);
 		else if(this->tree->type & dist_f)
 			sch=*(this->tree->dist.sch);
+		else if(this->tree->type & proj_f)
+			sch=*(this->tree->proj.sch);
 		int count=0;
 		while(1) {
 			int stat=this->curr_pipe->Remove(&tmp);

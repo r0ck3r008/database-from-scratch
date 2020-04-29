@@ -85,7 +85,16 @@ struct sum_op
 
 struct proj_op
 {
+	Project *proj;
+	Pipe *ipipe, *opipe;
+	int *keep;
+	int atts_in;
+	int atts_out;
+	Schema *sch;
 
+	proj_op();
+	~proj_op();
+	void traverse(int, struct operation *);
 };
 
 struct dist_op
