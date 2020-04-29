@@ -1,6 +1,8 @@
 #ifndef QUERY_H
 #define QUERY_H
 
+#include"catalog.h"
+#include"optimizer/qp_tree.h"
 #include"parser/parse_tree.h"
 
 struct query
@@ -12,20 +14,24 @@ struct query
 	struct NameList *sel_atts;
 	int dis_att;
 	int dis_func;
-
+	int query_type;
+	char *output_var;
+	char *table;
+	char *file;
+	struct AttrList *atts_create;
+	struct NameList *atts_sort;
 	query(struct FuncOperator *,
 		struct TableList *,
 		struct AndList *,
 		struct NameList *,
 		struct NameList *,
-		int, int);
+		int, int, int,
+		char *, char *, char *,
+		struct AttrList *,
+		struct NameList *);
 	~query();
-};
 
-void del_name_list(struct NameList *);
-void del_tbl_list(struct TableList *);
-void del_and_list(struct AndList *,
-			struct OrList *);
-void del_func_list(struct FuncOperator *);
+	void dispatcher();
+};
 
 #endif

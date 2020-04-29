@@ -1,9 +1,8 @@
 #ifndef TEST_H
 #define TEST_H
 
-#include"optimizer/statistics.h"
+#include"db/query.h"
 #include"parser/parse_tree.h"
-#include"optimizer/qp_tree.h"
 #include"glbl/defs.h"
 
 // the aggregate function (NULL if no agg)
@@ -20,5 +19,11 @@ extern struct NameList *attsToSelect;
 extern int distinctAtts;
 // 1 if there is a DISTINCT in an aggregate query
 extern int distinctFunc;
+extern int queryType;
+extern char *outputVar;
+extern char *tableName;
+extern char *fileToInsert;
+extern struct AttrList *attsToCreate;
+extern struct NameList *attsToSort;
 
 #endif

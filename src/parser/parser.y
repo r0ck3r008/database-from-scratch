@@ -21,9 +21,7 @@
 	int distinctFunc;  // 1 if there is a DISTINCT in an aggregate query
 	
 	int queryType; // 1 for SELECT, 2 for CREATE, 3 for DROP,
-				   // 4 for INSERT, 5 for SET, 6 for EXIT
-//	int outputType; // 0 for NONE, 1 for STDOUT, 2 for file output
-	
+				   // 4 for INSERT, 5 for SET, 6 for EXIT	
 	char *outputVar;
 	
 	char *tableName;
