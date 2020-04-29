@@ -1,3 +1,4 @@
+#include<string.h>
 #include<unistd.h>
 
 #include"qp_tree.h"
@@ -48,7 +49,7 @@ void Qptree :: process(struct query *q)
 	if(q->dis_att)
 		this->process();
 	this->process(q->sel_atts);
-	this->execute(1);
+	this->execute(q);
 }
 
 Pipe *Qptree :: dispense_pipe(int *pipe_id)
@@ -59,8 +60,19 @@ Pipe *Qptree :: dispense_pipe(int *pipe_id)
 	return p;
 }
 
-void Qptree :: execute(int flag)
+void Qptree :: execute(struct query *q)
 {
+	int flag;
+	if(q->output_var!=NULL) {
+		if(!strcmp(q->output_var, "NONE"))
+			flag=0;
+		else if(!strcmp(q->output_var, "STDOUT"))
+			flag=1;
+		else
+			flag=2;
+	} else {
+		flag=1;
+	}
 	//add final pipe
 	int pipe=0;
 	Pipe *p=this->dispense_pipe(&pipe);
@@ -84,14 +96,26 @@ void Qptree :: execute(int flag)
 			sch=*(this->tree->dist.sch);
 		else if(this->tree->type & proj_f)
 			sch=*(this->tree->proj.sch);
-		int count=0;
-		while(1) {
-			int stat=this->curr_pipe->Remove(&tmp);
-			if(!stat)
-				break;
-			tmp.Print(&sch);
-			count++;
+		if(flag==1) {
+			int count=0;
+			while(1) {
+				int stat=this->curr_pipe->Remove(&tmp);
+				if(!stat)
+					break;
+				tmp.Print(&sch);
+				count++;
+			}
+			cout << "Counted: " << count << " records!\n";
+		} else if(flag==2){
+			WriteOut wr;
+			FILE *f=NULL;
+			if((f=fopen(q->output_var, "w"))==NULL) {
+				cerr << "Error in opening the file!\n";
+				_exit(-1);
+			}
+			wr.Run(p, f, &sch);
+			wr.WaitUntilDone();
+			fclose(f);
 		}
-		cout << "Counted: " << count << " records!\n";
 	}
 }

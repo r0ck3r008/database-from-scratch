@@ -114,6 +114,41 @@ SQL: SELECT WhatIWant FROM Tables WHERE AndList
 	queryType = 1;
 }
 
+| SET OUTPUT Name SELECT WhatIWant FROM Tables WHERE AndList GROUP BY Atts
+{
+	outputVar = $3;
+	tables = $7;
+	boolean = $9;	
+	groupingAtts = $12;
+	queryType = 1;
+}
+
+| SET OUTPUT String SELECT WhatIWant FROM Tables WHERE AndList GROUP BY Atts
+{
+	outputVar = $3;
+	tables = $7;
+	boolean = $9;	
+	groupingAtts = $12;
+	queryType = 1;
+}
+
+| SET OUTPUT Name SELECT WhatIWant FROM Tables WHERE AndList
+{
+	outputVar = $3;
+	tables = $7;
+	boolean = $9;	
+	queryType = 1;
+}
+
+| SET OUTPUT String SELECT WhatIWant FROM Tables WHERE AndList
+{
+	outputVar=$3;
+	tables = $7;
+	boolean = $9;	
+	groupingAtts = NULL;
+	queryType = 1;
+}
+
 | CREATE TABLE Name '(' NewAtts ')' AS HEAP
 {
 	tableName = $3;
@@ -141,18 +176,6 @@ SQL: SELECT WhatIWant FROM Tables WHERE AndList
 {
 	tableName = $3;
 	queryType = 3;
-}
-
-| SET OUTPUT Name
-{
-	queryType = 5;
-	outputVar = $3;
-}
-
-| SET OUTPUT String
-{
-	queryType = 5;
-	outputVar = $3;
 }
 
 | EXIT

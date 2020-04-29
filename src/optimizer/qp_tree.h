@@ -57,7 +57,7 @@ private:
 	//project
 	void process(struct NameList *);
 	Schema *mk_agg_sch();
-	void execute(int);
+	void execute(struct query *);
 
 public:
 	Qptree(Catalog *);
