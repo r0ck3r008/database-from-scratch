@@ -90,12 +90,23 @@ struct AndList {
 	// this is the disjunction to the left of the AND
 	struct OrList *left;
 
+	// assuming atomic operations per AndList->left
 	int is_join;
 
 	// this is the AndList to the right of the AND
 	// note that this can be NULL if the right is a disjunction
 	struct AndList *rightAnd;
 
+};
+
+
+struct AttrList{
+	
+	char *name;
+	int type;
+	
+	struct AttrList *next;
+	
 };
 
 #endif
