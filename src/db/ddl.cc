@@ -27,7 +27,7 @@ void Ddl :: process()
 		break;
 	case 4:
 		//insert
-		//this->insert();
+		this->insert();
 		break;
 	default:
 		cerr << "Wrong query Type!\n";
@@ -43,7 +43,9 @@ void Ddl :: create()
 		ftype=Sorted;
 	else
 		ftype=Heap;
-	c.addRel(q->table, ftype);
+	char fname[64];
+	sprintf(fname, "tmp/%s.bin", q->table);
+	c.addRel(q->table, fname, ftype);
 	int i=0;
 	while(curr!=NULL) {
 		int key=0;
@@ -77,4 +79,16 @@ void Ddl :: drop()
 	}
 	c.remRel(q->table);
 	c.write(this->cat_file);
+}
+
+void Ddl :: insert()
+{
+	Catalog c;
+	c.read(this->cat_file);
+	Schema *sch=c.snap(this->q->table);
+	if(sch==NULL)
+		return;
+	DBFile dbf;
+	dbf.Create(sch->fname.c_str(), sch->type, NULL);
+	dbf.Load(sch, sch->fname.c_str());
 }
