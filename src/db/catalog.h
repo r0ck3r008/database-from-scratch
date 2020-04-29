@@ -12,7 +12,9 @@ class Catalog
 
 public:
 	void addRel(char *, char *, fType, int);
+	void addRel(char *, fType);
 	void addAtt(char *, char *, int, Type, int);
+	void addAtt(char *, char *, Type, int);
 	Schema *snap(char *);
 	void write(char *);
 	void read(char *);

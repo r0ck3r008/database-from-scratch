@@ -21,7 +21,7 @@
 	int distinctFunc;  // 1 if there is a DISTINCT in an aggregate query
 	
 	int queryType; // 1 for SELECT, 2 for CREATE, 3 for DROP,
-				   // 4 for INSERT, 5 for SET, 6 for EXIT	
+				   // 4 for INSERT
 	char *outputVar;
 	
 	char *tableName;
@@ -187,11 +187,11 @@ NewAtts: Name Name
 {
 	$$ = (struct AttrList *) malloc (sizeof (struct AttrList));
 	$$->name = $1;
-	if (strcmp ($2, "INTEGER") == 0)
+	if (strcmp ($2, "Int") == 0)
 		$$->type = 0;
-	else if (strcmp ($2, "DOUBLE") == 0)
+	else if (strcmp ($2, "Double") == 0)
 		$$->type = 1;
-	else if (strcmp ($2, "STRING") == 0)
+	else if (strcmp ($2, "String") == 0)
 		$$->type = 2;
 	$$->next = NULL;
 }

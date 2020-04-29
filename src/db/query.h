@@ -1,6 +1,7 @@
 #ifndef QUERY_H
 #define QUERY_H
 
+#include"ddl.h"
 #include"catalog.h"
 #include"optimizer/qp_tree.h"
 #include"parser/parse_tree.h"

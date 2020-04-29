@@ -128,13 +128,14 @@ void init_stats()
 
 void query :: dispatcher()
 {
-	switch(this->query_type) {
-	case 1:
+	if(this->query_type==1) {
 		init_stats();
 		Catalog c;
 		c.read(cat_file);
 		Qptree qpt(&c);
 		qpt.process(this);
-		break;
+	} else {
+		Ddl ddl(this, cat_file);
+		ddl.process();
 	}
 }

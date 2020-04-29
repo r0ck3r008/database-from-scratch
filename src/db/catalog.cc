@@ -39,6 +39,16 @@ void Catalog :: addAtt(char *_rname, char *aname, int n_dis, Type type, int key)
 	itr1->second->addAtt(aname, type, dis, key);
 }
 
+void Catalog :: addRel(char *_rname, fType type)
+{
+	this->addRel(_rname, " ", type, 0);
+}
+
+void Catalog :: addAtt(char *_rname, char *aname, Type type, int key)
+{
+	this->addAtt(_rname, aname, -1, type, key);
+}
+
 Schema *Catalog :: snap(char *_rname)
 {
 	string rname(_rname);
